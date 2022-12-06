@@ -1,0 +1,100 @@
+<!--saved by ADM on PCTP10 with appConfig.exe v4.7.1.3 on 18/11/2021 12:09:17-->
+<app:Symbol x:Class="appClient_gen.Post_it"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:app="http://prysm.fr/AppVision"
+xmlns:video="http://prysm.fr/AppVideo"
+xmlns:gen="clr-namespace:appClient_gen" InitialHeight="250" InitialWidth="225" Fill="Image:./Post-it.png" Format="2.0" AppVersion="4.7.1.3" Date="2021-11-18 12:09:17Z">
+  <app:SynoItem.AnimationItems>
+    <app:ActionAnim x:Key="script">
+      <app:CData xml:space="preserve"><![CDATA[
+// create a Post-it overlay on the specified synoptic
+public static async void Create(string synoptic, Point position)
+{
+	var msg = new UserMessageRow { Category = "Post-it", Description = "new Post-it", ContentCategory= "content" };
+	var id = await Sdk.Server.EventManager.AddUserMessage(msg);
+	Sdk.Server.ClientManager.UpdateOverlay(new OverlayItem {
+		Id = "Event_" + id, Symbol = "OverlaySample\\Post-it.xaml", Synoptic = synoptic, Position = position, SymbolParameters = msg.Description + ";" + msg.ContentCategory, ZIndex = 10 });
+}
+
+public override void OnLoaded() 
+{
+	OnIdle();
+	subject.TextChanged += OnTextChanged;
+	body.TextChanged += OnTextChanged;
+}
+public override void OnIdle()
+{
+	if (!subject.IsFocused) subject.Text = %1;
+	if (!body.IsFocused) body.Text = %2;
+}
+
+// drag'n drop Post-it note
+void PinMove(object s, MouseEventArgs e)
+{
+	this.SetTopLeft(e.GetPosition(this.GetAncestor<Canvas>()).Substract(clicOffset));
+}
+Point clicOffset;
+
+// forward text updates to the server
+async void OnTextChanged(object sender, TextChangedEventArgs e)
+{
+	if (!((TextBoxItem)sender).IsFocused) return;
+	if (t != null) return; await (t = TaskEx.Delay(2000)); t = null; // 1 update every 2 sec
+
+	var msg = await GetLinkedUserMessage();
+	if (msg != null)
+	{
+		msg.Description = subject.Text;
+		msg.ContentCategory= body.Text;
+		Server.EventManager.UpdateUserMessage(msg);
+	}
+}
+Task t;
+
+// retrieve the UserMessage associated with this overlay instance
+public Task<UserMessageRow> GetLinkedUserMessage()
+{
+	var id = ((OverlayItem)Tag).Id.Substring(6).ToInt();  // "Event_nnn"
+	return Server.EventManager.GetUserMessageById(id);
+}
+
+]]></app:CData>
+    </app:ActionAnim>
+  </app:SynoItem.AnimationItems>
+  <app:TextBoxItem AcceptReturn="True" AcceptsTab="True" Angle="-3" Text="" Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="body" Width="192" Height="128" Canvas.Left="20" Canvas.Top="91"></app:TextBoxItem>
+  <app:TextBoxItem AcceptReturn="True" AcceptsTab="True" Angle="-3" Text="" Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" FontSize="18" x:Name="subject" Width="196" Height="36" Canvas.Left="12" Canvas.Top="43"></app:TextBoxItem>
+  <app:EllipseItem Text="x" Fill="{x:Null}" Foreground="#FF808080" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" x:Name="close" Width="18" Height="18" Canvas.Left="195" Canvas.Top="17">
+    <app:SynoItem.AnimationItems>
+      <app:ActionAnim x:Key="MouseLeftButtonUp">
+        <app:CData xml:space="preserve"><![CDATA[// Set the UserMessage status to Completed.
+// The server script 'Post-it.cs' will then remove the overlay from every clients
+var msg = await GetLinkedUserMessage();
+if (msg != null)
+{
+	msg.Status =10; // Completed
+	Server.EventManager.UpdateUserMessage(msg);
+}]]></app:CData>
+      </app:ActionAnim>
+    </app:SynoItem.AnimationItems>
+  </app:EllipseItem>
+  <app:RectangleItem Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="pin" Width="60" Height="48" Canvas.Left="89" Canvas.Top="-3">
+    <app:SynoItem.AnimationItems>
+      <app:ActionAnim x:Key="MouseLeftButtonDown">
+        <app:CData xml:space="preserve"><![CDATA[clicOffset = e.GetPosition(this);
+pin.MouseMove += PinMove;
+pin.CaptureMouse();
+e.Handled = true;]]></app:CData>
+      </app:ActionAnim>
+      <app:ActionAnim x:Key="MouseLeftButtonUp">
+        <app:CData xml:space="preserve"><![CDATA[e.Handled = true;
+pin.ReleaseMouseCapture();
+pin.MouseMove -= PinMove;
+var item = (OverlayItem)Tag;
+item.Position = e.GetPosition(this.GetAncestor<Canvas>()).Substract(clicOffset);
+Server.ClientManager.UpdateOverlay(item);]]></app:CData>
+      </app:ActionAnim>
+    </app:SynoItem.AnimationItems>
+  </app:RectangleItem>
+</app:Symbol>

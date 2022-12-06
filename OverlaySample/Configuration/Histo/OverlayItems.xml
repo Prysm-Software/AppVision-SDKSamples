@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ArrayOfOverlayItem xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <OverlayItem Id="101_A" Synoptic="OverlaySample\Synoptic 1.xaml">
+    <Date />
+    <Symbol>OverlaySample\Symbol A.xaml</Symbol>
+    <Position>
+      <X>445</X>
+      <Y>232</Y>
+    </Position>
+    <ZIndex xsi:nil="true" />
+  </OverlayItem>
+  <OverlayItem Id="Event_1" Synoptic="OverlaySample\Post-it Demo.xaml">
+    <Date />
+    <Symbol>OverlaySample\Post-it.xaml</Symbol>
+    <Position>
+      <X>488.416536661467</X>
+      <Y>41.2745709828388</Y>
+    </Position>
+    <SymbolParameters>new Post-it;content</SymbolParameters>
+    <ZIndex>10</ZIndex>
+  </OverlayItem>
+  <OverlayItem Id="101_B" Synoptic="OverlaySample\Synoptic 1.xaml">
+    <Date />
+    <Symbol>OverlaySample\Symbol B.xaml</Symbol>
+    <Position>
+      <X>375</X>
+      <Y>181</Y>
+    </Position>
+    <SymbolParameters>some param</SymbolParameters>
+    <ZIndex xsi:nil="true" />
+  </OverlayItem>
+</ArrayOfOverlayItem>

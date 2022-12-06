@@ -1,0 +1,26 @@
+<!--saved by ADM on PCTP10 with appConfig.exe v4.7.1.3 on 18/11/2021 18:54:19-->
+<app:Synoptic x:Class="appClient_gen.homepage"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:app="http://prysm.fr/AppVision"
+xmlns:video="http://prysm.fr/AppVideo"
+xmlns:gen="clr-namespace:appClient_gen" InitialWidth="800" InitialHeight="600" Format="2.0" AppVersion="4.7.1.3" Date="2021-11-18 18:54:19Z" Fill="#FFF2F2F2" ZoomMode="None">
+  <app:RectangleItem Text="This sample demonstrates how to develop a metadata player for AppVision.&#xD;&#xA;Metadata provider offers the ability to draw shapes, texts or images over a video player.&#xD;&#xA;A common use case is to display video analytics overlays such as detection bounding boxes.&#xD;&#xA;&#xD;&#xA;This sample project uses the YOLO Neural Networks for object detection (see https://github.com/AlexeyAB/darknet)&#xD;&#xA;&#xD;&#xA;Requirements:&#xD;&#xA; • Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019 x64.&#xD;&#xA;&#xD;&#xA;PlayerMetadata class implements the IPlayerOverlay interface." Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" FontSize="12" x:Name="RectangleItem14" Width="588" Height="188" Canvas.Left="124" Canvas.Top="120" />
+  <app:RectangleItem Fill="Image:Images/warning.png" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem15" Width="24" Height="24" ToolTip="PlayerMetadata.dll not found. Did you build SDK samples?" Canvas.Left="48" Canvas.Top="124">
+    <app:SynoItem.AnimationItems>
+      <app:PropertyAnim x:Key="SynoItem.IsAnimVisible" Expression="!File.Exists(Helper.PathBin + &quot;\\PlayerMetadata.dll&quot;) " />
+    </app:SynoItem.AnimationItems>
+  </app:RectangleItem>
+  <app:RectangleItem Fill="#2331859B" BorderBrush="#FF808080" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem25" Width="800" Height="80" Canvas.Left="0" Canvas.Top="0" app:WfCanvas.Anchor="Left, Top, Right" />
+  <app:RectangleItem Text="SDK Samples - Player Metadata" Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF31859B" FontSize="24" FontStyle="Normal" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" x:Name="RectangleItem1" Width="528" Height="36" Canvas.Left="148" Canvas.Top="28" app:WfCanvas.Anchor="Left, Top, Right" />
+  <app:RectangleItem Fill="Image:Images/logo.png" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem2" Width="88" Height="68" Canvas.Left="704" Canvas.Top="8" app:WfCanvas.Anchor="Top, Right" />
+  <app:RectangleItem Fill="Image:Images/app-logo.png" BorderBrush="#FF808080" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem24" Width="132" Height="72" Canvas.Left="8" Canvas.Top="4" />
+  <app:RectangleItem Text="🎥" Foreground="#FF808080" FontSize="64" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" x:Name="RectangleItem26" Width="200" Height="148" Canvas.Left="124" Canvas.Top="348">
+    <app:SynoItem.AnimationItems>
+      <app:ActionAnim x:Key="MouseLeftButtonUp">
+        <app:CData xml:space="preserve"><![CDATA[//<wizard><load_doc document='$V.PlayerMetadata.Analytics' parameters='' window='0' container='main'/></wizard>]]></app:CData>
+      </app:ActionAnim>
+    </app:SynoItem.AnimationItems>
+  </app:RectangleItem>
+</app:Synoptic>

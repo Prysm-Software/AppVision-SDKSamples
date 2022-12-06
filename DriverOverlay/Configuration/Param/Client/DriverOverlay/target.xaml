@@ -1,0 +1,14 @@
+<!--saved by ADM on PCTP10 with appConfig.exe v4.5.0.1 on 23/05/2019 20:12:57-->
+<app:Symbol x:Class="appClient_gen.DriverOverlay_target"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:app="http://prysm.fr/AppVision"
+xmlns:video="http://prysm.fr/AppVideo"
+xmlns:gen="clr-namespace:appClient_gen" InitialHeight="130" InitialWidth="60" Format="2.0" AppVersion="4.5.0.1" Date="2019-05-23 20:12:57Z">
+  <app:EllipseItem Fill="Image:Images/pin.png" BorderBrush="#FFD99594" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="EllipseItem1" Width="60" Height="70" Opacity="0.74928169242532994" Canvas.Left="0" Canvas.Top="0">
+    <app:SynoItem.AnimationItems>
+      <app:PropertyAnim x:Key="ToolTip" Expression="((OverlayItem)Tag).Position.ToString()" />
+    </app:SynoItem.AnimationItems>
+  </app:EllipseItem>
+</app:Symbol>

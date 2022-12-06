@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="PlayerClock.Clock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             BorderBrush="LightGray">
+    <Viewbox x:Name="viewbox" Stretch="{Binding Stretch}">
+        <Grid Height="200" Width="200" Loaded="Grid_Loaded">
+            <Grid.Resources>
+                <Line x:Key="bigTick" x:Shared="false" X1="100" Y1="3" X2="100" Y2="11" RenderTransformOrigin=".5 .5" StrokeThickness="1" />
+                <Line x:Key="smallTick" x:Shared="false" X1="100" Y1="3" X2="100" Y2="7" RenderTransformOrigin=".5 .5" StrokeThickness=".5" />
+                <Style TargetType="Line">
+                    <Setter Property="Stroke" Value="{Binding Foreground}" />
+                </Style>
+            </Grid.Resources>
+            <Ellipse Stroke="{Binding BorderBrush}" />
+            <Grid x:Name="ticks" />
+            <Canvas x:Name="labels" TextBlock.FontSize="20"/>
+            <Grid>
+                <Grid.Effect>
+                    <DropShadowEffect Opacity=".5"/>
+                </Grid.Effect>
+                <Line X1="100" Y1="105" X2="100" Y2="40" RenderTransformOrigin=".5 .5" StrokeThickness="3" >
+                    <Line.RenderTransform>
+                        <RotateTransform x:Name="hour"/>
+                    </Line.RenderTransform>
+                </Line>
+                <Line X1="100" Y1="110" X2="100" Y2="13" RenderTransformOrigin=".5 .5" StrokeThickness="2">
+                    <Line.RenderTransform>
+                        <RotateTransform x:Name="minute"/>
+                    </Line.RenderTransform>
+                </Line>
+                <Line X1="100" Y1="120" X2="100" Y2="5" RenderTransformOrigin=".5 .5" Stroke="Red" StrokeThickness=".6">
+                    <Line.RenderTransform>
+                        <RotateTransform x:Name="second"/>
+                    </Line.RenderTransform>
+                </Line>
+            </Grid>
+            <Ellipse Fill="White" HorizontalAlignment="Center" VerticalAlignment="Center" Width="2" Height="2"/>
+        </Grid>
+    </Viewbox>
+</UserControl>

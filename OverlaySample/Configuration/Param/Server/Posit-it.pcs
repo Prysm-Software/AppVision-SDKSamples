@@ -1,0 +1,25 @@
+public class ScriptPost_it : Prysm.AppVision.Script.ScriptServerBase
+{
+
+	// keep in sync post-it overlay with the corresponding usermessage
+	public override async void OnEventChanged(EventRow ev)
+	{
+		if (ev.SubType != EventSubType.UserUpdateEvent) return;
+		
+		var over = (await Server.ClientManager.GetOverlays("Id=Event_" + ev.AlarmId)).FirstOrDefault();
+		if (over == null) return;
+		
+		var msg = await Server.EventManager.GetUserMessageById(ev.AlarmId ?? 0);
+		if (msg == null) return;
+
+		if (msg.IsCompleted)
+		{
+			Server.ClientManager.RemoveOverlay(over.Id);
+		}
+		else
+		{
+			over.SymbolParameters = msg.Description + ";" + msg.ContentCategory;	
+			Server.ClientManager.UpdateOverlay(over);
+		}
+	}
+}

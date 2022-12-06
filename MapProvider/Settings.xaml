@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="MapProvider.Settings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="http://schemas.telerik.com/2008/xaml/presentation">
+    <StackPanel Margin="4">
+        <TextBlock>Application ID</TextBlock>
+        <TextBox Text="{Binding ApplicationId}" Margin="0 0 0 8" />
+        <TextBlock>Mode</TextBlock>
+        <t:RadComboBox SelectedItem="{Binding Mode}" Margin="0 0 0 8">
+            <t:MapMode>Road</t:MapMode>
+            <t:MapMode>Aerial</t:MapMode>
+            <t:MapMode>Birdseye</t:MapMode>
+        </t:RadComboBox>
+        <CheckBox IsChecked="{Binding IsLabelVisible}">Display labels</CheckBox>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,19 @@
+<!--saved by ADM on PCTP10 with appConfig.exe v4.7.1.3 on 18/11/2021 16:29:46-->
+<app:Symbol x:Class="appClient_gen.DriverSimple_Toggle"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:app="http://prysm.fr/AppVision"
+xmlns:video="http://prysm.fr/AppVideo"
+xmlns:gen="clr-namespace:appClient_gen" InitialHeight="32" InitialWidth="64" Format="2.0" AppVersion="4.7.1.3" Date="2021-11-18 16:29:46Z" ParameterLabels="Input variable">
+  <app:RectangleItem Fill="Image:Images/Toggle-off.png" BorderBrush="#FF808080" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem1" Width="64" Height="32" Canvas.Left="0" Canvas.Top="0">
+    <app:SynoItem.AnimationItems>
+      <app:ActionAnim x:Key="MouseLeftButtonUp">
+        <app:CData xml:space="preserve"><![CDATA[//<wizard><set_variable variable='%1' state='Invert' confirm='False'/></wizard>]]></app:CData>
+      </app:ActionAnim>
+      <app:ColorAnim x:Key="Fill" DefaultColor="Image:Images/Toggle-off.png">
+        <app:ColorEntry Condition="%1" Color="Image:Images/Toggle-on.png" />
+      </app:ColorAnim>
+    </app:SynoItem.AnimationItems>
+  </app:RectangleItem>
+</app:Symbol>

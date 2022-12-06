@@ -1,0 +1,36 @@
+<Project AppVersion="4.0">
+  <Items>
+    <Reference Filename="$Bin/AppCommon.dll" />
+    <Reference Filename="$Bin/AppData.dll" />
+    <Reference Filename="$Bin/AppScript.dll" />
+    <Reference Filename="$Bin/AppSDK.dll" />
+    <Reference Filename="mscorlib.dll" />
+    <Reference Filename="System.Core.dll" />
+    <Reference Filename="System.Data.dll" />
+    <Reference Filename="System.Data.Linq.dll" />
+    <Reference Filename="System.dll" />
+    <Reference Filename="System.Runtime.Serialization.dll" />
+    <Reference Filename="System.ServiceModel.dll" />
+    <Reference Filename="System.Web.dll" />
+    <Reference Filename="System.Xml.dll" />
+    <Compile Filename="Internal.pcs" />
+    <Compile Filename="Posit-it.pcs" />
+  </Items>
+  <PcsHeader>using System.Globalization;
+using System.Linq;
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ServiceModel;
+using Prysm.AppVision.Common;
+using Prysm.AppVision.Data;
+using Prysm.AppVision.SDK;
+
+namespace Prysm.AppVision.Server
+{
+</PcsHeader>
+  <PcsFooter>
+}
+</PcsFooter>
+</Project>

@@ -1,0 +1,699 @@
+﻿<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Prysm.AppControl.Data" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="Category">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="BadgeDesign" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="AccessProfileId" Type="Edm.Int32" />
+        <Property Name="IsVisitor" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="DefaultValidityPeriod" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="People" Relationship="Prysm.AppControl.Data.Person_Category" ToRole="Person_Category_Source" FromRole="Person_Category_Target" />
+        <NavigationProperty Name="AccessProfile" Relationship="Prysm.AppControl.Data.AccessProfile_Categories" ToRole="AccessProfile_Categories_Source" FromRole="AccessProfile_Categories_Target" />
+      </EntityType>
+      <EntityType Name="Person">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="FirstName" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="LastName" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CategoryId" Type="Edm.Int32" />
+        <Property Name="DepartmentId" Type="Edm.Int32" />
+        <Property Name="CompanyId" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Address" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Phone" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Email" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info1" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info2" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info3" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info4" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info5" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info6" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info7" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info8" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info9" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info10" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Photo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Notes" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ParentId" Type="Edm.Int32" />
+        <Property Name="Language" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Culture" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ValidityStart" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="ValidityEnd" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="ValidityInfo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsPass" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsAlarm" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsAntipassback" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsEscortRequired" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EscortId" Type="Edm.Int32" />
+        <Property Name="CrisisLevel" Type="Edm.Int32" />
+        <Property Name="PinCode" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="UserIdCreation" Type="Edm.Int32" Nullable="false" />
+        <Property Name="UserIdModification" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DateCreation" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="DateModification" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ExtId1" Type="Edm.Int32" />
+        <Property Name="ExtId2" Type="Edm.Int32" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Department" Relationship="Prysm.AppControl.Data.Department_People" ToRole="Department_People_Source" FromRole="Department_People_Target" />
+        <NavigationProperty Name="Category" Relationship="Prysm.AppControl.Data.Person_Category" ToRole="Person_Category_Target" FromRole="Person_Category_Source" />
+        <NavigationProperty Name="Badges" Relationship="Prysm.AppControl.Data.Badge_Person" ToRole="Badge_Person_Source" FromRole="Badge_Person_Target" />
+        <NavigationProperty Name="PersonProfiles" Relationship="Prysm.AppControl.Data.PersonProfile_Person" ToRole="PersonProfile_Person_Source" FromRole="PersonProfile_Person_Target" />
+        <NavigationProperty Name="PersonRights" Relationship="Prysm.AppControl.Data.PersonRight_Person" ToRole="PersonRight_Person_Source" FromRole="PersonRight_Person_Target" />
+        <NavigationProperty Name="Escort" Relationship="Prysm.AppControl.Data.Person_Escort" ToRole="Person_Escort_Target" FromRole="Person_Escort_Source" />
+      </EntityType>
+      <EntityType Name="Department">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="BadgeDesign" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="AccessProfileId" Type="Edm.Int32" />
+        <NavigationProperty Name="People" Relationship="Prysm.AppControl.Data.Department_People" ToRole="Department_People_Target" FromRole="Department_People_Source" />
+        <NavigationProperty Name="AccessProfile" Relationship="Prysm.AppControl.Data.AccessProfile_Departments" ToRole="AccessProfile_Departments_Source" FromRole="AccessProfile_Departments_Target" />
+      </EntityType>
+      <EntityType Name="AccessProfile">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="AccessProfileRights" Relationship="Prysm.AppControl.Data.AccessProfileRight_AccessProfile" ToRole="AccessProfileRight_AccessProfile_Source" FromRole="AccessProfileRight_AccessProfile_Target" />
+        <NavigationProperty Name="People" Relationship="Prysm.AppControl.Data.PersonProfile_AccessProfile" ToRole="PersonProfile_AccessProfile_Source" FromRole="PersonProfile_AccessProfile_Target" />
+        <NavigationProperty Name="Categories" Relationship="Prysm.AppControl.Data.AccessProfile_Categories" ToRole="AccessProfile_Categories_Target" FromRole="AccessProfile_Categories_Source" />
+        <NavigationProperty Name="Departments" Relationship="Prysm.AppControl.Data.AccessProfile_Departments" ToRole="AccessProfile_Departments_Target" FromRole="AccessProfile_Departments_Source" />
+      </EntityType>
+      <EntityType Name="AccessProfileRight">
+        <Key>
+          <PropertyRef Name="AccessProfileId" />
+          <PropertyRef Name="CrisisLevel" />
+          <PropertyRef Name="ReaderId" />
+        </Key>
+        <Property Name="AccessProfileId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ReaderId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CrisisLevel" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TimetableId" Type="Edm.Int32" />
+        <Property Name="ValidityStart" Type="Edm.DateTime" />
+        <Property Name="ValidityEnd" Type="Edm.DateTime" />
+        <Property Name="ValidityInfo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="AccessProfile" Relationship="Prysm.AppControl.Data.AccessProfileRight_AccessProfile" ToRole="AccessProfileRight_AccessProfile_Target" FromRole="AccessProfileRight_AccessProfile_Source" />
+      </EntityType>
+      <EntityType Name="PersonProfile">
+        <Key>
+          <PropertyRef Name="AccessProfileId" />
+          <PropertyRef Name="PersonId" />
+        </Key>
+        <Property Name="PersonId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="AccessProfileId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Person" Relationship="Prysm.AppControl.Data.PersonProfile_Person" ToRole="PersonProfile_Person_Target" FromRole="PersonProfile_Person_Source" />
+        <NavigationProperty Name="AccessProfile" Relationship="Prysm.AppControl.Data.PersonProfile_AccessProfile" ToRole="PersonProfile_AccessProfile_Target" FromRole="PersonProfile_AccessProfile_Source" />
+      </EntityType>
+      <EntityType Name="Badge">
+        <Key>
+          <PropertyRef Name="BadgeTypeId" />
+          <PropertyRef Name="Code" />
+          <PropertyRef Name="Format" />
+        </Key>
+        <Property Name="Code" Type="Edm.String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+        <Property Name="Format" Type="Edm.String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+        <Property Name="BadgeTypeId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="PersonId" Type="Edm.Int32" />
+        <Property Name="Status" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Info" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ExtId" Type="Edm.Int32" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="BadgeType" Relationship="Prysm.AppControl.Data.BadgeType_Badges" ToRole="BadgeType_Badges_Source" FromRole="BadgeType_Badges_Target" />
+        <NavigationProperty Name="Person" Relationship="Prysm.AppControl.Data.Badge_Person" ToRole="Badge_Person_Target" FromRole="Badge_Person_Source" />
+      </EntityType>
+      <EntityType Name="BadgeType">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Length" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="Badges" Relationship="Prysm.AppControl.Data.BadgeType_Badges" ToRole="BadgeType_Badges_Target" FromRole="BadgeType_Badges_Source" />
+      </EntityType>
+      <EntityType Name="PersonRight">
+        <Key>
+          <PropertyRef Name="CrisisLevel" />
+          <PropertyRef Name="PersonId" />
+          <PropertyRef Name="ReaderId" />
+        </Key>
+        <Property Name="PersonId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ReaderId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CrisisLevel" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TimetableId" Type="Edm.Int32" />
+        <Property Name="ValidityStart" Type="Edm.DateTime" />
+        <Property Name="ValidityEnd" Type="Edm.DateTime" />
+        <Property Name="ValidityInfo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Person" Relationship="Prysm.AppControl.Data.PersonRight_Person" ToRole="PersonRight_Person_Target" FromRole="PersonRight_Person_Source" />
+      </EntityType>
+      <EntityType Name="Zone">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CheckAntipassbackInput" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CheckAntipassbackOutput" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="ZoneReaderIns" Relationship="Prysm.AppControl.Data.ZoneReaderIn_Zone" ToRole="ZoneReaderIn_Zone_Source" FromRole="ZoneReaderIn_Zone_Target" />
+        <NavigationProperty Name="ZoneReaderOuts" Relationship="Prysm.AppControl.Data.ZoneReaderOut_Zone" ToRole="ZoneReaderOut_Zone_Source" FromRole="ZoneReaderOut_Zone_Target" />
+      </EntityType>
+      <EntityType Name="ZoneReaderIn">
+        <Key>
+          <PropertyRef Name="ReaderId" />
+          <PropertyRef Name="ZoneId" />
+        </Key>
+        <Property Name="ZoneId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ReaderId" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="Zone" Relationship="Prysm.AppControl.Data.ZoneReaderIn_Zone" ToRole="ZoneReaderIn_Zone_Target" FromRole="ZoneReaderIn_Zone_Source" />
+      </EntityType>
+      <EntityType Name="ZoneReaderOut">
+        <Key>
+          <PropertyRef Name="ReaderId" />
+          <PropertyRef Name="ZoneId" />
+        </Key>
+        <Property Name="ZoneId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ReaderId" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="Zone" Relationship="Prysm.AppControl.Data.ZoneReaderOut_Zone" ToRole="ZoneReaderOut_Zone_Target" FromRole="ZoneReaderOut_Zone_Source" />
+      </EntityType>
+      <EntityType Name="AccessProfileZoneRight">
+        <Key>
+          <PropertyRef Name="AccessProfileId" />
+          <PropertyRef Name="CrisisLevel" />
+          <PropertyRef Name="ZoneId" />
+        </Key>
+        <Property Name="AccessProfileId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ZoneId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CrisisLevel" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TimetableId" Type="Edm.Int32" />
+        <Property Name="ValidityStart" Type="Edm.DateTime" />
+        <Property Name="ValidityEnd" Type="Edm.DateTime" />
+        <Property Name="ValidityInfo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="AccessProfile" Relationship="Prysm.AppControl.Data.AccessProfileZoneRight_AccessProfile" ToRole="AccessProfileZoneRight_AccessProfile_Target" FromRole="AccessProfileZoneRight_AccessProfile_Source" />
+        <NavigationProperty Name="Zone" Relationship="Prysm.AppControl.Data.AccessProfileZoneRight_Zone" ToRole="AccessProfileZoneRight_Zone_Target" FromRole="AccessProfileZoneRight_Zone_Source" />
+      </EntityType>
+      <EntityType Name="PersonZone">
+        <Key>
+          <PropertyRef Name="PersonId" />
+          <PropertyRef Name="ZoneId" />
+        </Key>
+        <Property Name="ZoneId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="PersonId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DateInput" Type="Edm.DateTimeOffset" Nullable="false" />
+        <NavigationProperty Name="Zone" Relationship="Prysm.AppControl.Data.PersonZone_Zone" ToRole="PersonZone_Zone_Target" FromRole="PersonZone_Zone_Source" />
+        <NavigationProperty Name="Person" Relationship="Prysm.AppControl.Data.PersonZone_Person" ToRole="PersonZone_Person_Target" FromRole="PersonZone_Person_Source" />
+      </EntityType>
+      <EntityType Name="Visitor">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="FirstName" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="LastName" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CategoryId" Type="Edm.Int32" />
+        <Property Name="DepartmentId" Type="Edm.Int32" />
+        <Property Name="Company" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CompanyId" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Reason" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Address" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Phone" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Email" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info1" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info2" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info3" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info4" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info5" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info6" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info7" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info8" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info9" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Info10" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Photo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Language" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Culture" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="PersonId" Type="Edm.Int32" />
+        <Property Name="VisitedId" Type="Edm.Int32" />
+        <Property Name="VisitedLocation" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Scan1" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Scan2" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ValidityStart" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="ValidityEnd" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="ValidityInfo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ReceptionNotes" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Notes" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="BadgeReturn" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="IsEscortRequired" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UserIdCreation" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DateCreation" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="UserIdValidation" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DateValidation" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="UserIdModification" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DateModification" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Status" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ExtId1" Type="Edm.Int32" />
+        <Property Name="ExtId2" Type="Edm.Int32" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Department" Relationship="Prysm.AppControl.Data.Visitor_Department" ToRole="Visitor_Department_Target" FromRole="Visitor_Department_Source" />
+        <NavigationProperty Name="Category" Relationship="Prysm.AppControl.Data.Visitor_Category" ToRole="Visitor_Category_Target" FromRole="Visitor_Category_Source" />
+        <NavigationProperty Name="Person" Relationship="Prysm.AppControl.Data.Visitor_Person" ToRole="Visitor_Person_Target" FromRole="Visitor_Person_Source" />
+        <NavigationProperty Name="Visited" Relationship="Prysm.AppControl.Data.Visitor_Visited" ToRole="Visitor_Visited_Target" FromRole="Visitor_Visited_Source" />
+      </EntityType>
+      <EntityType Name="Location">
+        <Key>
+          <PropertyRef Name="PersonId" />
+        </Key>
+        <Property Name="PersonId" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="ReaderId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Date" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="ReaderIdOk" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DateOk" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Person" Relationship="Prysm.AppControl.Data.Location_Person" ToRole="Location_Person_Target" FromRole="Location_Person_Source" />
+      </EntityType>
+      <Association Name="Person_Category">
+        <End Type="Prysm.AppControl.Data.Category" Role="Person_Category_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Person" Role="Person_Category_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Person_Category_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="Person_Category_Source">
+            <PropertyRef Name="CategoryId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="AccessProfile_Categories">
+        <End Type="Prysm.AppControl.Data.AccessProfile" Role="AccessProfile_Categories_Source" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Category" Role="AccessProfile_Categories_Target" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="AccessProfile_Categories_Source">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="AccessProfile_Categories_Target">
+            <PropertyRef Name="AccessProfileId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Department_People">
+        <End Type="Prysm.AppControl.Data.Department" Role="Department_People_Source" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Person" Role="Department_People_Target" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Department_People_Source">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="Department_People_Target">
+            <PropertyRef Name="DepartmentId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Badge_Person">
+        <End Type="Prysm.AppControl.Data.Person" Role="Badge_Person_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Badge" Role="Badge_Person_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Badge_Person_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="Badge_Person_Source">
+            <PropertyRef Name="PersonId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="PersonProfile_Person">
+        <End Type="Prysm.AppControl.Data.Person" Role="PersonProfile_Person_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.PersonProfile" Role="PersonProfile_Person_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="PersonProfile_Person_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="PersonProfile_Person_Source">
+            <PropertyRef Name="PersonId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="PersonRight_Person">
+        <End Type="Prysm.AppControl.Data.Person" Role="PersonRight_Person_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.PersonRight" Role="PersonRight_Person_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="PersonRight_Person_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="PersonRight_Person_Source">
+            <PropertyRef Name="PersonId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Person_Escort">
+        <End Type="Prysm.AppControl.Data.Person" Role="Person_Escort_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Person" Role="Person_Escort_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Person_Escort_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="Person_Escort_Source">
+            <PropertyRef Name="EscortId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="AccessProfile_Departments">
+        <End Type="Prysm.AppControl.Data.AccessProfile" Role="AccessProfile_Departments_Source" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Department" Role="AccessProfile_Departments_Target" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="AccessProfile_Departments_Source">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="AccessProfile_Departments_Target">
+            <PropertyRef Name="AccessProfileId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="AccessProfileRight_AccessProfile">
+        <End Type="Prysm.AppControl.Data.AccessProfile" Role="AccessProfileRight_AccessProfile_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.AccessProfileRight" Role="AccessProfileRight_AccessProfile_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="AccessProfileRight_AccessProfile_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="AccessProfileRight_AccessProfile_Source">
+            <PropertyRef Name="AccessProfileId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="PersonProfile_AccessProfile">
+        <End Type="Prysm.AppControl.Data.AccessProfile" Role="PersonProfile_AccessProfile_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.PersonProfile" Role="PersonProfile_AccessProfile_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="PersonProfile_AccessProfile_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="PersonProfile_AccessProfile_Source">
+            <PropertyRef Name="AccessProfileId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="BadgeType_Badges">
+        <End Type="Prysm.AppControl.Data.BadgeType" Role="BadgeType_Badges_Source" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.Badge" Role="BadgeType_Badges_Target" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="BadgeType_Badges_Source">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="BadgeType_Badges_Target">
+            <PropertyRef Name="BadgeTypeId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="ZoneReaderIn_Zone">
+        <End Type="Prysm.AppControl.Data.Zone" Role="ZoneReaderIn_Zone_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.ZoneReaderIn" Role="ZoneReaderIn_Zone_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="ZoneReaderIn_Zone_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="ZoneReaderIn_Zone_Source">
+            <PropertyRef Name="ZoneId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="ZoneReaderOut_Zone">
+        <End Type="Prysm.AppControl.Data.Zone" Role="ZoneReaderOut_Zone_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.ZoneReaderOut" Role="ZoneReaderOut_Zone_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="ZoneReaderOut_Zone_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="ZoneReaderOut_Zone_Source">
+            <PropertyRef Name="ZoneId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="AccessProfileZoneRight_AccessProfile">
+        <End Type="Prysm.AppControl.Data.AccessProfile" Role="AccessProfileZoneRight_AccessProfile_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.AccessProfileZoneRight" Role="AccessProfileZoneRight_AccessProfile_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="AccessProfileZoneRight_AccessProfile_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="AccessProfileZoneRight_AccessProfile_Source">
+            <PropertyRef Name="AccessProfileId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="AccessProfileZoneRight_Zone">
+        <End Type="Prysm.AppControl.Data.Zone" Role="AccessProfileZoneRight_Zone_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.AccessProfileZoneRight" Role="AccessProfileZoneRight_Zone_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="AccessProfileZoneRight_Zone_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="AccessProfileZoneRight_Zone_Source">
+            <PropertyRef Name="ZoneId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="PersonZone_Zone">
+        <End Type="Prysm.AppControl.Data.Zone" Role="PersonZone_Zone_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.PersonZone" Role="PersonZone_Zone_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="PersonZone_Zone_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="PersonZone_Zone_Source">
+            <PropertyRef Name="ZoneId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="PersonZone_Person">
+        <End Type="Prysm.AppControl.Data.Person" Role="PersonZone_Person_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppControl.Data.PersonZone" Role="PersonZone_Person_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="PersonZone_Person_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="PersonZone_Person_Source">
+            <PropertyRef Name="PersonId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Visitor_Department">
+        <End Type="Prysm.AppControl.Data.Department" Role="Visitor_Department_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Visitor" Role="Visitor_Department_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Visitor_Department_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="Visitor_Department_Source">
+            <PropertyRef Name="DepartmentId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Visitor_Category">
+        <End Type="Prysm.AppControl.Data.Category" Role="Visitor_Category_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Visitor" Role="Visitor_Category_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Visitor_Category_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="Visitor_Category_Source">
+            <PropertyRef Name="CategoryId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Visitor_Person">
+        <End Type="Prysm.AppControl.Data.Person" Role="Visitor_Person_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Visitor" Role="Visitor_Person_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Visitor_Person_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="Visitor_Person_Source">
+            <PropertyRef Name="PersonId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Visitor_Visited">
+        <End Type="Prysm.AppControl.Data.Person" Role="Visitor_Visited_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppControl.Data.Visitor" Role="Visitor_Visited_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Visitor_Visited_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="Visitor_Visited_Source">
+            <PropertyRef Name="VisitedId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Location_Person">
+        <End Type="Prysm.AppControl.Data.Location" Role="Location_Person_Source" Multiplicity="*" />
+        <End Type="Prysm.AppControl.Data.Person" Role="Location_Person_Target" Multiplicity="0..1" />
+      </Association>
+      <EntityContainer Name="AppControlContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Categories" EntityType="Prysm.AppControl.Data.Category" />
+        <EntitySet Name="People" EntityType="Prysm.AppControl.Data.Person" />
+        <EntitySet Name="Departments" EntityType="Prysm.AppControl.Data.Department" />
+        <EntitySet Name="AccessProfiles" EntityType="Prysm.AppControl.Data.AccessProfile" />
+        <EntitySet Name="AccessProfileRights" EntityType="Prysm.AppControl.Data.AccessProfileRight" />
+        <EntitySet Name="PersonProfiles" EntityType="Prysm.AppControl.Data.PersonProfile" />
+        <EntitySet Name="Badges" EntityType="Prysm.AppControl.Data.Badge" />
+        <EntitySet Name="BadgeTypes" EntityType="Prysm.AppControl.Data.BadgeType" />
+        <EntitySet Name="PersonRights" EntityType="Prysm.AppControl.Data.PersonRight" />
+        <EntitySet Name="Zones" EntityType="Prysm.AppControl.Data.Zone" />
+        <EntitySet Name="ZoneReaderIns" EntityType="Prysm.AppControl.Data.ZoneReaderIn" />
+        <EntitySet Name="ZoneReaderOuts" EntityType="Prysm.AppControl.Data.ZoneReaderOut" />
+        <EntitySet Name="AccessProfileZoneRights" EntityType="Prysm.AppControl.Data.AccessProfileZoneRight" />
+        <EntitySet Name="PersonZones" EntityType="Prysm.AppControl.Data.PersonZone" />
+        <EntitySet Name="Visitors" EntityType="Prysm.AppControl.Data.Visitor" />
+        <EntitySet Name="Locations" EntityType="Prysm.AppControl.Data.Location" />
+        <FunctionImport Name="GetPeople" ReturnType="Collection(Prysm.AppControl.Data.Person)" EntitySet="People" m:HttpMethod="GET" />
+        <FunctionImport Name="GetNextPersonId" ReturnType="Edm.Int32" m:HttpMethod="GET" />
+        <FunctionImport Name="GetNextCategoryId" ReturnType="Edm.Int32" m:HttpMethod="GET" />
+        <FunctionImport Name="GetNextDepartmentId" ReturnType="Edm.Int32" m:HttpMethod="GET" />
+        <FunctionImport Name="GetNextAccessProfileId" ReturnType="Edm.Int32" m:HttpMethod="GET" />
+        <FunctionImport Name="GetNextBadgeTypeId" ReturnType="Edm.Int32" m:HttpMethod="GET" />
+        <FunctionImport Name="GetNextZoneId" ReturnType="Edm.Int32" m:HttpMethod="GET" />
+        <FunctionImport Name="GetNextVisitorId" ReturnType="Edm.Int32" m:HttpMethod="GET" />
+        <AssociationSet Name="Person_Category" Association="Prysm.AppControl.Data.Person_Category">
+          <End Role="Person_Category_Target" EntitySet="Categories" />
+          <End Role="Person_Category_Source" EntitySet="People" />
+        </AssociationSet>
+        <AssociationSet Name="AccessProfile_Categories" Association="Prysm.AppControl.Data.AccessProfile_Categories">
+          <End Role="AccessProfile_Categories_Target" EntitySet="Categories" />
+          <End Role="AccessProfile_Categories_Source" EntitySet="AccessProfiles" />
+        </AssociationSet>
+        <AssociationSet Name="Department_People" Association="Prysm.AppControl.Data.Department_People">
+          <End Role="Department_People_Target" EntitySet="People" />
+          <End Role="Department_People_Source" EntitySet="Departments" />
+        </AssociationSet>
+        <AssociationSet Name="Badge_Person" Association="Prysm.AppControl.Data.Badge_Person">
+          <End Role="Badge_Person_Target" EntitySet="People" />
+          <End Role="Badge_Person_Source" EntitySet="Badges" />
+        </AssociationSet>
+        <AssociationSet Name="PersonProfile_Person" Association="Prysm.AppControl.Data.PersonProfile_Person">
+          <End Role="PersonProfile_Person_Target" EntitySet="People" />
+          <End Role="PersonProfile_Person_Source" EntitySet="PersonProfiles" />
+        </AssociationSet>
+        <AssociationSet Name="PersonRight_Person" Association="Prysm.AppControl.Data.PersonRight_Person">
+          <End Role="PersonRight_Person_Target" EntitySet="People" />
+          <End Role="PersonRight_Person_Source" EntitySet="PersonRights" />
+        </AssociationSet>
+        <AssociationSet Name="Person_Escort" Association="Prysm.AppControl.Data.Person_Escort">
+          <End Role="Person_Escort_Source" EntitySet="People" />
+          <End Role="Person_Escort_Target" EntitySet="People" />
+        </AssociationSet>
+        <AssociationSet Name="AccessProfile_Departments" Association="Prysm.AppControl.Data.AccessProfile_Departments">
+          <End Role="AccessProfile_Departments_Target" EntitySet="Departments" />
+          <End Role="AccessProfile_Departments_Source" EntitySet="AccessProfiles" />
+        </AssociationSet>
+        <AssociationSet Name="AccessProfileRight_AccessProfile" Association="Prysm.AppControl.Data.AccessProfileRight_AccessProfile">
+          <End Role="AccessProfileRight_AccessProfile_Target" EntitySet="AccessProfiles" />
+          <End Role="AccessProfileRight_AccessProfile_Source" EntitySet="AccessProfileRights" />
+        </AssociationSet>
+        <AssociationSet Name="PersonProfile_AccessProfile" Association="Prysm.AppControl.Data.PersonProfile_AccessProfile">
+          <End Role="PersonProfile_AccessProfile_Target" EntitySet="AccessProfiles" />
+          <End Role="PersonProfile_AccessProfile_Source" EntitySet="PersonProfiles" />
+        </AssociationSet>
+        <AssociationSet Name="BadgeType_Badges" Association="Prysm.AppControl.Data.BadgeType_Badges">
+          <End Role="BadgeType_Badges_Target" EntitySet="Badges" />
+          <End Role="BadgeType_Badges_Source" EntitySet="BadgeTypes" />
+        </AssociationSet>
+        <AssociationSet Name="ZoneReaderIn_Zone" Association="Prysm.AppControl.Data.ZoneReaderIn_Zone">
+          <End Role="ZoneReaderIn_Zone_Target" EntitySet="Zones" />
+          <End Role="ZoneReaderIn_Zone_Source" EntitySet="ZoneReaderIns" />
+        </AssociationSet>
+        <AssociationSet Name="ZoneReaderOut_Zone" Association="Prysm.AppControl.Data.ZoneReaderOut_Zone">
+          <End Role="ZoneReaderOut_Zone_Target" EntitySet="Zones" />
+          <End Role="ZoneReaderOut_Zone_Source" EntitySet="ZoneReaderOuts" />
+        </AssociationSet>
+        <AssociationSet Name="AccessProfileZoneRight_AccessProfile" Association="Prysm.AppControl.Data.AccessProfileZoneRight_AccessProfile">
+          <End Role="AccessProfileZoneRight_AccessProfile_Source" EntitySet="AccessProfileZoneRights" />
+          <End Role="AccessProfileZoneRight_AccessProfile_Target" EntitySet="AccessProfiles" />
+        </AssociationSet>
+        <AssociationSet Name="AccessProfileZoneRight_Zone" Association="Prysm.AppControl.Data.AccessProfileZoneRight_Zone">
+          <End Role="AccessProfileZoneRight_Zone_Source" EntitySet="AccessProfileZoneRights" />
+          <End Role="AccessProfileZoneRight_Zone_Target" EntitySet="Zones" />
+        </AssociationSet>
+        <AssociationSet Name="PersonZone_Zone" Association="Prysm.AppControl.Data.PersonZone_Zone">
+          <End Role="PersonZone_Zone_Source" EntitySet="PersonZones" />
+          <End Role="PersonZone_Zone_Target" EntitySet="Zones" />
+        </AssociationSet>
+        <AssociationSet Name="PersonZone_Person" Association="Prysm.AppControl.Data.PersonZone_Person">
+          <End Role="PersonZone_Person_Source" EntitySet="PersonZones" />
+          <End Role="PersonZone_Person_Target" EntitySet="People" />
+        </AssociationSet>
+        <AssociationSet Name="Visitor_Department" Association="Prysm.AppControl.Data.Visitor_Department">
+          <End Role="Visitor_Department_Source" EntitySet="Visitors" />
+          <End Role="Visitor_Department_Target" EntitySet="Departments" />
+        </AssociationSet>
+        <AssociationSet Name="Visitor_Category" Association="Prysm.AppControl.Data.Visitor_Category">
+          <End Role="Visitor_Category_Source" EntitySet="Visitors" />
+          <End Role="Visitor_Category_Target" EntitySet="Categories" />
+        </AssociationSet>
+        <AssociationSet Name="Visitor_Person" Association="Prysm.AppControl.Data.Visitor_Person">
+          <End Role="Visitor_Person_Source" EntitySet="Visitors" />
+          <End Role="Visitor_Person_Target" EntitySet="People" />
+        </AssociationSet>
+        <AssociationSet Name="Visitor_Visited" Association="Prysm.AppControl.Data.Visitor_Visited">
+          <End Role="Visitor_Visited_Source" EntitySet="Visitors" />
+          <End Role="Visitor_Visited_Target" EntitySet="People" />
+        </AssociationSet>
+        <AssociationSet Name="Location_Person" Association="Prysm.AppControl.Data.Location_Person">
+          <End Role="Location_Person_Source" EntitySet="Locations" />
+          <End Role="Location_Person_Target" EntitySet="People" />
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

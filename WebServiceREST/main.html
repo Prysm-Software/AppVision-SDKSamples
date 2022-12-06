@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>AppVision WebService demo</title>
+    <meta charset="utf-8" />
+    <script src="crypto.js"></script>
+    <script src="appServer.js"></script>
+</head>
+<body>
+    <h2>AppVision WebService demo</h2>
+	<p id="conn"/>
+	<p id="log"/>
+
+    <script>
+
+        let params = new URLSearchParams(window.location.search);
+        let host = params.get('host');
+        let user = params.get('user');
+        let pwd = params.get('pwd');
+
+        if (host && user) {
+
+            var appServer = new AppServer();
+
+            appServer.login(host, user, pwd)
+                .then(() => document.getElementById('conn').innerText = `${appServer.user.LastName} connected to ${appServer.desc} at ${host}`)
+                .catch(err => document.writeln(err));
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<!--saved by ADM on PCTP10 with appConfig.exe v4.5.103.0 on 21/01/2020 17:30:58-->
+<app:Synoptic x:Class="appClient_gen.DriverOverlay_map"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:app="http://prysm.fr/AppVision"
+xmlns:video="http://prysm.fr/AppVideo"
+xmlns:gen="clr-namespace:appClient_gen" InitialWidth="NaN" InitialHeight="NaN" Fill="Geo:Osm:http://tile.openstreetmap.de/{z}/{x}/{y}.png" ZoomMode="None" InitialZoom="18" GeoViewport="5.36899495124819,43.4927516748053,0.0022702217101811,0.00141655434803312" Format="2.0" AppVersion="4.5.103.0" Date="2020-01-21 17:30:58Z"></app:Synoptic>

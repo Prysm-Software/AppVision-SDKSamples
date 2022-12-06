@@ -1,0 +1,26 @@
+﻿<Window x:Class="ClientSimple.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Client Sample" 
+        Height="400" Width="600" Background="#FFF0F0F0"
+        Closed="Window_Closed">
+    <DockPanel>
+        <WrapPanel DockPanel.Dock="Top" Margin="6">
+            <Label>Host</Label>
+            <TextBox Name="txtHost">localhost</TextBox>
+            <Label>User</Label>
+            <TextBox Name="txtUser">ADM</TextBox>
+            <Label>Password</Label>
+            <TextBox Name="txtPwd">123</TextBox>
+            <Button Width="100" Click="ButtonConnect_Click">Connect</Button>
+        </WrapPanel>
+        <WrapPanel DockPanel.Dock="Top" Margin="6 0" IsEnabled="False" Name="panelSetVar">
+            <Label>Variable name</Label>
+            <ComboBox Width="180" Name="cbxVariables" DisplayMemberPath="Name"/>
+            <Label>Variable value</Label>
+            <TextBox Name="txtVarValue">1</TextBox>
+            <Button Width="100" Click="ButtonSetVar_Click">Set variable value</Button>
+        </WrapPanel>
+        <ListBox x:Name="listBox" Margin="6" />
+    </DockPanel>
+</Window>

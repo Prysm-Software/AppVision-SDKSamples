@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="WizardSample.WelcomePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:t="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:app="http://prysm.fr/AppVision"
+             mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="600">
+
+    <Grid app:Panel.RowDefinitions="80 auto * auto">
+
+        <Grid Background="White">
+            <Image Margin="8" HorizontalAlignment="Right" Source="/Resources/prysm.png" />
+            <TextBlock Margin="100 10" VerticalAlignment="Center">
+                <Span FontSize="16" FontWeight="Bold"><Run Text="{app:RT App.Name}"/> Configuration Wizard</Span>
+                <LineBreak />
+                <Span FontSize="14">for WizardSample</Span>
+            </TextBlock>
+        </Grid>
+
+        <TextBlock Grid.Row="1" Margin="20" TextWrapping="Wrap" >
+            This wizard will import WizardSample devices into <Run Text="{app:RT App.Name}"/> configuration.
+        </TextBlock>
+
+        <WrapPanel Grid.Row="3" HorizontalAlignment="Right">
+            <Button Width="75" Margin="10" Content="Next" IsDefault="True" Command="{Binding AppLoginCommand}" />
+        </WrapPanel>
+    </Grid>
+</UserControl>

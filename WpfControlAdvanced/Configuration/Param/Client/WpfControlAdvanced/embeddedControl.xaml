@@ -1,0 +1,54 @@
+<!--saved by ADM on PCTP10 with appConfig.exe v4.7.1.3 on 18/11/2021 19:24:16-->
+<app:Synoptic x:Class="appClient_gen.WpfControlAdvanced_embeddedControl"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:app="http://prysm.fr/AppVision"
+xmlns:video="http://prysm.fr/AppVideo"
+xmlns:gen="clr-namespace:appClient_gen" InitialWidth="800" InitialHeight="600" Format="2.0" AppVersion="4.7.1.3" Date="2021-11-18 19:24:16Z" Fill="#FFDDDDDD" ZoomMode="None">
+  <ad:UserControl1 xmlns:ad="clr-namespace:WpfControlAdvanced;assembly=WpfControlAdvanced" Background="#FFF5F5F5" x:Name="UserControl1" Width="704" Height="332" Canvas.Left="52" Canvas.Top="136" app:WfCanvas.Anchor="Left, Top, Right, Bottom"></ad:UserControl1>
+  <app:RectangleItem Fill="Image:Images/Lighting-off.png" BorderBrush="#FF808080" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="light1" Width="36" Height="56" Canvas.Left="56" Canvas.Top="516" app:WfCanvas.Anchor="Left, Bottom">
+    <app:SynoItem.AnimationItems>
+      <app:ColorAnim x:Key="Fill" DefaultColor="Image:Images/Lighting-off.png">
+        <app:ColorEntry Condition="$V.InputOutput.Input1" Color="Image:Images/Lighting-on.png" />
+      </app:ColorAnim>
+      <app:ActionAnim x:Key="MouseLeftButtonUp">
+        <app:CData xml:space="preserve"><![CDATA[//<wizard><set_variable variable='$V.InputOutput.Input1' state='Inverser' confirm='False'/></wizard>
+$V.InputOutput.Input1 = !$V.InputOutput.Input1;]]></app:CData>
+      </app:ActionAnim>
+    </app:SynoItem.AnimationItems>
+  </app:RectangleItem>
+  <app:RectangleItem Text="Click on light bulbs to trigger variable changes" Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" FontWeight="Bold" x:Name="RectangleItem1" Width="376" Height="32" Canvas.Left="32" Canvas.Top="492" app:WfCanvas.Anchor="Left, Bottom" />
+  <app:RectangleItem Text="Embedded custom control:" Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" FontWeight="Bold" x:Name="RectangleItem2" Width="412" Height="32" Canvas.Left="28" Canvas.Top="96" />
+  <app:RectangleItem Fill="Image:Images/Lighting-off.png" BorderBrush="#FF808080" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="light2" Width="36" Height="56" Canvas.Left="104" Canvas.Top="516" app:WfCanvas.Anchor="Left, Bottom">
+    <app:SynoItem.AnimationItems>
+      <app:ColorAnim x:Key="Fill" DefaultColor="Image:Images/Lighting-off.png">
+        <app:ColorEntry Condition="$V.InputOutput.Input2" Color="Image:Images/Lighting-on.png" />
+      </app:ColorAnim>
+      <app:ActionAnim x:Key="MouseLeftButtonUp">
+        <app:CData xml:space="preserve"><![CDATA[//<wizard><set_variable variable='$V.InputOutput.Input2' state='Inverser' confirm='False'/></wizard>
+$V.InputOutput.Input2 = !$V.InputOutput.Input2;]]></app:CData>
+      </app:ActionAnim>
+    </app:SynoItem.AnimationItems>
+  </app:RectangleItem>
+  <app:RectangleItem Fill="Image:Images/Lighting-off.png" BorderBrush="#FF808080" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="light3" Width="36" Height="56" Canvas.Left="152" Canvas.Top="516" app:WfCanvas.Anchor="Left, Bottom">
+    <app:SynoItem.AnimationItems>
+      <app:ColorAnim x:Key="Fill" DefaultColor="Image:Images/Lighting-off.png">
+        <app:ColorEntry Condition="$V.InputOutput.Input3" Color="Image:Images/Lighting-on.png" />
+      </app:ColorAnim>
+      <app:ActionAnim x:Key="MouseLeftButtonUp">
+        <app:CData xml:space="preserve"><![CDATA[//<wizard><set_variable variable='$V.InputOutput.Input3' state='Inverser' confirm='False'/></wizard>
+$V.InputOutput.Input3 = !$V.InputOutput.Input3;]]></app:CData>
+      </app:ActionAnim>
+    </app:SynoItem.AnimationItems>
+  </app:RectangleItem>
+  <app:RectangleItem Text="WpfControlAdvanced" Fill="{x:Null}" Foreground="#FF31859B" FontSize="32" FontStyle="Normal" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" x:Name="RectangleItem3" Width="536" Height="48" Canvas.Left="148" Canvas.Top="20" app:WfCanvas.Anchor="Left, Top, Right" />
+  <app:RectangleItem Text="Interact with the custom control from AppVision client" Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" FontWeight="Bold" x:Name="RectangleItem4" Width="332" Height="32" Canvas.Left="448" Canvas.Top="492" app:WfCanvas.Anchor="Left, Bottom" />
+  <app:ButtonItem Text="Direct method invoke" Fill="#FF808080" Foreground="#FF000000" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" x:Name="ButtonItem1" Width="148" Height="28" Canvas.Left="452" Canvas.Top="528" app:WfCanvas.Anchor="Left, Bottom">
+    <app:SynoItem.AnimationItems>
+      <app:ActionAnim x:Key="MouseLeftButtonUp">
+        <app:CData xml:space="preserve"><![CDATA[UserControl1.SampleFunction(999);]]></app:CData>
+      </app:ActionAnim>
+    </app:SynoItem.AnimationItems>
+  </app:ButtonItem>
+</app:Synoptic>

@@ -1,0 +1,53 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration>DesktopClient</Configuration>
+    <OutputType>Library</OutputType>
+    <AssemblyName>appClient.gen.PCTP10</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <ReferencePath>D:\AppVision Version 4\SDK\PlayerMetadata\Configuration\Param\Client;D:\AppVision Version 4\Bin</ReferencePath>
+    <OutputPath>..\..\GenBin\bin</OutputPath>
+    <IntermediateOutputPath>..\..\GenBin\obj</IntermediateOutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AppControl.Data" />
+    <Reference Include="appCommon" />
+    <Reference Include="appData" />
+    <Reference Include="appScript" />
+    <Reference Include="appSDK" />
+    <Reference Include="appSIP" />
+    <Reference Include="appSyn" />
+    <Reference Include="appUI" />
+    <Reference Include="appVideo" />
+    <Reference Include="appClient" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="Telerik.Windows.Controls.Navigation" />
+    <Reference Include="Telerik.Windows.Controls.DataVisualization" />
+    <Reference Include="Telerik.Windows.Controls.Chart" />
+    <Reference Include="Telerik.Windows.Controls.GridView" />
+    <Reference Include="Telerik.Windows.Controls.Input" />
+    <Reference Include="Telerik.Windows.Controls" />
+    <Reference Include="Telerik.Windows.Data" />
+    <Compile Include="homepage.xaml.cs" />
+    <Page Include="homepage.xaml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>move "$(TargetPath)" "$(TargetDir)\appClient.gen.dll"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="WpfControlSimple.UserControl1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border BorderThickness="1" BorderBrush="SlateGray">
+        <UniformGrid Columns="2" VerticalAlignment="Top">
+            <TextBlock Margin="4">Variable name</TextBlock>
+            <ComboBox x:Name="varName" Margin="4" SelectionChanged="Variable_SelectionChanged"
+                  Foreground="Black" Background="White"/>
+            <TextBlock Margin="4">Variable value</TextBlock>
+            <TextBox x:Name="varValue" Margin="4"/>
+            <Button Click="SetVariableValue" Margin="4">Set value</Button>
+            <Button Click="OpenNewWindow" Margin="4">Open window</Button>
+        </UniformGrid>
+    </Border>
+</UserControl>

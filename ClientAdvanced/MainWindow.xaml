@@ -1,0 +1,62 @@
+﻿<Window x:Class="ClientAdvanced.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:app="http://prysm.fr/AppVision"
+        xmlns:video="http://prysm.fr/AppVideo"
+        xmlns:local="clr-namespace:ClientAdvanced.Properties"
+        Title="Client Sample UI" Height="600" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="200"/>
+        </Grid.RowDefinitions>
+
+        <WrapPanel Name="panelLogin" Margin="6" DataContext="{x:Static local:Settings.Default}">
+            <TextBlock>Host</TextBlock>
+            <TextBox Text="{Binding host}" MinWidth="180" Margin="6 0" />
+            <TextBlock>User</TextBlock>
+            <TextBox Text="{Binding user}"  Width="100" Margin="6 0" />
+            <TextBlock>Password</TextBlock>
+            <TextBox Text="{Binding pwd}"  Width="100" Margin="6 0" />
+            <Button Width="100" Click="BtnConnect_Click">Connect</Button>
+        </WrapPanel>
+
+        <WrapPanel Name="panelLogout" Margin="6" Visibility="Collapsed">
+            <TextBlock Name="txtStatus" Margin="6 0" />
+            <Button Width="100" Click="BtnDisconnect_Click">Disconnect</Button>
+        </WrapPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <Expander Header="Areas" IsExpanded="True">
+                        <app:AreaControl/>
+                    </Expander>
+                    <Expander Header="Videos" IsExpanded="True">
+                        <video:CamerasControl/>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+
+            <GridSplitter Width="4"/>
+            <app:Container Grid.Column="1" AllowDrop="True" x:Name="c1" />
+        </Grid>
+
+        <GridSplitter Grid.Row="1" Height="4" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
+
+        <TabControl Grid.Row="2">
+            <TabItem Header="Alarms">
+                <app:AlarmControl />
+            </TabItem>
+            <TabItem Header="Events">
+                <app:EventControl />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

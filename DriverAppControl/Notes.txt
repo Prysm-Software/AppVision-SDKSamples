@@ -1,0 +1,32 @@
+---------------------------------------------------
+Notes sur le téléchargement
+---------------------------------------------------
+Les méthodes qui traitent le téléchargement sont dans la classe Device:
+	. Download
+	. DownloadHolidays
+	. DownloadTimetables
+	. DownloadProfiles
+	. DownloadUsers
+
+Les classes qui modélisent les données à télécharger dans un équipement sont:
+	. DeviceTimetable:		programme horaire
+	. DeviceProfile:		profil d'accès
+	. DeviceUser:			personne
+
+Les données à télécharger sont réindexées (ce n'est pas le même id de la base Param ou AppControl)
+pour ceci la classe DeviceIndex permet de conserver la liaison entre les index:
+	. pour les programmes horaires l'indexation est mémorisée dans le fichier {name}_TID.xml
+	. pour les utilisateurs l'indexation est mémorisée dans le fichier {name}_UID.xml
+	. pour les profils d'accès, il n'y a pas de réindexation car le profil d'accès est construit dynamiquement
+	  le contenu des profils d'accès est mémorisée dans le fichier {name}_P.xml
+
+Attention: une personne ayant plusieurs badges correspond à plusieurs DeviceIndex avec le même appId
+
+---------------------------------------------------
+Notes sur le transfert des modifications
+---------------------------------------------------
+Les méthodes intervenant pour le transfert des modifications sont:
+	. Driver.DownloadModifications()
+	. Driver.OnModification()
+	. Device.DownloadList()
+

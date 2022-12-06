@@ -1,0 +1,26 @@
+﻿<video:PlayerBaseControl x:Class="PlayerClock.PlayerClockControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PlayerClock"
+             xmlns:video="http://prysm.fr/AppVideo"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid Margin="40" RenderTransformOrigin="0.5,0.5">
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform x:Name="zoom" />
+                    <TranslateTransform x:Name="panTilt" />
+                </TransformGroup>
+            </Grid.RenderTransform>
+            <Grid.Effect>
+                <BlurEffect x:Name="focus" Radius="0" />
+            </Grid.Effect>
+            <local:Clock x:Name="clock" />
+        </Grid>
+        <TextBlock x:Name="tbTop" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="10" />
+        <TextBlock x:Name="tbBottom" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="20" Margin="10 36" />
+        <TextBlock x:Name="tbClock" TextAlignment="Center" VerticalAlignment="Center" FontSize="30" Margin="0 90 0 0" Foreground="Aqua" Text="???" />
+    </Grid>
+</video:PlayerBaseControl>

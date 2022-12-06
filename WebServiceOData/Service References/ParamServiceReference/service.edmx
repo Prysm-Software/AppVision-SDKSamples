@@ -1,0 +1,473 @@
+﻿<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Prysm.AppVision.Data" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="AreaRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Icon" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField1" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField2" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField3" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField4" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField5" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Synoptic" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Sound" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="SiteInfo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ColorInfo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Variables" Relationship="Prysm.AppVision.Data.VariableRow_Area" ToRole="VariableRow_Area_Source" FromRole="VariableRow_Area_Target" />
+      </EntityType>
+      <EntityType Name="VariableRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="TypeInt" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SiteId" Type="Edm.Int32" />
+        <Property Name="AreaId" Type="Edm.Int32" />
+        <Property Name="StateDescs" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="SendMailing" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="StoreEvent" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="StoreValue" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="StoreTempo" Type="Edm.Int32" Nullable="false" />
+        <Property Name="StoreDeltaMin" Type="Edm.Double" Nullable="false" />
+        <Property Name="StoreDeltaMax" Type="Edm.Double" Nullable="false" />
+        <Property Name="IsExclude" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="StateType" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Address" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="IsAlarm" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AlarmInstructions" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="IsAlarmMultiple" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AlarmNeedAcknowledge" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AlarmResetOnAcknowledge" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AlarmNeedReport" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AlarmSeverity" Type="Edm.Int32" Nullable="false" />
+        <Property Name="AlarmSeverity2" Type="Edm.Int32" Nullable="false" />
+        <Property Name="AlarmTempo" Type="Edm.Int32" Nullable="false" />
+        <Property Name="AlarmMinValue" Type="Edm.Double" Nullable="false" />
+        <Property Name="AlarmMaxValue" Type="Edm.Double" Nullable="false" />
+        <Property Name="AlarmMinValue2" Type="Edm.Double" Nullable="false" />
+        <Property Name="AlarmMaxValue2" Type="Edm.Double" Nullable="false" />
+        <Property Name="Synoptic" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Sound" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="GraphMin" Type="Edm.Double" Nullable="false" />
+        <Property Name="GraphMax" Type="Edm.Double" Nullable="false" />
+        <Property Name="GraphScale" Type="Edm.Double" Nullable="false" />
+        <Property Name="VideoLink" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Symbol" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Icon" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="NoVisible" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Expression" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Script" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Position" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Notes" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="BufferLength" Type="Edm.Int32" Nullable="false" />
+        <Property Name="BufferTypeInt" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField1" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField2" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField3" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField4" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField5" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Area" Relationship="Prysm.AppVision.Data.VariableRow_Area" ToRole="VariableRow_Area_Target" FromRole="VariableRow_Area_Source" />
+        <NavigationProperty Name="Groups" Relationship="Prysm.AppVision.Data.VariableRow_Groups" ToRole="VariableRow_Groups_Target" FromRole="VariableRow_Groups_Source" />
+        <NavigationProperty Name="Instructions" Relationship="Prysm.AppVision.Data.VariableRow_Instructions" ToRole="VariableRow_Instructions_Target" FromRole="VariableRow_Instructions_Source" />
+      </EntityType>
+      <EntityType Name="GroupRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Icon" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField1" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField2" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField3" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField4" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomField5" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Synoptic" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Sound" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ColorInfo" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Variables" Relationship="Prysm.AppVision.Data.VariableRow_Groups" ToRole="VariableRow_Groups_Source" FromRole="VariableRow_Groups_Target" />
+      </EntityType>
+      <EntityType Name="InstructionRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Value" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Type" Type="Edm.Int32" Nullable="false" />
+        <Property Name="NeedValidation" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Variables" Relationship="Prysm.AppVision.Data.VariableRow_Instructions" ToRole="VariableRow_Instructions_Source" FromRole="VariableRow_Instructions_Target" />
+      </EntityType>
+      <EntityType Name="TextReportRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Value" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Type" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <EntityType Name="HolidayRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Date" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Type" Type="Edm.Int32" Nullable="false" />
+        <Property Name="IsAnnual" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Culture" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <EntityType Name="OptionRow">
+        <Key>
+          <PropertyRef Name="Name" />
+        </Key>
+        <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+        <Property Name="Value" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Type" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <EntityType Name="ProfileRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="IsAdmin" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="PriorityLevel" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DbOptions" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="DbRoles" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Filters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="FiltersWrite" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="FiltersFile" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="WebHomePage" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="WindowsHomePage" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Users" Relationship="Prysm.AppVision.Data.UserRow_Profile" ToRole="UserRow_Profile_Source" FromRole="UserRow_Profile_Target" />
+      </EntityType>
+      <EntityType Name="UserRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="LastName" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="FirstName" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Password" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ProfileId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="IsLocked" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Language" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Culture" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Email" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Phone" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Notes" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="FilterClients" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="FilterTimetableId" Type="Edm.Int32" />
+        <Property Name="ValidityStart" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="ValidityEnd" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="CreateDate" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="DbOptions" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="DbRoles" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="Profile" Relationship="Prysm.AppVision.Data.UserRow_Profile" ToRole="UserRow_Profile_Target" FromRole="UserRow_Profile_Source" />
+        <NavigationProperty Name="FilterTimetable" Relationship="Prysm.AppVision.Data.UserRow_FilterTimetable" ToRole="UserRow_FilterTimetable_Target" FromRole="UserRow_FilterTimetable_Source" />
+      </EntityType>
+      <EntityType Name="ProtocolRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Address" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Executable" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="IsExclude" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AutoStart" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="LogLevel" Type="Edm.Int32" Nullable="false" />
+        <Property Name="LogFilename" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="MaxRetry" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Timeout" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <EntityType Name="MailingRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Type" Type="Edm.Int32" Nullable="false" />
+        <Property Name="To" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="FilterTimetableId" Type="Edm.Int32" />
+        <Property Name="Filters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="FilterSeverity" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Conditions" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Grouping" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="TempoRetry" Type="Edm.Int32" Nullable="false" />
+        <Property Name="MaxRetry" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ModelEmail" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ModelSMS" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ModelOther" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <NavigationProperty Name="FilterTimetable" Relationship="Prysm.AppVision.Data.MailingRow_FilterTimetable" ToRole="MailingRow_FilterTimetable_Target" FromRole="MailingRow_FilterTimetable_Source" />
+      </EntityType>
+      <EntityType Name="ActionRow">
+        <Key>
+          <PropertyRef Name="Name" />
+        </Key>
+        <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Context" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Type" Type="Edm.Int32" Nullable="false" />
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ParameterDescriptions" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="ReturnDescription" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Script" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <EntityType Name="PlannedActionRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Type" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Date" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="FlagWeek" Type="Edm.Int32" Nullable="false" />
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Script" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <EntityType Name="LinkRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Type" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Date" Type="Edm.DateTime" />
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Source" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Action" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <EntityType Name="FileInfoRow">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="None" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="Name" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Description" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="TypeInt" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ContextInt" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SiteId" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Parameters" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Extension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="Url" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        <Property Name="CustomExtension" Type="Edm.String" MaxLength="Max" FixedLength="false" Unicode="true" />
+      </EntityType>
+      <Association Name="VariableRow_Area">
+        <End Type="Prysm.AppVision.Data.AreaRow" Role="VariableRow_Area_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppVision.Data.VariableRow" Role="VariableRow_Area_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="VariableRow_Area_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="VariableRow_Area_Source">
+            <PropertyRef Name="AreaId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="VariableRow_Groups">
+        <End Type="Prysm.AppVision.Data.GroupRow" Role="VariableRow_Groups_Target" Multiplicity="*" />
+        <End Type="Prysm.AppVision.Data.VariableRow" Role="VariableRow_Groups_Source" Multiplicity="*" />
+      </Association>
+      <Association Name="VariableRow_Instructions">
+        <End Type="Prysm.AppVision.Data.InstructionRow" Role="VariableRow_Instructions_Target" Multiplicity="*" />
+        <End Type="Prysm.AppVision.Data.VariableRow" Role="VariableRow_Instructions_Source" Multiplicity="*" />
+      </Association>
+      <Association Name="UserRow_Profile">
+        <End Type="Prysm.AppVision.Data.ProfileRow" Role="UserRow_Profile_Target" Multiplicity="1">
+          <OnDelete Action="Cascade" />
+        </End>
+        <End Type="Prysm.AppVision.Data.UserRow" Role="UserRow_Profile_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="UserRow_Profile_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="UserRow_Profile_Source">
+            <PropertyRef Name="ProfileId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="UserRow_FilterTimetable">
+        <End Type="Prysm.AppVision.Data.VariableRow" Role="UserRow_FilterTimetable_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppVision.Data.UserRow" Role="UserRow_FilterTimetable_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="UserRow_FilterTimetable_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="UserRow_FilterTimetable_Source">
+            <PropertyRef Name="FilterTimetableId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="MailingRow_FilterTimetable">
+        <End Type="Prysm.AppVision.Data.VariableRow" Role="MailingRow_FilterTimetable_Target" Multiplicity="0..1" />
+        <End Type="Prysm.AppVision.Data.MailingRow" Role="MailingRow_FilterTimetable_Source" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="MailingRow_FilterTimetable_Target">
+            <PropertyRef Name="Id" />
+          </Principal>
+          <Dependent Role="MailingRow_FilterTimetable_Source">
+            <PropertyRef Name="FilterTimetableId" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <EntityContainer Name="ParamContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Areas" EntityType="Prysm.AppVision.Data.AreaRow" />
+        <EntitySet Name="Variables" EntityType="Prysm.AppVision.Data.VariableRow" />
+        <EntitySet Name="Groups" EntityType="Prysm.AppVision.Data.GroupRow" />
+        <EntitySet Name="Instructions" EntityType="Prysm.AppVision.Data.InstructionRow" />
+        <EntitySet Name="TextReports" EntityType="Prysm.AppVision.Data.TextReportRow" />
+        <EntitySet Name="Holidays" EntityType="Prysm.AppVision.Data.HolidayRow" />
+        <EntitySet Name="Options" EntityType="Prysm.AppVision.Data.OptionRow" />
+        <EntitySet Name="Profiles" EntityType="Prysm.AppVision.Data.ProfileRow" />
+        <EntitySet Name="Users" EntityType="Prysm.AppVision.Data.UserRow" />
+        <EntitySet Name="Protocols" EntityType="Prysm.AppVision.Data.ProtocolRow" />
+        <EntitySet Name="Mailings" EntityType="Prysm.AppVision.Data.MailingRow" />
+        <EntitySet Name="Actions" EntityType="Prysm.AppVision.Data.ActionRow" />
+        <EntitySet Name="PlannedActions" EntityType="Prysm.AppVision.Data.PlannedActionRow" />
+        <EntitySet Name="Links" EntityType="Prysm.AppVision.Data.LinkRow" />
+        <EntitySet Name="FileInfos" EntityType="Prysm.AppVision.Data.FileInfoRow" />
+        <FunctionImport Name="Login" ReturnType="Collection(Prysm.AppVision.Data.UserRow)" EntitySet="Users" m:HttpMethod="GET">
+          <Parameter Name="username" Type="Edm.String" />
+          <Parameter Name="hashpassword" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetAreasByLevel" ReturnType="Collection(Prysm.AppVision.Data.AreaRow)" EntitySet="Areas" m:HttpMethod="GET">
+          <Parameter Name="filterName" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetGroupsByLevel" ReturnType="Collection(Prysm.AppVision.Data.GroupRow)" EntitySet="Groups" m:HttpMethod="GET">
+          <Parameter Name="filterName" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetVariablesByLevel" ReturnType="Collection(Prysm.AppVision.Data.VariableRow)" EntitySet="Variables" m:HttpMethod="GET">
+          <Parameter Name="filterName" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="CopyVariableNode" ReturnType="Edm.String" m:HttpMethod="GET">
+          <Parameter Name="sourceVarName" Type="Edm.String" />
+          <Parameter Name="destVarName" Type="Edm.String" />
+          <Parameter Name="offsetName" Type="Edm.Int32" Nullable="false" />
+        </FunctionImport>
+        <FunctionImport Name="obsoleteMoveVariableNode" ReturnType="Collection(Prysm.AppVision.Data.VariableRow)" EntitySet="Variables" m:HttpMethod="GET">
+          <Parameter Name="sourceVarName" Type="Edm.String" />
+          <Parameter Name="destVarName" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="BuildServerProject" ReturnType="Edm.String" m:HttpMethod="GET">
+          <Parameter Name="debug" Type="Edm.Boolean" Nullable="false" />
+        </FunctionImport>
+        <FunctionImport Name="BuildClientProject" ReturnType="Edm.String" m:HttpMethod="GET" />
+        <FunctionImport Name="ShowInstalledCertificate" ReturnType="Edm.String" m:HttpMethod="GET" />
+        <FunctionImport Name="CreateSelfSignedCertificate" m:HttpMethod="GET">
+          <Parameter Name="subject" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetVariableFullIsExclude" ReturnType="Edm.Boolean" m:HttpMethod="GET">
+          <Parameter Name="name" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetAreaFullDescription" ReturnType="Edm.String" m:HttpMethod="GET">
+          <Parameter Name="name" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetGroupFullDescription" ReturnType="Edm.String" m:HttpMethod="GET">
+          <Parameter Name="name" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetVariableFullDescription" ReturnType="Edm.String" m:HttpMethod="GET">
+          <Parameter Name="name" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetVariableAreaDescription" ReturnType="Edm.String" m:HttpMethod="GET">
+          <Parameter Name="name" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetVariableGroupsDescription" ReturnType="Edm.String" m:HttpMethod="GET">
+          <Parameter Name="name" Type="Edm.String" />
+        </FunctionImport>
+        <FunctionImport Name="GetVariableCommandNames" ReturnType="Collection(Edm.String)" m:HttpMethod="GET" />
+        <AssociationSet Name="VariableRow_Area" Association="Prysm.AppVision.Data.VariableRow_Area">
+          <End Role="VariableRow_Area_Target" EntitySet="Areas" />
+          <End Role="VariableRow_Area_Source" EntitySet="Variables" />
+        </AssociationSet>
+        <AssociationSet Name="VariableRow_Groups" Association="Prysm.AppVision.Data.VariableRow_Groups">
+          <End Role="VariableRow_Groups_Source" EntitySet="Variables" />
+          <End Role="VariableRow_Groups_Target" EntitySet="Groups" />
+        </AssociationSet>
+        <AssociationSet Name="VariableRow_Instructions" Association="Prysm.AppVision.Data.VariableRow_Instructions">
+          <End Role="VariableRow_Instructions_Source" EntitySet="Variables" />
+          <End Role="VariableRow_Instructions_Target" EntitySet="Instructions" />
+        </AssociationSet>
+        <AssociationSet Name="UserRow_Profile" Association="Prysm.AppVision.Data.UserRow_Profile">
+          <End Role="UserRow_Profile_Target" EntitySet="Profiles" />
+          <End Role="UserRow_Profile_Source" EntitySet="Users" />
+        </AssociationSet>
+        <AssociationSet Name="UserRow_FilterTimetable" Association="Prysm.AppVision.Data.UserRow_FilterTimetable">
+          <End Role="UserRow_FilterTimetable_Source" EntitySet="Users" />
+          <End Role="UserRow_FilterTimetable_Target" EntitySet="Variables" />
+        </AssociationSet>
+        <AssociationSet Name="MailingRow_FilterTimetable" Association="Prysm.AppVision.Data.MailingRow_FilterTimetable">
+          <End Role="MailingRow_FilterTimetable_Source" EntitySet="Mailings" />
+          <End Role="MailingRow_FilterTimetable_Target" EntitySet="Variables" />
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

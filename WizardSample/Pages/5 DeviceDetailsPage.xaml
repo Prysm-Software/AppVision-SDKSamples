@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="WizardSample.DeviceDetailsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:t="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:app="http://prysm.fr/AppVision"
+             mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="600">
+
+    <Grid app:Panel.RowDefinitions="80 auto * auto auto">
+
+        <Grid Background="White">
+            <Path Margin="20" HorizontalAlignment="Left" Fill="Black" Stretch="Uniform" Data="M25.8,15.2C26.5,15.2 27.0,15.8 27.0,16.5 27.0,17.1 26.5,17.7 25.8,17.7 25.1,17.7 24.5,17.1 24.5,16.5 24.5,15.8 25.1,15.2 25.8,15.2z M2,14L2,19 30,19 30,14z M0,12L32,12 32,21 17,21 17,25 20,25 20,26.0 32.0,26.0 32.0,28.0 20,28.0 20,29 12,29 12,28 0,28 0,26 12,26 12,25 15,25 15,21 0,21z M25.8,3.2C26.5,3.2 27.0,3.8 27.0,4.5 27.0,5.1 26.5,5.7 25.8,5.7 25.1,5.7 24.5,5.1 24.5,4.5 24.5,3.8 25.1,3.2 25.8,3.2z M2,2L2,7 30,7 30,2z M0,0L32,0 32,9 0,9z" />
+            <Image Margin="8" HorizontalAlignment="Right" Source="/Resources/prysm.png" />
+            <TextBlock Margin="100 10" VerticalAlignment="Center">
+                <Span FontSize="16" FontWeight="Bold">Device details</Span>
+                <LineBreak/>
+                <Span FontSize="14">Select entities to import</Span>
+            </TextBlock>
+        </Grid>
+
+        <TextBlock Grid.Row="1" Margin="0 10 10 0" HorizontalAlignment="Right">
+            <Run Text="{Binding SelectedEntities.Count, Mode=OneWay}"/>/
+            <Run Text="{Binding Entities.Count, Mode=OneWay}"/> entity(ies) selected.
+        </TextBlock>
+
+        <t:RadGridView Name="grid" Grid.Row="2" Margin="10 0"
+                       ItemsSource="{Binding Entities}" SelectionMode="Extended" SelectionChanged="SelectionChanged"
+                       AutoGenerateColumns="False" IsReadOnly="True" ShowGroupPanel="False" RowIndicatorVisibility="Collapsed" GridLinesVisibility="None">
+            <t:RadGridView.Columns>
+                <t:GridViewSelectColumn />
+                <t:GridViewImageColumn DataMemberBinding="{Binding Icon}" ErrorImageSource="/Resources/device.png" ImageHeight="16" />
+                <t:GridViewDataColumn Header="Name" DataMemberBinding="{Binding Name}" />
+                <t:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" />
+
+                <!-- <todo> add more info if necessary
+                <t:GridViewDataColumn Header="Other info" DataMemberBinding="{Binding OtherInfo}" />-->
+
+                <!-- if desired, display a check mark if entity is already in the configuration-->
+                <t:GridViewColumn Header="" Width="6" SortMemberPath="VariableRow.Name" FilterMemberPath="VariableRow.Name">
+                    <t:GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock x:Name="checkMark" Text="✓" Visibility="{Binding VariableRow, Converter={app:NullToCollapsed}}">
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="{Binding VariableRow.Name}" ContentStringFormat="This entity is already imported as $V.{0}"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                        </DataTemplate>
+                    </t:GridViewColumn.CellTemplate>
+                </t:GridViewColumn>
+            </t:RadGridView.Columns>
+        </t:RadGridView>
+
+        <t:RadPathButton Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Top" Height="22" Width="22" Margin="40 4"
+                         IsBackgroundVisible="False" ToolTip="Search" Command="t:RadGridViewCommands.Search" CommandTarget="{x:Reference grid}"
+                         PathGeometry="F1M-185,-2026L-203,-2048C-197,-2056 -197,-2067 -203,-2075 -211,-2084 -225,-2086 -234,-2078 -244,-2071 -245,-2057 -238,-2047 -231,-2039 -221,-2037 -212,-2041L-195,-2019 -185,-2026z M-231,-2053C-235,-2059 -234,-2067 -229,-2071 -223,-2076 -215,-2075 -210,-2069 -206,-2063 -207,-2055 -212,-2051 -218,-2046 -226,-2047 -231,-2053z" />
+
+        <ProgressBar Grid.Row="3" Margin="10 0" Height="12" IsIndeterminate="{Binding IsBusy}" Visibility="{Binding IsBusy, Converter={app:ToVisible}}" Minimum="0" Maximum="1" />
+
+        <WrapPanel Grid.Row="4" HorizontalAlignment="Right">
+            <Button Width="75" Margin="10" Content="Previous" IsCancel="True" Command="{Binding DeviceLoginCommand}" />
+            <Button Width="75" Margin="10" Content="Next" IsDefault="True" Command="{Binding SettingsCommand}" />
+        </WrapPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,11 @@
+<!--saved by ADM on PCTP10 with appConfig.exe v4.5.0.1 on 23/05/2019 18:53:09-->
+<app:Synoptic x:Class="appClient_gen.WpfControlSimple_embeddedControl"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:app="http://prysm.fr/AppVision"
+xmlns:video="http://prysm.fr/AppVideo"
+xmlns:gen="clr-namespace:appClient_gen" InitialWidth="800" InitialHeight="600" Format="2.0" AppVersion="4.5.0.1" Date="2019-05-23 18:53:09Z" Fill="#FFDDDDDD" ZoomMode="None">
+  <app:RectangleItem Text="WpfControlSimple" Fill="{x:Null}" Foreground="#FF31859B" FontSize="32" FontStyle="Normal" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" x:Name="RectangleItem1" Width="536" Height="48" Canvas.Left="144" Canvas.Top="28" app:WfCanvas.Anchor="Left, Top, Right"></app:RectangleItem>
+  <ac:UserControl1 xmlns:ac="clr-namespace:WpfControlSimple;assembly=WpfControlSimple" x:Name="UserControl11" Width="464" Height="132" Canvas.Left="64" Canvas.Top="120"></ac:UserControl1>
+</app:Synoptic>
