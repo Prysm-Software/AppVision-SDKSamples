@@ -1,0 +1,22 @@
+export declare enum ReaderStatus {
+    BadgeForServerChecking = 0,
+    BadgeOk = 10,
+    BadgeOkByUser = 11,
+    BadgeOkWithoutPassing = 12,
+    BadgeOkOut = 13,
+    BadgeOkUnknown = 40,
+    BadgeOkAlarm = 48,
+    BadgeOkDuress = 49,
+    BadgeNok = 50,
+    BadgeNokSchedule = 51,
+    BadgeNokSite = 52,
+    BadgeNokGroup = 53,
+    BadgeNokCode = 54,
+    BadgeNokLock = 55,
+    BadgeNokInactive = 56,
+    BadgeNokBlacklist = 57,
+    BadgeNokPeriod = 58,
+    BadgeNokPincode = 59,
+    BadgeNokUnknown = 60,
+    BadgeNokMax = 99
+}

@@ -1,0 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NameValue = void 0;
+class NameValue {
+}
+exports.NameValue = NameValue;
