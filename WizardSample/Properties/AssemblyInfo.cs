@@ -30,4 +30,4 @@ using System.Windows;
                                               // dans l'application ou dans l'un des dictionnaires de ressources spécifiques à un thème)
 )]
 
-[assembly: AssemblyVersion("4.7.0")]
+[assembly: AssemblyVersion("4.8.0.0")]
