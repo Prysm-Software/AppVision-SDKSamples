@@ -64,14 +64,26 @@
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" x:Name="line">
                         <TextBlock Text="{Binding Date, StringFormat={}{0:yyyy-MM-dd HH:mm:ss.f}}" Foreground="Gray" Margin="0 0 4 0" />
+                        <TextBlock Text=" "/>
+                        <TextBlock x:Name="level" Text="{Binding Level}"/>
+                        <TextBlock Text=" "/>
                         <TextBlock Text="{Binding Message}"/>
                     </StackPanel>
-                    <!--colorize errors 
+                    <!--colorize errors -->
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding Level}" Value="Error">
                             <Setter TargetName="line" Property="Background" Value="#40ff0000" />
                         </DataTrigger>
-                    </DataTemplate.Triggers>-->
+                        <DataTrigger Binding="{Binding Level}" Value="Error">
+                            <Setter TargetName="level" Property="Foreground" Value="#FFFF4C4C" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Level}" Value="Info">
+                            <Setter TargetName="level" Property="Foreground" Value="Lime" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Level}" Value="Debug">
+                            <Setter TargetName="level" Property="Foreground" Value="#FF0090FF" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>

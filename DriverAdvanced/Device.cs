@@ -26,6 +26,7 @@ namespace DriverAdvanced
 			Trace.Info($"[{_rootVar.Name}] {_rootVar.Address?.HidePasswords()}");
 			Trace.Info($"[{_rootVar.Name}] {_rootVar.FullParameters?.HidePasswords().Trim()}");
 
+			Task.Run(async () => { while (true) { Trace.Debug("test"); Trace.Info("test"); Trace.Error("test"); await Task.Delay(5000); } });
 			// todo 
 			// get $projectname$ device info
 
