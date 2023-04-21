@@ -30,7 +30,7 @@ class AppServer {
         const sessionId = await resp.json();
         const credentials = [
             { Name: "username", Value: user },
-            { Name: "password", Value: await pbkdf2(sessionId + await pbkdf2(user + pwd)) }
+            { Name: "password", Value: pwd }
         ];
 
         // Authorization header required if AD/LDAP auth is enabled
@@ -114,12 +114,5 @@ class AppServer {
                     break;
             }
         }
-    }
-
-
-    // compute SHA-512 hash
-    async sha512(data){
-        const hash = await crypto.subtle.digest({name: "SHA-512"}, Uint8Array.from(data));
-        return Array.prototype.map.call(new Uint8Array(hash), x => x.toString(16).padStart(2, '0')).join(''); // hex string
     }
 }
