@@ -1,12 +1,12 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Prysm.AppVision.$safeprojectname$.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DriverAdvanced.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="MaxCount" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10000</Value>
     </Setting>
     <Setting Name="LogLevel" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

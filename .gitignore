@@ -348,3 +348,4 @@ ASALocalRun/
 healthchecksdb
 
 /WebServiceREST/.vscode/launch.json
+/DriverAdvanced/BuildInfo.cs

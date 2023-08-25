@@ -14,7 +14,7 @@ namespace WizardSample
         private void SelectionChanged(object sender, Telerik.Windows.Controls.SelectionChangeEventArgs e)
         {
             // shortcut to sync seleted entities
-            ((ViewModel)DataContext).SelectedEntities.RemplaceAll(grid.SelectedItems.OfType<Entity>());
+            ((ViewModel)DataContext).SelectedEntities.ReplaceAll(grid.SelectedItems.OfType<Entity>());
         }
     }
 }

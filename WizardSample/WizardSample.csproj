@@ -44,15 +44,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="appCommon">
-      <HintPath>D:\AppVision Version 4\Bin\appCommon.dll</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\appCommon.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="appData">
-      <HintPath>D:\AppVision Version 4\Bin\appData.dll</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\appData.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="appSDK">
-      <HintPath>D:\AppVision Version 4\Bin\appSDK.dll</HintPath>
+      <HintPath>,C:\Program Files\AppVision 4\Bin\appSDK.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -73,23 +73,23 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="Telerik.Windows.Controls">
-      <HintPath>D:\AppVision Version 4\Bin\Telerik.Windows.Controls.dll</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\Telerik.Windows.Controls.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Telerik.Windows.Controls.GridView">
-      <HintPath>D:\AppVision Version 4\Bin\Telerik.Windows.Controls.GridView.dll</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\Telerik.Windows.Controls.GridView.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Telerik.Windows.Controls.Input">
-      <HintPath>D:\AppVision Version 4\Bin\Telerik.Windows.Controls.Input.dll</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\Telerik.Windows.Controls.Input.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Telerik.Windows.Data">
-      <HintPath>D:\AppVision Version 4\Bin\Telerik.Windows.Data.dll</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\Telerik.Windows.Data.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Telerik.Windows.Themes.VisualStudio2013">
-      <HintPath>D:\AppVision Version 4\Bin\Telerik.Windows.Themes.VisualStudio2013.dll</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\Telerik.Windows.Themes.VisualStudio2013.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="WindowsBase" />

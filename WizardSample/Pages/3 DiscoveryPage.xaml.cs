@@ -15,7 +15,7 @@ namespace WizardSample
         private void SelectionChanged(object sender, Telerik.Windows.Controls.SelectionChangeEventArgs e)
         {
             // shortcut to sync seleted devices
-            ((ViewModel)DataContext).SelectedDevices.RemplaceAll(grid.SelectedItems.OfType<Device>());
+            ((ViewModel)DataContext).SelectedDevices.ReplaceAll(grid.SelectedItems.OfType<Device>());
         }
     }
 }

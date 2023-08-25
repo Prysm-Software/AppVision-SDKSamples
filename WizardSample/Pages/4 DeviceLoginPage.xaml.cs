@@ -8,5 +8,10 @@ namespace WizardSample
         {
             InitializeComponent();
         }
-    }
+
+		private void devicePwd_PasswordChanged(object sender, System.Windows.RoutedEventArgs e)
+		{
+			((ViewModel)DataContext).DevicePassword = devicePwd.Password;
+		}
+	}
 }

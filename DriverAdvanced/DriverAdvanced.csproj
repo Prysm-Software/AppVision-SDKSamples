@@ -35,7 +35,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>C:\Program Files\AppVision 4\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,19 +52,19 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Driver.ico</ApplicationIcon>
+    <ApplicationIcon>Properties\Driver.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="appCommon">
-      <HintPath>C:\Program Files\AppVision 4\Bin\</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\appCommon.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="appData">
-      <HintPath>C:\Program Files\AppVision 4\Bin\</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\appData.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="appSDK">
-      <HintPath>C:\Program Files\AppVision 4\Bin\</HintPath>
+      <HintPath>C:\Program Files\AppVision 4\Bin\appSDK.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -85,6 +85,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BuildInfo.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BuildInfo.tt</DependentUpon>
+    </Compile>
     <Compile Include="Device.cs" />
     <Compile Include="Driver.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -98,8 +103,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Trace.cs" />
     <AppDesigner Include="Properties\" />
+    <Compile Include="Trace.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -122,7 +127,14 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Driver.ico" />
+    <Resource Include="Properties\Driver.ico" />
+    <Resource Include="Properties\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BuildInfo.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BuildInfo.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

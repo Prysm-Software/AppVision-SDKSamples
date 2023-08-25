@@ -25,7 +25,7 @@
             <Label>User</Label>
             <TextBox Text="{Binding DeviceUsername}" />
             <Label>Password</Label>
-            <t:RadPasswordBox Text="{Binding DevicePassword}" />
+            <t:RadPasswordBox Name="devicePwd" PasswordChanged="devicePwd_PasswordChanged" />
         </Grid>
 
         <WrapPanel Grid.Row="3" HorizontalAlignment="Right">

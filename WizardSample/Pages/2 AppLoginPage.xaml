@@ -24,7 +24,16 @@
 
         <Grid Grid.Row="2" Margin="20" app:Panel.Columns="2" app:Panel.Padding="8">
             <TextBlock><Run Text="{app:RT App.Name}"/> server (host or IP)</TextBlock>
-            <TextBox Text="{Binding AppHostname}" />
+            <t:RadComboBox Text="{Binding AppHostname, Mode=TwoWay}" IsEditable="True" ItemsSource="{Binding AppServers.Servers}">
+                <t:RadComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <TextBlock Text="{Binding}"/>
+                            <TextBlock Text="{Binding Address}" Foreground="Gray" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </DataTemplate>
+                </t:RadComboBox.ItemTemplate>
+            </t:RadComboBox>
             <Label>User</Label>
             <TextBox Text="{Binding AppUsername}" />
             <Label>Password</Label>

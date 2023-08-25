@@ -16,7 +16,6 @@ namespace DriverAdvanced
 	{
 		Driver _driver;
 		VariableRow _rootVar;
-		bool _stopping;
 
 		public Device(Driver driver, VariableRow deviceVariable)
 		{
@@ -64,7 +63,6 @@ namespace DriverAdvanced
 			Trace.Info($"[{_rootVar.Name}] Stop");
 			_driver.AppServer.VariableManager.StateChanged -= VariableChanged;
 			_driver.AppServer.VariableManager.RowUpdated -= variableUpdated;
-			_stopping = true;
 
 			// todo 
 			// disconnect from $projectname$ device

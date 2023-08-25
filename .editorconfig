@@ -1,0 +1,16 @@
+﻿# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+###############################
+# Core EditorConfig Options   #
+###############################
+# All files
+[*]
+
+# Code files
+[*.{cs,csx,vb,vbx}]
+indent_style = tab
+indent_size = 4
+insert_final_newline = true
+charset = utf-8-bom
+
+# CS1998: Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
+dotnet_diagnostic.CS1998.severity = suggestion

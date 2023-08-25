@@ -1,0 +1,6 @@
+﻿using System;
+
+class BuildInfo 
+{
+	public static DateTime Date = DateTime.Parse("<#=	DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")	#>");
+}

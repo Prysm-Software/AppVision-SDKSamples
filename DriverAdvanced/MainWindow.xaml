@@ -17,6 +17,10 @@
         <Path x:Key="download" x:Shared="false" Fill="#99000000"  Height="14" Stretch="Uniform" Data="M0,20.299993L2.7000122,20.299993 2.7000122,26.799994 29.399994,26.799994 29.399994,20.299993 32,20.299993 32,29.400001 0,29.400001z M14.899994,0L17.100006,0 17.100006,14.799992 21.200012,10.700015 24.200012,10.700015 24.299988,10.799991 16,19.000005 14.399994,17.399999 7.7000122,10.700015 7.7999878,10.600009 10.799988,10.600009 14.899994,14.700016z" />
         <Path x:Key="refresh" x:Shared="false" Fill="#99000000"  Height="14" Stretch="Uniform" Data="M17.078003,0C20.645004,0,23.943001,1.038002,26.683006,2.7930031L29.226006,0 30.790001,8.1049995 21.998001,7.9370003 24.605995,5.0730019C22.433998,3.7580032 19.853004,2.9820023 17.078003,2.9820023 9.4169998,2.9820023 3.1829987,8.8220024 3.1829987,15.999001 3.1829987,23.177002 9.4169998,29.017998 17.078003,29.017998 21.121002,29.017998 24.752007,27.383003 27.293007,24.794998L29.370995,27.089005C26.265007,30.112999 21.910004,32 17.078003,32 7.6460037,32 0,24.835999 0,15.999001 0,7.1640015 7.6460037,0 17.078003,0z" />
     </Window.Resources>
+    <Window.TaskbarItemInfo>
+        <!-- display the device logo over the standard driver icon -->
+        <TaskbarItemInfo Overlay="/Properties/logo.png" />
+    </Window.TaskbarItemInfo>
 
     <DockPanel>
         <ToolBar DockPanel.Dock="Top" ToolBarTray.IsLocked="True" Background="{x:Null}" Loaded="ToolBar_Loaded">
@@ -72,13 +76,13 @@
                     <!--colorize errors -->
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding Level}" Value="Error">
-                            <Setter TargetName="line" Property="Background" Value="#40ff0000" />
+                            <Setter TargetName="level" Property="Background" Value="#40ff0000" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Level}" Value="Error">
                             <Setter TargetName="level" Property="Foreground" Value="#FFFF4C4C" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Level}" Value="Info">
-                            <Setter TargetName="level" Property="Foreground" Value="Lime" />
+                            <Setter TargetName="level" Property="Foreground" Value="#FF00B000" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Level}" Value="Debug">
                             <Setter TargetName="level" Property="Foreground" Value="#FF0090FF" />

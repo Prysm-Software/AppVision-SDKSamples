@@ -42,17 +42,20 @@ namespace DriverAdvanced
 				AppServer.Open(hostName);
 				AppServer.Login(protocolName);
 
-                // todo
-                // get protocol settings
+				if (!AppServer.CheckWarrantyDate(BuildInfo.Date))
+					throw new Exception("This driver was built after your warranty has expied.");
+				
+				// todo
+				// get protocol settings
 
-                //IPEndPoint host = Helper.ParseEndPoint(AppServer.CurrentProtocol.Address, 80);
-                //int timeout = AppServer.CurrentProtocol.Timeout;
-                //int retry = AppServer.CurrentProtocol.MaxRetry;
-                //string param1 = Helper.GetParameter("Param1", AppServer.CurrentProtocol.Parameters, "Param1Default");
-                //int param2 = Helper.GetParameter<int>("Param2", AppServer.CurrentProtocol.Parameters);
-                // ...
+				//IPEndPoint host = Helper.ParseEndPoint(AppServer.CurrentProtocol.Address, 80);
+				//int timeout = AppServer.CurrentProtocol.Timeout;
+				//int retry = AppServer.CurrentProtocol.MaxRetry;
+				//string param1 = Helper.GetParameter("Param1", AppServer.CurrentProtocol.Parameters, "Param1Default");
+				//int param2 = Helper.GetParameter<int>("Param2", AppServer.CurrentProtocol.Parameters);
+				// ...
 
-                var deviceVars = AppServer.GetVariablesByProtocol();
+				var deviceVars = AppServer.GetVariablesByProtocol();
 				if (deviceVars.Length == 0)
 					Trace.Info("This protocol has no device");
 
@@ -83,8 +86,9 @@ namespace DriverAdvanced
 			}
 			catch (Exception ex)
 			{
-				//AddAlarm(ex);	// driver keeps running
-				throw;			// driver will close in 5s
+				//AddAlarm(ex);	          // driver triggers an alarm
+				//throw;                  // driver will close in 5s
+				Trace.Error(ex.Message);  // driver keeps running
 			}
 		}
 
@@ -143,8 +147,8 @@ namespace DriverAdvanced
 		{
 			try
 			{
-// to be removed if not required
-#if MAX_ALARMS_COUNT_PER_MIN 
+				// to be removed if not required
+#if MAX_ALARMS_COUNT_PER_MIN
 				// limit alarms per minute to prevent server overflow
 				if (DateTime.UtcNow < _alrDate.AddMinutes(1))
 				{
@@ -166,13 +170,14 @@ namespace DriverAdvanced
 				}
 #endif
 				Trace.Error(ex, $"[{row.Name}]");
-				AppServer.AlarmManager.AddAlarmExt(10, ex.Message, row?.FullDescription, ex.ToString(), row?.AreaDescription, row?.GroupsDescription);
+				AppServer.AlarmManager.AddAlarmExt(10, ex.Message, row?.FullDescription, ex.ToString(), row?.AreaDescription, row?.FullGroupDescriptions);
 			}
 			catch { }
 		}
+#if MAX_ALARMS_COUNT_PER_MIN
 		DateTime _alrDate;
 		int _alrCount;
-
+#endif
 
 		internal void SetVariableNoCache(string name, object value, string info = null, string operation = null)
 		{
