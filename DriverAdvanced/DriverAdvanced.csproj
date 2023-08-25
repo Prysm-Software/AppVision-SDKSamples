@@ -104,7 +104,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <AppDesigner Include="Properties\" />
-    <Compile Include="Trace.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
