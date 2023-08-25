@@ -12,7 +12,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-
+using Prysm.AppVision.Common.Logger.Model;
+using Prysm.AppVision.Common.Logger;
 
 namespace Prysm.AppVision.SDK
 {
@@ -36,7 +37,7 @@ namespace Prysm.AppVision.SDK
 			new DispatcherTimer { Interval = TimeSpan.FromSeconds(1), IsEnabled = true }.Tick += Tick;
 			CollectionViewSource.GetDefaultView(Items).Filter = Items_Filter;
 			level.ItemsSource = Enum.GetValues(typeof(LogLevel));
-			Trace.LogEvent += NewLog;
+			Trace.Logger.LogEvent += NewLog;
 		}
 
 		void Window_Closed(object sender, EventArgs e)
@@ -51,7 +52,7 @@ namespace Prysm.AppVision.SDK
 
 		void NewLog(LogEntry it)
 		{
-			if (LogLevel >= it.Level)
+			if (LogLevel <= it.Level)
 				if (_buffer.Count < 1000) // max 1000 lines/s
 					_buffer.Enqueue(it);
 		}

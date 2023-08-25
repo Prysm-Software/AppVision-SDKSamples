@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
+using Prysm.AppVision.Common.Logger;
 
 namespace DriverAdvanced
 {

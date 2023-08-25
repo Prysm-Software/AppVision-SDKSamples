@@ -1,5 +1,6 @@
 ﻿using DriverAdvanced;
 using Prysm.AppVision.Common;
+using Prysm.AppVision.Common.Logger;
 using System;
 using System.ComponentModel;
 using System.Globalization;
