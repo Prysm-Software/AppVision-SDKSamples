@@ -179,7 +179,7 @@ namespace WizardSample
 			{
 				Log("Create protocol: " + protocolName);
 
-				var iconPath = $"Images/{protocolName}.ico";
+				var iconPath = $"Images/{protocolName}.png";
 				try
 				{
 					var icon = Application.GetResourceStream(new Uri("/Resources/logo.png", UriKind.Relative));
