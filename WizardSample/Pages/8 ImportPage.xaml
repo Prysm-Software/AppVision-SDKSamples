@@ -30,7 +30,7 @@
                     </EventTrigger>
                 </Path.Triggers>
             </Path>
-            <Image Margin="8" HorizontalAlignment="Right" Source="/Resources/prysm.png" />
+            <Image Margin="8" HorizontalAlignment="Right" Source="/Resources/app-company2.png" />
             <TextBlock Margin="100 10" VerticalAlignment="Center">
                 <Span FontSize="16" FontWeight="Bold">Import</Span>
                 <LineBreak/>

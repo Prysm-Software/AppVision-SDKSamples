@@ -12,7 +12,7 @@
         <Grid Background="White">
             <Path Name="failure" Visibility="{Binding Success, Converter={app:ToCollapsed}}" Margin="20" HorizontalAlignment="Left" Fill="Red" Stretch="Uniform" Data="M14.29,21.39L17.69,21.39 17.69,24.39 14.29,24.39z M14.79,6.60L17.09,6.60 17.59,17.5 14.19,17.5z M16,3.10C8.89,3.10 3.09,8.89 3.09,16 3.09,23.10 8.89,28.89 16,28.89 23.09,28.89 28.89,23.10 28.89,16 28.89,8.89 23.09,3.10 16,3.10z M16,0C24.79,0 32,7.19 32,16 32,24.79 24.79,32 16,32 7.19,32 0,24.79 0,16 0,7.19 7.19,0 16,0z" />
             <Path Name="success" Visibility="{Binding Success, Converter={app:ToVisible}}" Margin="20" HorizontalAlignment="Left" Fill="Green" Stretch="Uniform" Data="M-150,626C-152,626 -154,626 -156,626 -167,633 -180,646 -189,657 -190,658 -192,662 -193,662 -194,662 -198,659 -198,659 -202,656 -205,653 -209,650 -211,652 -212,653 -214,655 -206,665 -200,675 -193,685 -181,665 -168,644 -152,629 -151,627 -149,626 -150,626z" />
-            <Image Margin="8" HorizontalAlignment="Right" Source="/Resources/prysm.png" />
+            <Image Margin="8" HorizontalAlignment="Right" Source="/Resources/app-company2.png" />
             <TextBlock Margin="100 10" VerticalAlignment="Center">
                 <Span FontSize="16" FontWeight="Bold">Completed</Span>
             </TextBlock>

@@ -216,9 +216,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\prysm.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -227,6 +224,10 @@
   <ItemGroup>
     <Resource Include="Resources\icon.ico" />
     <Resource Include="Resources\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\app-company2.png" />
+    <Content Include="Resources\app-name2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

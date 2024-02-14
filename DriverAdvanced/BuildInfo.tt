@@ -3,4 +3,5 @@
 class BuildInfo 
 {
 	public static DateTime Date = DateTime.Parse("<#=	DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")	#>");
+	public static string BuildBy = "<#=	Environment.MachineName	#>";
 }

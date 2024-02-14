@@ -10,7 +10,7 @@
     <Grid app:Panel.RowDefinitions="80 auto * auto">
 
         <Grid Background="White">
-            <Image Margin="8" HorizontalAlignment="Right" Source="/Resources/prysm.png" />
+            <Image Margin="8" HorizontalAlignment="Right" Source="/Resources/app-company2.png" />
             <TextBlock Margin="100 10" VerticalAlignment="Center">
                 <Span FontSize="16" FontWeight="Bold"><Run Text="{app:RT App.Name}"/> Configuration Wizard</Span>
                 <LineBreak />
