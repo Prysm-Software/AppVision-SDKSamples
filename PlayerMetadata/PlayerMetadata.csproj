@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\Program Files\AppVision 4\Bin\</OutputPath>
+    <OutputPath>..\..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>C:\Program Files\AppVision 4\Bin\</OutputPath>
+    <OutputPath>..\..\Bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -37,17 +37,17 @@
       <HintPath>..\packages\Alturos.Yolo.2.6.4\lib\net461\Alturos.Yolo.dll</HintPath>
     </Reference>
     <Reference Include="appCommon">
-      <HintPath>C:\Program Files\AppVision 4\Bin\appCommon.dll</HintPath>
+      <HintPath>..\..\Bin\appCommon.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="appVideo">
-      <HintPath>C:\Program Files\AppVision 4\Bin\appVideo.dll</HintPath>
+      <HintPath>..\..\Bin\appVideo.dll</HintPath>
     </Reference>
     <Reference Include="appSDK">
-      <HintPath>C:\Program Files\AppVision 4\Bin\appSDK.dll</HintPath>
+      <HintPath>..\..\Bin\appSDK.dll</HintPath>
     </Reference>
     <Reference Include="appFFmpeg">
-      <HintPath>C:\Program Files\AppVision 4\Bin\appFFmpeg.dll</HintPath>
+      <HintPath>..\..\Bin\appFFmpeg.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

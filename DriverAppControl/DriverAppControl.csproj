@@ -30,7 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\Program Files\AppVision 4\Bin\</OutputPath>
+    <OutputPath>..\..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,7 +40,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>C:\Program Files\AppVision 4\Bin\</OutputPath>
+    <OutputPath>..\..\Bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -48,16 +48,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="appCommon">
-      <HintPath>C:\Program Files\AppVision 4\Bin\appCommon.dll</HintPath>
+      <HintPath>..\..\Bin\appCommon.dll</HintPath>
     </Reference>
     <Reference Include="AppControl.Sdk">
-      <HintPath>C:\Program Files\AppVision 4\Bin\AppControl.Sdk.dll</HintPath>
+      <HintPath>..\..\Bin\AppControl.Sdk.dll</HintPath>
     </Reference>
     <Reference Include="appData">
-      <HintPath>C:\Program Files\AppVision 4\Bin\appData.dll</HintPath>
+      <HintPath>..\..\Bin\appData.dll</HintPath>
     </Reference>
     <Reference Include="appSDK">
-      <HintPath>C:\Program Files\AppVision 4\Bin\appSDK.dll</HintPath>
+      <HintPath>..\..\Bin\appSDK.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.8.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Data.Edm.5.8.4\lib\net40\Microsoft.Data.Edm.dll</HintPath>

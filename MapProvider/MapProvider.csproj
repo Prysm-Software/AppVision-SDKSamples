@@ -23,7 +23,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\Program Files\AppVision 4\Bin\</OutputPath>
+    <OutputPath>..\..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,7 +31,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>C:\Program Files\AppVision 4\Bin\</OutputPath>
+    <OutputPath>..\..\Bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,10 +39,10 @@
   <ItemGroup>
     <Reference Include="appCommon">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\AppVision 4\Bin\appCommon.dll</HintPath>
+      <HintPath>..\..\Bin\appCommon.dll</HintPath>
     </Reference>
     <Reference Include="appSDK">
-      <HintPath>C:\Program Files\AppVision 4\Bin\appSDK.dll</HintPath>
+      <HintPath>..\..\Bin\appSDK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -57,13 +57,13 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="Telerik.Windows.Controls">
-      <HintPath>C:\Program Files\AppVision 4\Bin\Telerik.Windows.Controls.dll</HintPath>
+      <HintPath>..\..\Bin\Telerik.Windows.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Telerik.Windows.Controls.DataVisualization">
-      <HintPath>C:\Program Files\AppVision 4\Bin\Telerik.Windows.Controls.DataVisualization.dll</HintPath>
+      <HintPath>..\..\Bin\Telerik.Windows.Controls.DataVisualization.dll</HintPath>
     </Reference>
     <Reference Include="Telerik.Windows.Controls.Input">
-      <HintPath>C:\Program Files\AppVision 4\Bin\Telerik.Windows.Controls.Input.dll</HintPath>
+      <HintPath>..\..\Bin\Telerik.Windows.Controls.Input.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationProvider" />
     <Reference Include="UIAutomationTypes" />
