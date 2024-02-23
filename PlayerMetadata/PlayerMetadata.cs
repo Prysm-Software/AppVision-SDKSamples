@@ -32,6 +32,7 @@ namespace PlayerMetadata
 
         public bool IsActiveX => false;
 
+		public bool HostMustHandleAutoReconnection => false;
 
 
         public PlayerMetadata()
