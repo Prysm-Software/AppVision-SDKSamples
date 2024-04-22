@@ -16,6 +16,18 @@ namespace Prysm.AppVision.SDK
 		Driver _driver;
 		Window _window;
 
+        static App() => AppDomain.CurrentDomain.AssemblyResolve += LookForAssemblyInParentDir;
+
+        // probing assemblies in the parent folder
+		// to be used if your driver is deployed in a sub-directory of the 'bin' folder (i.e. bin\MyDriver\my_driver.exe)
+        static System.Reflection.Assembly LookForAssemblyInParentDir(object sender, ResolveEventArgs a)
+        {
+            Console.WriteLine(a.Name);
+            var dir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            var ass = $@"{dir}\..\{a.Name.Split(',')[0]}.dll";
+            return File.Exists(ass) ? Assembly.LoadFrom(ass) : null;
+        }
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			// Set invariant culture
