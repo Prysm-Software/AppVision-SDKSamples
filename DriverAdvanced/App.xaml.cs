@@ -4,6 +4,7 @@ using Prysm.AppVision.Common.Logger;
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;

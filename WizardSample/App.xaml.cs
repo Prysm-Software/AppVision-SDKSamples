@@ -1,22 +1,23 @@
 ﻿using Prysm.AppVision.Common;
-using Prysm.AppVision.SDK;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 
 namespace WizardSample
 {
-    public partial class App : Application
+	public partial class App : Application
     {
         static App() => AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
-        // probing assemblies in the parent folder
+		private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			return null;
+		}
+
+		// probing assemblies in the parent folder
 		// to be used if your driver is deployed in a sub-directory of the 'bin' folder (i.e. bin\MyDriver\my_driver.exe)
-        static System.Reflection.Assembly LookForAssemblyInParentDir(object sender, ResolveEventArgs a)
+		static Assembly LookForAssemblyInParentDir(object sender, ResolveEventArgs a)
         {
             Console.WriteLine(a.Name);
             var dir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
