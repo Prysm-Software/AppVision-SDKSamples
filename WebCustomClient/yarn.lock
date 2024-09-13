@@ -1570,7 +1570,7 @@
 
 "@prysm/appsdk@./AppSdk-TS/":
   "resolved" "file:AppSdk-TS"
-  "version" "4.8.117"
+  "version" "4.9.117"
   dependencies:
     "rxjs" "^7.5.5"
 

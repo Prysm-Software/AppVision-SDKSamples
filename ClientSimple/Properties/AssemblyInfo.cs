@@ -13,7 +13,7 @@ using System.Windows.Markup;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Prysm")]
 [assembly: AssemblyProduct("ClientSimple")]
-[assembly: AssemblyCopyright("Copyright © Prysm 2020")]
+[assembly: AssemblyCopyright("Copyright © Prysm 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,6 +51,6 @@ using System.Windows.Markup;
 //
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.8.0.0")]
+
+[assembly: AssemblyVersion("4.9")]
 

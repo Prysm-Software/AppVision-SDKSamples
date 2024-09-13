@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Prysm")]
 [assembly: AssemblyProduct("WizardSample")]
-[assembly: AssemblyCopyright("Copyright © Prysm 2020")]
+[assembly: AssemblyCopyright("Copyright © Prysm 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -30,4 +30,4 @@ using System.Windows;
                                               // dans l'application ou dans l'un des dictionnaires de ressources spécifiques à un thème)
 )]
 
-[assembly: AssemblyVersion("4.8.0.0")]
+[assembly: AssemblyVersion("4.9")]

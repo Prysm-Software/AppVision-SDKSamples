@@ -63,7 +63,7 @@ namespace DriverSimple
 					throw new Exception("No variable linked to protocol " + protocolName);
 
 				// Subscribe to received the change of value for Output variables
-				_appServer.AddFilterNotifications($"$V.{_protocolVariable.Name}.Output*");
+				_appServer.AddFilterNotifications($"$V.{_protocolVariable.Name}.*");
 				_appServer.StartNotifications(false);   // true to receive the output initial values
 				_appServer.ProtocolSynchronized();
 				Trace("Connected");

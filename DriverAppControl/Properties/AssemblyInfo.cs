@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Prysm")]
 [assembly: AssemblyProduct("DriverAppControl")]
-[assembly: AssemblyCopyright("Copyright © Prysm 2019")]
+[assembly: AssemblyCopyright("Copyright © Prysm 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -50,6 +50,5 @@ using System.Windows;
 //
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.8.0.0")]
-[assembly: AssemblyFileVersion("4.8.0.0")]
+
+[assembly: AssemblyVersion("4.9")]

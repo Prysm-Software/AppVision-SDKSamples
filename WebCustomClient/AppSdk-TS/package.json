@@ -1,6 +1,6 @@
 {
   "name": "@prysm/appsdk",
-  "version": "4.8.117",
+  "version": "4.9.117",
   "description": "This package will allow you to connect to an appvision server",
   "scripts": {
     "build": "tsc",
