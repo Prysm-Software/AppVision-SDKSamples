@@ -34,7 +34,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Reference Include="appCommon"/>
-		<Reference Include="appFFmpeg"/>
+		<Reference Include="App.FFmpeg"/>
 		<Reference Include="appSDK"/>
 		<Reference Include="appVideo"/>
 		<Reference Include="PresentationCore" />

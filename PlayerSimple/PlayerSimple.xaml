@@ -1,6 +1,7 @@
 ﻿<video:PlayerBaseControl x:Class="PlayerSimple.PlayerSimple"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:video="http://prysm.fr/AppVideo">
-    <video:FFmpegVideoPlayerCtrl x:Name="player" />
+             xmlns:video="http://prysm.fr/AppVideo"
+             xmlns:ffmpeg="http://prysm.fr/FFmpeg">
+    <ffmpeg:Player x:Name="player" />
 </video:PlayerBaseControl>
