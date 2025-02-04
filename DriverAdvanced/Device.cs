@@ -1,14 +1,7 @@
-﻿using Prysm.AppVision.SDK;
+﻿using System;
 using Prysm.AppVision.Common;
 using Prysm.AppVision.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Text;
-using Prysm.AppVision.Common.Logger;
+using Prysm.Logger;
 
 namespace DriverAdvanced
 {

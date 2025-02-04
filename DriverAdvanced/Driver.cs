@@ -1,11 +1,12 @@
-﻿using Prysm.AppVision.SDK;
-using Prysm.AppVision.Data;
-using Prysm.AppVision.Common;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using Prysm.AppVision.Common.Logger;
+using Prysm.AppVision.SDK;
+using Prysm.AppVision.Data;
+using Prysm.AppVision.Common;
+using Prysm.Logger;
+using Prysm.Utility.Logger;
 
 namespace DriverAdvanced
 {
@@ -24,7 +25,7 @@ namespace DriverAdvanced
 			AppServer.Restart += () => { Stop(); Start(); };
 			AppServer.Download += Download;
 			AppServer.Refresh += Refresh;
-			Trace.Logger.LogEvent += it => AppServer.Log((int)it.Level, it.Message);
+			Trace.Logger.AddAppender(new AppServerLogAppender(AppServer), LogLevel.All, "app");
 		}
 
 		public void Start()

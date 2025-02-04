@@ -48,6 +48,8 @@
 		<Reference Include="appCommon"/>
 		<Reference Include="appData"/>
 		<Reference Include="appSDK"/>
+		<Reference Include="App.Logger"/>
+		<Reference Include="App.Utility"/>
 		<Reference Include="System" />
 		<Reference Include="System.Data" />
 		<Reference Include="System.Xml" />
