@@ -127,7 +127,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BuildInfo.cs</LastGenOutput>
     </Content>
-    <Resource Include="Readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
