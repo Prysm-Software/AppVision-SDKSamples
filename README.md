@@ -26,14 +26,13 @@ A basic AppVision experience is required; the following background is also assum
 |---|---|
 | **AppVision** | 4.x running on localhost (or a reachable host) |
 | **Visual Studio** | 2019 or 2022 with .NET desktop workload |
-| **.NET Framework** | 4.8 SDK |
+| **.NET Framework** | 4.8 |
 
 ### Folder layout expected by the build
 
 ```
-AppVision 4\
-AppVision 4\Public\
-AppVision 4\Public\AppVision-SDKSamples\   <- this repository
+C:\Program Files\AppVision 4\Bin\
+\AppVision 4\Public\AppVision-SDKSamples\   <- this repository
 ```
 
 The SDK and application DLLs in `AppVision 4\Bin\` are referenced as
@@ -158,8 +157,6 @@ Useful for integrations from non-.NET platforms (Python, Java, PowerShell, etc.)
 | `appCommon.dll` | `Prysm.AppVision.Common` | `Helper`, `RColor`, `RT`, `CommStatus` |
 | `appVideo.dll` | `Prysm.AppVision.Video` | `PlayerBaseControl`, `IPlayerLive`, `IPlayerPlayback`, `IPlayerPtz`, `IPlayerExport` |
 | `appUI.dll` | `Prysm.AppVision.UI` | `IPersistable`, `ICommandable`, `IContainer` |
-| `appControl.dll` | `Prysm.AppControl.SDK` | `ChannelService` |
-| `appServer.dll` | `Prysm.AppVision.Server` | `AppUserLogin` |
 | `App.Logger.dll` | `Prysm.Logger` | `Trace`, `LogLevel`, `LogBox` |
 | `App.Utility.dll` | `Prysm.Utility.Logger` | `AppServerLogAppender` |
 
