@@ -12,11 +12,26 @@ using System.Windows.Threading;
 
 namespace DriverSimple
 {
+	/// <summary>
+	/// WPF driver demonstrating 8 simulated digital I/O channels, a custom alarm
+	/// and a custom event.
+	/// <para>
+	/// Inputs (CheckBoxes) simulate incoming device signals pushed into AppVision
+	/// via <see cref="Prysm.AppVision.SDK.VariableManager.Set"/>.
+	/// Outputs (RadioButtons) reflect commands received from AppVision.
+	/// </para>
+	/// </summary>
 	public partial class MainWindow : Window
 	{
+		/// <summary>AppVision driver server connection handle.</summary>
 		AppServerForDriver _appServer;
+		/// <summary>The protocol node variable; its sub-variables map to the 8 I/O channels.</summary>
 		VariableRow _protocolVariable;
 
+		/// <summary>
+		/// Initialises the window, wires AppVision server event callbacks
+		/// and sets the title bar to the product version.
+		/// </summary>
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -29,6 +44,11 @@ namespace DriverSimple
 		}
 
 		#region Load
+		/// <summary>
+		/// Parses the command-line arguments, connects to AppVision and subscribes
+		/// to output variable notifications.
+		/// Expected command line: <c>DriverSimple.exe protocolName[@hostname]</c>
+		/// </summary>
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			// CommandLine: DriverSample.exe protocolName[@hostname]
@@ -70,7 +90,8 @@ namespace DriverSimple
 
 
 				// Set the initial value of Input variables.
-				// At driver startup, '@init' flag is used to set initial values without storing the change in the database as if it was an actual devce event.
+				// The '@init' operation flag sets values without recording them as real device events
+				// in the history database (useful for startup state synchronisation).
 				for (int i = 1; i <= 8; i++)
 				{
 					_appServer.VariableManager.Set(_protocolVariable.Name + ".Input" + i, 0, operation: "@init");
@@ -87,16 +108,22 @@ namespace DriverSimple
 
 		#region Close
 
+		/// <summary>Stops the driver and triggers a restart when requested by AppVision.</summary>
 		void RestartRequested()
 		{
 			_restart = true;
 			Close();
 		}
+		/// <summary>Closes the driver window when AppVision terminates this driver process.</summary>
 		void CloseRequested()
 		{
 			Close(); // Close driver window
 		}
 
+		/// <summary>
+		/// Disconnects from AppVision and optionally relaunches the driver process
+		/// when a restart was requested by the server.
+		/// </summary>
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			try
@@ -118,10 +145,13 @@ namespace DriverSimple
 
 		#endregion
 
-		// Handle change of variable values received from AppVision server
-		//
-		// in this demo driver, we toggle RadioButtons
-		// in a real driver, the command should be reflected in the external system or device
+		/// <summary>
+		/// Called by AppVision when an output variable changes value (e.g. an operator
+		/// presses a button in a synoptic).
+		/// In a real driver, the command would be forwarded to the physical device.
+		/// Here, the corresponding RadioButton is toggled in the UI.
+		/// </summary>
+		/// <param name="state">New variable state containing name, value and timestamp.</param>
 		void VariableManager_StateChanged(VariableState state)
 		{
 			Dispatcher.BeginInvoke((Action)delegate
@@ -136,10 +166,11 @@ namespace DriverSimple
 			});
 		}
 
-		// Set variable values in AppVision server
-		//
-		// in this demo driver, we simulate IO events with CheckBoxes
-		// in a real driver, the system or device events should be reflected in AppVision using variables
+		/// <summary>
+		/// Simulates an I/O input event: publishes the CheckBox state to AppVision
+		/// as a variable value change.
+		/// In a real driver this would be triggered by the physical device, not the UI.
+		/// </summary>
 		private void Inputs_Click(object sender, RoutedEventArgs e)
 		{
 			var checkBox = (CheckBox)e.Source;
@@ -152,6 +183,10 @@ namespace DriverSimple
 		}
 
 		
+		/// <summary>
+		/// Sends a space-separated list of 25 random integers to the Buffer variable.
+		/// Demonstrates publishing a multi-value payload to AppVision.
+		/// </summary>
 		private void SetBuffer_Click(object sender, RoutedEventArgs e)
 		{
 			var rand = new Random();
@@ -164,12 +199,14 @@ namespace DriverSimple
 
 		}
 
+		/// <summary>Raises a custom free-text event in the AppVision event log.</summary>
 		private void SetEvent_Click(object sender, RoutedEventArgs e)
 		{
 			// Set a custom event in AppVision server
 			_appServer.EventManager.AddEvent("test", "Sample Event");
 		}
 
+		/// <summary>Raises a custom numbered alarm in the AppVision alarm table.</summary>
 		private void TriggerAlarm_Click(object sender, RoutedEventArgs e)
 		{
 			// Trigger a custom alarm in AppVision server
@@ -177,6 +214,10 @@ namespace DriverSimple
 		}
 
 		#region Trace,Error,Log
+		/// <summary>
+		/// Logs an error to the trace window, to the AppVision server log
+		/// and raises an alarm in AppVision so the operator is notified.
+		/// </summary>
 		private void Error(string text)
 		{
 			try
@@ -189,6 +230,10 @@ namespace DriverSimple
 			catch { }
 		}
 
+		/// <summary>
+		/// Logs a message to the local trace window and, if the server log level
+		/// allows it, to the AppVision server log.
+		/// </summary>
 		void Trace(string text)
 		{
 			TraceWindow(text);

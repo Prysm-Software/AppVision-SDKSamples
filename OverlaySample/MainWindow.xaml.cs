@@ -22,10 +22,19 @@ using System.Windows.Threading;
 
 namespace OverlayManager
 {
+    /// <summary>
+    /// Standalone CRUD tool for managing geo-referenced overlay icons on an AppVision GIS synoptic.
+    /// Displays a live-updating DataGrid backed by an <see cref="ObservableCollection{T}"/> of
+    /// <see cref="OverlayItem"/> objects and synchronises create/update/delete operations with
+    /// the AppVision server in real time.
+    /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        /// <summary>AppVision client server connection handle.</summary>
         AppServer _server = new AppServer();
+        /// <summary>Live-bound collection of overlays displayed in the DataGrid.</summary>
         ObservableCollection<OverlayItem> _overlays = new ObservableCollection<OverlayItem>();
+        /// <summary>Cache of all file entries (symbols + synoptics) used for column auto-complete.</summary>
         FileInfoRow[] _files;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -42,6 +51,10 @@ namespace OverlayManager
                 _server.Close();
         }
 
+        /// <summary>
+        /// Connects to AppVision, subscribes to overlay change notifications
+        /// and loads the current overlay list into the DataGrid.
+        /// </summary>
         async void Connect_Click(object sender, RoutedEventArgs e)
         {
             using (new WaitCursor())
@@ -73,6 +86,12 @@ namespace OverlayManager
             dataGrid.IsEnabled = isConnected;
         }
 
+        /// <summary>
+        /// Called by AppVision whenever an overlay is created, updated or deleted on the server.
+        /// Keeps the local <see cref="_overlays"/> collection in sync with the server state.
+        /// </summary>
+        /// <param name="event">The type of modification (Add/Update/Delete).</param>
+        /// <param name="item">The overlay that was modified.</param>
         void Overlay_Updated(ModifType @event, OverlayItem item)
         {
             if (@event == ModifType.Delete)
@@ -89,7 +108,11 @@ namespace OverlayManager
             }
         }
 
-        // Cancel the datagrid built-in DeleteCommand and call RemoveOverlay(id) for each selected overlays.
+        /// <summary>
+        /// Intercepts the DataGrid built-in Delete command and replaces it with a call to
+        /// <see cref="Prysm.AppVision.SDK.ClientManager.RemoveOverlay"/> for each selected row,
+        /// so the server is updated rather than just the local collection.
+        /// </summary>
         private void DataGrid_PreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             if (e.Command == DataGrid.DeleteCommand)
@@ -103,14 +126,21 @@ namespace OverlayManager
         }
 
 
-        // Pre-fill some data when the user create a new row in the datagrid.
+        /// <summary>
+        /// Pre-fills a sensible default ID when the user starts typing a new overlay row.
+        /// </summary>
         private void DataGrid_InitializingNewItem(object sender, InitializingNewItemEventArgs e)
         {
             var overlay = (OverlayItem)e.NewItem;
             overlay.Id = "new overlay " + dataGrid.Items.Count;
         }
 
-        // Call UpdateOverlay(overlayItem) when the user modify a new or existing overlay.
+        /// <summary>
+        /// Commits a row edit and persists the change to AppVision via
+        /// <see cref="Prysm.AppVision.SDK.ClientManager.UpdateOverlay(OverlayItem)"/>.
+        /// Temporarily removes and re-adds this handler around <c>CommitEdit</c> to
+        /// avoid a recursive call.
+        /// </summary>
         async void DataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
             Console.WriteLine("edit " + e.Row);
@@ -132,8 +162,11 @@ namespace OverlayManager
             if (dataGrid.Columns.IndexOf(c => c.Header.Equals(e.PropertyName)) > -1 || e.PropertyName.EndsWith("String"))
                 e.Cancel = true;
         }
-        // List of symbols and synoptics in the configuration (auto completion)
+        /// <summary>Names of all synoptic files available on the server, plus the special <c>@geo</c> value.
+        /// Used for column auto-complete in the DataGrid.</summary>
         public IEnumerable<string> Synoptics => _files?.Where(f => f.Type == FileInfoType.Synoptic).Select(f => f.Name).Concat(0, "@geo");
+        /// <summary>Names of all symbol (XAML) files available on the server.
+        /// Used for column auto-complete in the DataGrid.</summary>
         public IEnumerable<string> Symbols => _files?.Where(f => f.Type == FileInfoType.Symbol).Select(f => f.Name);
     }
 }

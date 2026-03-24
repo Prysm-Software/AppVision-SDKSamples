@@ -7,9 +7,17 @@ using static System.Math;
 
 namespace DriverOverlay
 {
+	/// <summary>
+	/// WPF driver that animates a geo-referenced overlay icon on an AppVision GIS synoptic.
+	/// A <see cref="DispatcherTimer"/> computes a Lissajous trajectory at 2 Hz and calls
+	/// <see cref="Prysm.AppVision.SDK.ClientManager.UpdateOverlay"/> to move the icon
+	/// and leave a fading position trail.
+	/// </summary>
 	public partial class MainWindow : Window
 	{
+		/// <summary>AppVision driver server connection handle.</summary>
 		AppServerForDriver _appServer;
+		/// <summary>Timer that drives the 2 Hz position update loop.</summary>
 		DispatcherTimer _timer;
 
 		public MainWindow()
@@ -22,6 +30,11 @@ namespace DriverOverlay
 		}
 
 		#region Load
+		/// <summary>
+		/// Parses command-line arguments, connects to AppVision, then starts
+		/// the animation timer.
+		/// Expected: <c>DriverOverlay.exe protocolName[@hostname]</c>
+		/// </summary>
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			string[] args = Environment.GetCommandLineArgs();
@@ -63,6 +76,7 @@ namespace DriverOverlay
 		}
 		#endregion
 		#region Window_Closed()
+		/// <summary>Stops the animation timer and disconnects from AppVision.</summary>
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			try
@@ -76,20 +90,29 @@ namespace DriverOverlay
 			catch { }
 		}
 		#endregion
+		/// <summary>
+		/// Timer callback — advances the Lissajous parameter <c>_t</c> and
+		/// recalculates the target position in metres relative to the origin.
+		/// </summary>
 		private void OnTick(object sender, EventArgs e)
 		{
-			// Loitering around origin location
+			// Lissajous figure: X = cos(t)*50m, Y = sin(2t)*50m
 			_t += 0.1;
 			if (_t > 2 * PI) _t = 0;
 			_xMeters = Cos(_t) * 50;
 			_yMeters = Sin(2 * _t) * 50;
-			
+
 			MoveTargetPosition();
 		}
 		double _t, _xMeters, _yMeters;
 
 		readonly Point _originLocation = new Point(5.370101, 43.493548);    // X=longitude, Y=latitude (Fr Aix Antelios)
 		
+		/// <summary>
+		/// Converts the current metric offset from the origin into geographic coordinates
+		/// and pushes the new position to AppVision via <see cref="Prysm.AppVision.SDK.ClientManager.UpdateOverlay"/>.
+		/// Also maintains a 20-dot position trail using timestamped tail overlay IDs.
+		/// </summary>
 		private void MoveTargetPosition()
 		{
 			try
@@ -104,8 +127,8 @@ namespace DriverOverlay
 				
 				Trace($"move target to {location}");
 
-				// Create or update a overlay
-				// Note: "@geo" keyword will display the overlay on all geographical synoptics 
+				// Create or update the main icon overlay.
+				// The "@geo" target places the overlay on all geographical (GIS) synoptics.
 				_appServer.ClientManager.UpdateOverlay("item_id", "DriverOverlay\\target.xaml", "@geo", location);
 				
 				// Display a list of spot to visualize the previous positions

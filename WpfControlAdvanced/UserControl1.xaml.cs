@@ -14,14 +14,30 @@ using System.Xml.Linq;
 
 namespace WpfControlAdvanced
 {
-	// Demo WPF control to be displayed in AppVision client
+	/// <summary>
+	/// Advanced embeddable synoptic control demonstrating:
+	/// <list type="bullet">
+	///   <item><description><see cref="IPersistable"/> — save/restore control state in AppVision workspaces</description></item>
+	///   <item><description><see cref="ICommandable"/> — expose actions to AppVision context menus</description></item>
+	///   <item><description>Async data loading (synoptics, areas, variables, licence info)</description></item>
+	///   <item><description>Variable read/write, alarm raise/acknowledge and event subscription</description></item>
+	/// </list>
+	/// </summary>
 	public partial class UserControl1 : UserControl, IPersistable, ICommandable
 	{
+		/// <summary>Initialises the control.</summary>
 		public UserControl1()
 		{
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// Parameterised constructor called by AppVision when a control URL contains arguments.
+		/// </summary>
+		/// <param name="args">
+		/// Optional key=value strings passed via
+		/// <c>Client.Load(0, "main", "WpfControlAdvanced.dll#...", "arg1", "argN")</c>.
+		/// </param>
 		public UserControl1(params string[] args) : this()
 		{
 			Log("Constructor parameters: " + args.Join());
@@ -30,6 +46,10 @@ namespace WpfControlAdvanced
 			// Client.Load(0, "main", "WpfControlAdvanced.dll#WpfControlAdvanced.UserControl1", "arg1", "argN");
 		}
 
+		/// <summary>
+		/// Populates all UI panels with live server data once the control is visible.
+		/// Runs asynchronously to avoid blocking the UI thread during network calls.
+		/// </summary>
 		private async void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (!Sdk.Server.IsConnected) 
@@ -64,7 +84,10 @@ namespace WpfControlAdvanced
 			Sdk.Server.EventManager.EventChanged += EventManager_EventChanged;
 		}
 
-		// Release subscriptions
+		/// <summary>
+		/// Unsubscribes from all server events when the control is removed from the visual tree.
+		/// Always unsubscribe here to prevent memory leaks and callbacks after disposal.
+		/// </summary>
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			Sdk.Server.VariableManager.StateChanged -= VariableManager_StateChanged;
@@ -72,13 +95,13 @@ namespace WpfControlAdvanced
 			Sdk.Server.EventManager.EventChanged -= EventManager_EventChanged;
 		}
 
-		// This callback is invoked for each server event
+		/// <summary>Called when a new event is added to the AppVision event log.</summary>
 		private void EventManager_EventChanged(EventRow @event) => Log(@event);
 
-		// This callback is invoked everytime the status of an alarm changes
+		/// <summary>Called when the status of an alarm changes.</summary>
 		private void AlarmManager_AlarmChanged(AlarmInfo alarm) => Log(alarm);
 
-		// This callback is invoked everytime the value of a variable changes
+		/// <summary>Called when the value of any subscribed variable changes.</summary>
 		private void VariableManager_StateChanged(VariableState state) => Log(state);
 
 		void Log(object obj)
@@ -90,7 +113,10 @@ namespace WpfControlAdvanced
 		}
 
 
-		// Open the selected synoptic in a new window
+		/// <summary>
+		/// Opens the selected synoptic file in a new AppVision window using
+		/// <see cref="Prysm.AppVision.SDK.IClient.Load(string)"/>.
+		/// </summary>
 		private void OpenSynoptic(object sender, RoutedEventArgs e)
 		{
 			var filename = (string)synoptics.SelectedValue;
@@ -100,12 +126,15 @@ namespace WpfControlAdvanced
 			}
 		}
 
-		// Raise and acknowledge an alarm in AppVision
+		/// <summary>
+		/// Raises a numbered alarm in AppVision and stores its ID for later acknowledgement.
+		/// </summary>
 		private async void TriggerAlarm(object sender, RoutedEventArgs e)
 		{
 			alarmId = await Sdk.Server.AlarmManager.AddAlarm2(99, "My alarm", "Triggered from " + nameof(UserControl1));
 		}
 
+		/// <summary>Acknowledges the alarm that was raised by <see cref="TriggerAlarm"/>.</summary>
 		private void AcknowledgeAlarm(object sender, RoutedEventArgs e)
 		{
 			Sdk.Server.AlarmManager.AcknowledgeAlarm(alarmId);
@@ -114,14 +143,15 @@ namespace WpfControlAdvanced
 		long alarmId;
 
 
-		// Get and set variable value
+		/// <summary>Reads and displays the value of the variable selected in the list.</summary>
 		private void VariableList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var variable = (VariableState)variableList.SelectedItem;
-
-			variableValue.Text = variable?.Value?.ToStringInvariant(); // doubles are formated using invariant culture
+			// ToStringInvariant() ensures doubles use '.' as decimal separator regardless of locale.
+			variableValue.Text = variable?.Value?.ToStringInvariant();
 		}
 
+		/// <summary>Writes the text box value to the selected variable in AppVision.</summary>
 		private void SetVariableValue(object sender, RoutedEventArgs e)
 		{
 			var varName = (string)variableList.SelectedValue;
@@ -133,7 +163,9 @@ namespace WpfControlAdvanced
 
 		#region IPersistable
 
-		// By implementing the IPersistable inteface, this control can save and restore its internal state in AppVision workspaces.
+		// By implementing IPersistable, this control can save and restore its internal state
+		// in AppVision workspaces. AppVision calls GetEnv() when saving a workspace and
+		// SetEnv() when restoring it.
 
 		public string[] DocumentArgs => new[]
 		{
@@ -164,7 +196,8 @@ namespace WpfControlAdvanced
 
 		#region ICommandable
 
-		// By implementing the ICommandable interface, this control can be remotely controled
+		// By implementing ICommandable, this control exposes named actions to AppVision's
+		// right-click context menu and to remote script automation.
 
 		public async Task<IEnumerable<RemoteCommand>> GetCommands() => new[]
 		{
