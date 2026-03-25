@@ -1,4 +1,4 @@
-﻿# MapProvider â€” Custom GIS Map Provider
+﻿# MapProvider — Custom GIS Map Provider
 
 ## Overview
 
@@ -13,7 +13,7 @@ as a semicolon-separated string and persisted in the synoptic definition.
 > OpenStreetMap, ArcGIS, HERE, Mapbox, etc.
 
 **References:** `appCommon.dll`, `appSDK.dll`, `Telerik.Windows.Controls.Map`  
-**Output:** `MapProvider.dll` â†’ `AppVision 4\Bin\`
+**Output:** `MapProvider.dll` → `AppVision 4\Bin\`
 
 ---
 
@@ -93,11 +93,11 @@ Obtain one at: <https://docs.microsoft.com/en-us/bingmaps/getting-started/bing-m
 
 ## Configuration in AppVision
 
-1. Copy `MapProvider.dll` â†’ `AppVision 4\Bin\`.  
+1. Copy `MapProvider.dll` → `AppVision 4\Bin\`.  
 2. In the Configurator:
 
 ```
-Synoptics â€º [synoptic] â€º Background â€º Map provider
+Synoptics › [synoptic] › Background › Map provider
     Select: MapProvider.dll#MapProvider.BingMapsProvider
     Enter API key and desired map mode in the settings panel.
 ```
@@ -107,12 +107,12 @@ Synoptics â€º [synoptic] â€º Background â€º Map provider
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `MapProvider.dll` â†’ `AppVision 4\Bin\`.  
+2. Copy `MapProvider.dll` → `AppVision 4\Bin\`.  
 3. Restart the Configurator to pick up the new provider.
 
 ---
 
 ## See Also
 
-- [DriverOverlay](../DriverOverlay/README.md) â€” push geo-referenced overlay icons onto a map synoptic
-- [OverlaySample](../OverlaySample/README.md) â€” manage overlays at runtime
+- [DriverOverlay](../DriverOverlay/README.md) — push geo-referenced overlay icons onto a map synoptic
+- [OverlaySample](../OverlaySample/README.md) — manage overlays at runtime

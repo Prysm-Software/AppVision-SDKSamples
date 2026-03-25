@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11527.330 d18.3
+VisualStudioVersion = 18.3.11527.330
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriverMinimal", "DriverMinimal\DriverMinimal.csproj", "{2579E6DE-1678-41B4-8644-82F7982D0EA0}"
 EndProject
@@ -64,7 +64,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynchroAppControl", "AppCon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerMetadata", "PlayerMetadata\PlayerMetadata.csproj", "{6B6235A0-E93F-494E-A8B2-46A0178A9DAC}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Webcustomclient", "WebCustomClient\Webcustomclient.esproj", "{5D036232-3642-4EBB-953D-0EAEF560C948}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "WebCustomClient", "WebCustomClient\WebCustomClient.esproj", "{5D036232-3642-4EBB-953D-0EAEF560C948}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwoFactorAuthentication", "TwoFactorAuthentication\TwoFactorAuthentication.csproj", "{8AAD5BAB-65E7-45FA-AE6F-158E28A9B28F}"
 EndProject

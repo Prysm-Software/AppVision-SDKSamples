@@ -27,8 +27,18 @@ using System.Collections.Specialized;
 
 namespace WizardSample
 {
+	/// <summary>
+	/// Main ViewModel for the WizardSample multi-page onboarding wizard.
+	/// Implements <see cref="INotifyPropertyChanged"/> for WPF data-binding.
+	/// Manages page navigation, AppVision server login, device discovery,
+	/// entity scanning and the import of discovered devices into the AppVision configuration.
+	/// </summary>
 	public partial class ViewModel : INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Initialises the AppVision connection, loads localisation labels,
+		/// and shows the <see cref="WelcomePage"/>.
+		/// </summary>
 		public ViewModel()
 		{
 			// appvision server
@@ -41,7 +51,7 @@ namespace WizardSample
 
 		#region gestion de la navigation
 
-		// navigate to page
+		/// <summary>Gets or sets the wizard page currently shown in the main content area.</summary>
 		public Control CurrentPage
 		{
 			get { return _page; }
@@ -49,17 +59,32 @@ namespace WizardSample
 		}
 		Control _page;
 
+		/// <summary>Navigates to the AppVision login page (or skips it when credentials come from the command line).</summary>
 		public ICommand AppLoginCommand => new RelayCommand(GotoAppLoginPage);
+		/// <summary>Logs in to AppVision and navigates to the device discovery page.</summary>
 		public ICommand DiscoveryCommand => new RelayCommand(GotoDiscoveryPage, CanGotoDiscoveryPage);
+		/// <summary>Opens <see cref="AddDeviceDialog"/> to manually add a device to the discovered list.</summary>
 		public ICommand AddDeviceCommand => new RelayCommand(AddDevice);
+		/// <summary>Navigates to the device credential page for the selected device.</summary>
 		public ICommand DeviceLoginCommand => new RelayCommand(GotoDeviceLoginPage, CanGotoDeviceLoginPage);
+		/// <summary>Logs in to the device and navigates to the entity selection page.</summary>
 		public ICommand DeviceDetailsCommand => new RelayCommand(GotoDeviceDetailsPage);
+		/// <summary>Navigates to the import settings page once at least one entity is selected.</summary>
 		public ICommand SettingsCommand => new RelayCommand(GotoSettingsPage, CanGotoSettingsPage);
+		/// <summary>Opens a file picker to choose the WPF XAML symbol used for entity variables.</summary>
 		public ICommand BrowseSymbolCommand => new RelayCommand(BrowseSymbol);
+		/// <summary>Composes the import summary and navigates to the summary page.</summary>
 		public ICommand SummaryCommand => new RelayCommand(GotoSummaryPage, CanGotoSummaryPage);
+		/// <summary>Starts the import and navigates to the progress page.</summary>
 		public ICommand ImportCommand => new RelayCommand(GotoImportPage);
+		/// <summary>Cancels the in-progress import; enabled only while the import has not yet committed changes.</summary>
 		public ICommand CancelImportCommand => new RelayCommand(CancelImport, CanCancelImport);
 
+		/// <summary>
+		/// Parses the command-line for AppVision credentials; if they are complete, skips the login
+		/// page and jumps directly to device discovery. Otherwise shows <see cref="LoginAppPage"/>
+		/// and starts a local-network server scan.
+		/// </summary>
 		void GotoAppLoginPage()
 		{
 			// parse command line for AppVision credential
@@ -87,16 +112,23 @@ namespace WizardSample
 			AppServers.Discover();
 		}
 
+		/// <summary>Auto-fills <see cref="AppHostname"/> with the first AppVision server discovered on the LAN.</summary>
 		void AppServerFound(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (string.IsNullOrWhiteSpace(AppHostname))
 				AppHostname = AppServers.Servers.FirstOrDefault()?.ToString();
 		}
 
-		// AppVision servers detected on local network
+		/// <summary>Gets the mDNS/UDP discovery client used to locate AppVision servers on the local network.</summary>
 		public DiscoveryClient AppServers { get; } = new DiscoveryClient();
+		/// <summary>Returns <see langword="true"/> when hostname, username and password are all non-empty.</summary>
 		bool CanGotoDiscoveryPage() => !StringExtensions.IsNullOrWhiteSpace(AppHostname, AppUsername, AppPassword);
 
+		/// <summary>
+		/// Logs in to AppVision (blocking with a wait cursor), then navigates to
+		/// <see cref="DiscoveryPage"/> and starts background device scanning.
+		/// On login failure returns to <see cref="LoginAppPage"/>.
+		/// </summary>
 		async void GotoDiscoveryPage()
 		{
 			try
@@ -120,7 +152,9 @@ namespace WizardSample
 			*/
 		}
 
-		// manually add a device 
+		/// <summary>
+		/// Opens <see cref="AddDeviceDialog"/> and, if confirmed, appends the new device to <see cref="Devices"/>.
+		/// </summary>
 		void AddDevice()
 		{
 			var device = new Device();
@@ -129,8 +163,11 @@ namespace WizardSample
 			Devices.Add(device);
 		}
 
-
+		/// <summary>Returns <see langword="true"/> when at least one device is selected in the discovery grid.</summary>
 		bool CanGotoDeviceLoginPage() => SelectedDevice != null;
+		/// <summary>
+		/// Stops any running discovery, then navigates to <see cref="DeviceLoginPage"/>.
+		/// </summary>
 		void GotoDeviceLoginPage()
 		{
 			StopDiscovery(); // if discovery is not done yet
@@ -143,6 +180,10 @@ namespace WizardSample
 			*/
 		}
 
+		/// <summary>
+		/// Logs in to the selected device (blocking with a wait cursor), navigates to
+		/// <see cref="DeviceDetailsPage"/> and scans the device for entities asynchronously.
+		/// </summary>
 		async void GotoDeviceDetailsPage()
 		{
 			using (new WaitCursor())
@@ -164,7 +205,12 @@ namespace WizardSample
 			}
 		}
 
+		/// <summary>Returns <see langword="true"/> when at least one entity is selected in the entity grid.</summary>
 		bool CanGotoSettingsPage() => SelectedEntities.Count > 0;
+		/// <summary>
+		/// Logs out of the device gracefully, pre-fills the node name from the selected device,
+		/// and navigates to <see cref="SettingsPage"/>.
+		/// </summary>
 		void GotoSettingsPage()
 		{
 			_ = LogoutDevice(); // optional. graceful log off
@@ -175,6 +221,10 @@ namespace WizardSample
 			CurrentPage = new SettingsPage();
 		}
 
+		/// <summary>
+		/// Opens a file picker pre-filtered to AppVision XAML symbol files,
+		/// converts the chosen path to relative and stores it in <see cref="EntitySymbol"/>.
+		/// </summary>
 		void BrowseSymbol()
 		{
 			var dlg = new OpenFileDialog
@@ -194,7 +244,11 @@ namespace WizardSample
 			EntitySymbol = symbol;
 		}
 
+		/// <summary>Returns <see langword="true"/> when both <see cref="ProtocolName"/> and <see cref="NodeName"/> are non-empty.</summary>
 		bool CanGotoSummaryPage() => !StringExtensions.IsNullOrWhiteSpace(ProtocolName, NodeName);
+		/// <summary>
+		/// Composes the import summary into <see cref="Details"/> and navigates to <see cref="SummaryPage"/>.
+		/// </summary>
 		void GotoSummaryPage()
 		{
 			// compose the summary as you like 
@@ -214,7 +268,10 @@ namespace WizardSample
 		}
 
 
-		// start updating appvision config and switch to complete page when it's over
+		/// <summary>
+		/// Navigates to <see cref="ImportPage"/>, runs the import asynchronously,
+		/// then navigates to <see cref="CompletedPage"/> when finished (successfully or not).
+		/// </summary>
 		async void GotoImportPage()
 		{
 			CurrentPage = new ImportPage();
@@ -234,41 +291,51 @@ namespace WizardSample
 
 		#region AppServer
 
+		/// <summary>AppVision SDK client used for configuration read/write during the wizard.</summary>
 		AppServer appServer;
 
+		/// <summary>Gets or sets the AppVision server URL (persisted in user settings).</summary>
 		public string AppHostname
 		{
 			get { return Settings.Default.AppHostname; }
 			set { Settings.Default.AppHostname = value; }
 		}
+		/// <summary>Gets or sets the AppVision login name (persisted in user settings).</summary>
 		public string AppUsername
 		{
 			get { return Settings.Default.AppUsername; }
 			set { Settings.Default.AppUsername = value; }
 		}
+		/// <summary>Gets or sets the AppVision password (not persisted).</summary>
 		public string AppPassword { get; set; }
 
 		#endregion
 
 		#region Devices 
 
+		/// <summary>Gets or sets the network address of the device to import (persisted in user settings).</summary>
 		public string DeviceHostname
 		{
 			get { return Settings.Default.DeviceHostname; }
 			set { Settings.Default.DeviceHostname = value; }
 		}
+		/// <summary>Gets or sets the device login name (persisted in user settings).</summary>
 		public string DeviceUsername
 		{
 			get { return Settings.Default.DeviceUsername; }
 			set { Settings.Default.DeviceUsername = value; }
 		}
+		/// <summary>Gets or sets the device password (not persisted).</summary>
 		public string DevicePassword { get; set; }
 
+		/// <summary>Gets the list of discovered devices shown in the discovery grid.</summary>
 		public ObservableCollection<Device> Devices { get; } = new ObservableCollection<Device>();
 
 		// <todo> use SelectedDevices collection if batch import is suppported
 		// use SelectedDevice object if device must be imported one by one.
+		/// <summary>Gets the devices checked by the user in the discovery grid.</summary>
 		public ObservableCollection<Device> SelectedDevices { get; } = new ObservableCollection<Device>();
+		/// <summary>Gets the first selected device (shortcut for single-device import scenarios).</summary>
 		public Device SelectedDevice
 		{
 			//get; set;
@@ -276,23 +343,28 @@ namespace WizardSample
 			set { }
 		}
 
+		/// <summary>Gets the entities scanned from the selected device.</summary>
 		public ObservableCollection<Entity> Entities { get; } = new ObservableCollection<Entity>();
+		/// <summary>Gets the entities checked by the user for import.</summary>
 		public ObservableCollection<Entity> SelectedEntities { get; } = new ObservableCollection<Entity>();
 
 		#endregion
 
 		#region NodeName,NodeDescription
 
+		/// <summary>Gets or sets the AppVision driver protocol name used as the executable prefix (persisted).</summary>
 		public string ProtocolName
 		{
 			get { return Settings.Default.ProtocolName; }
 			set { Settings.Default.ProtocolName = value; }
 		}
+		/// <summary>Gets or sets the root node variable name created in AppVision (persisted).</summary>
 		public string NodeName
 		{
 			get { return Settings.Default.NodeName; }
 			set { Settings.Default.NodeName = value; }
 		}
+		/// <summary>Gets or sets the description for the root node variable (persisted).</summary>
 		public string NodeDescription
 		{
 			get { return Settings.Default.NodeDescription; }
@@ -303,9 +375,10 @@ namespace WizardSample
 		//public string OtherSettings { get; set; }
 
 		// example:
+		/// <summary>Gets or sets whether to create a variable group for the imported device.</summary>
 		public bool CreateGroup { get; set; }
 
-
+		/// <summary>Gets or sets the relative XAML symbol path assigned to each entity variable.</summary>
 		public string EntitySymbol // set an UI symbol for each entity variables
 		{
 			get { return _symbol; }
@@ -314,20 +387,20 @@ namespace WizardSample
 		string _symbol;
 		#endregion
 
-		// summary and import logs 
+		/// <summary>Gets the log lines displayed in the summary and import pages.</summary>
 		public ObservableCollection<string> Details { get; } = new ObservableCollection<string>();
-		// completion message
+		/// <summary>Gets or sets the completion message displayed on the final page.</summary>
 		public string Message { get; set; }
-		// controls completion icon
+		/// <summary>Gets or sets whether the import completed successfully (controls the completion icon).</summary>
 		public bool Success { get; set; } = true;
-		// progress bar [0-1]
+		/// <summary>Gets or sets the import progress in the range [0, 1] for the progress bar.</summary>
 		public double Progress
 		{
 			get { return _progress; }
 			set { _progress = value; Notify(); }
 		}
 		double _progress;
-		// progress bar indeterminate
+		/// <summary>Gets or sets a value indicating whether an indeterminate operation is in progress.</summary>
 		public bool IsBusy
 		{
 			get { return _busy; }
@@ -338,6 +411,10 @@ namespace WizardSample
 
 		#region LoginApp(),LogoutApp()
 
+		/// <summary>
+		/// Connects and logs in to the AppVision server on a background thread,
+		/// then persists the hostname and username to user settings.
+		/// </summary>
 		Task LoginApp()
 		{
 			return Task.Run(() =>
@@ -347,6 +424,7 @@ namespace WizardSample
 				Settings.Default.Save(); // store host + user
 			});
 		}
+		/// <summary>Closes the AppVision connection.</summary>
 		void LogoutApp()
 		{
 			appServer.Close();
@@ -355,6 +433,11 @@ namespace WizardSample
 
 		#region Discovery
 
+		/// <summary>
+		/// Discovers network devices and populates <see cref="Devices"/>.
+		/// The demo implementation pings every host on the local subnet; replace with
+		/// a real protocol-specific scan for production use.
+		/// </summary>
 		async Task DiscoverDevices()
 		{
 			IsBusy = true;
@@ -414,6 +497,7 @@ namespace WizardSample
 		// </demo>
 
 
+		/// <summary>Cancels any in-progress discovery scan (stub — implement for real hardware).</summary>
 		void StopDiscovery()
 		{
 			// todo
@@ -423,6 +507,10 @@ namespace WizardSample
 		#endregion
 
 		#region LoginDevice(),LogoutDevice()
+		/// <summary>
+		/// Authenticates with the selected device.
+		/// Replace the demo <see cref="Task.Delay"/> with a real protocol login call.
+		/// </summary>
 		Task LoginDevice()
 		{
 			// <todo>
@@ -435,12 +523,18 @@ namespace WizardSample
 			return Task.Delay(2000);
 		}
 
+		/// <summary>Closes the session with the device gracefully (stub — implement as needed).</summary>
 		async Task LogoutDevice()
 		{
 			// <todo>
 			// log out device
 		}
 
+		/// <summary>
+		/// Fetches entities from the connected device and populates <see cref="Entities"/>.
+		/// The demo implementation lists files from the common documents folder; replace with
+		/// a real device enumeration call.
+		/// </summary>
 		async Task ScanDevice()
 		{
 			// <todo> get entities from selected device 
@@ -479,20 +573,22 @@ namespace WizardSample
 
 		#region Utils
 
+		/// <summary>Appends a message to <see cref="Details"/> and writes it to the AppVision log.</summary>
 		void Log(string s)
 		{
 			Helper.Log(s);
 			InvokeUI(() => Details.Add(s));
 		}
 
-		// call on UI thread
+		/// <summary>Marshals an action to the WPF UI thread via the application dispatcher.</summary>
 		void InvokeUI(Action action) => App.Current.Dispatcher.InvokeAsync(action);
 
-
+		/// <summary>Raises <see cref="PropertyChanged"/> on the UI thread for the calling member.</summary>
 		protected void Notify([CallerMemberName] string propertyName = null)
 		{
 			InvokeUI(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
 		}
+		/// <inheritdoc/>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion

@@ -1,4 +1,4 @@
-﻿# DriverMinimal â€” Minimal AppVision Driver
+﻿# DriverMinimal — Minimal AppVision Driver
 
 ## Overview
 
@@ -12,7 +12,7 @@ The driver logs every variable state change to the console.
 It does not manage device objects, alarms, or value caching.
 
 **References:** `appSDK.dll` (`Prysm.AppVision.SDK`)  
-**Output:** `DriverMinimal.exe` â†’ `AppVision 4\Bin\`
+**Output:** `DriverMinimal.exe` → `AppVision 4\Bin\`
 
 ---
 
@@ -66,7 +66,7 @@ _server.VariableManager.Set("NodeName.VarName", value);
 
 | Member | Description |
 |---|---|
-| `.Open(host)` | Connect â€” empty string = localhost |
+| `.Open(host)` | Connect — empty string = localhost |
 | `.Login(protocolName)` | Register as the protocol handler |
 | `.AddFilterNotifications(filter)` | Subscribe to variable events |
 | `.StartNotifications(false)` | Start receiving state-change callbacks |
@@ -80,7 +80,7 @@ _server.VariableManager.Set("NodeName.VarName", value);
 ## Configuration in AppVision
 
 ```
-Configurator â€º Protocols â€º Add
+Configurator › Protocols › Add
     Name:    DriverMinimal
     Manager: DriverMinimal.exe
 ```
@@ -90,14 +90,14 @@ Configurator â€º Protocols â€º Add
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `DriverMinimal.exe` â†’ `AppVision 4\Bin\`.  
-3. Start the protocol from AppVision â€” the driver is launched automatically.
+2. Copy `DriverMinimal.exe` → `AppVision 4\Bin\`.  
+3. Start the protocol from AppVision — the driver is launched automatically.
 
 ---
 
 ## Debugging
 
-Set **Project Properties â€º Debug â€º Command line arguments** to:
+Set **Project Properties › Debug › Command line arguments** to:
 
 ```
 DriverMinimal[@localhost]
@@ -110,6 +110,6 @@ Every received variable state change is printed to the console.
 ## Learning Path
 
 ```
-DriverMinimal  â†’  DriverSimple  â†’  DriverAdvanced
+DriverMinimal  →  DriverSimple  →  DriverAdvanced
 No GUI             WPF + 8 I/O      Device pattern, alarms, caching
 ```

@@ -14,6 +14,12 @@ using System.Windows.Shapes;
 
 namespace WizardSample
 {
+    /// <summary>
+    /// Modal dialog that lets the operator manually enter device credentials
+    /// when automatic discovery does not find a device.
+    /// The dialog's <see cref="Window.DataContext"/> must be a <see cref="Device"/> instance;
+    /// it is populated via the form and the caller reads it after <see cref="Window.DialogResult"/> is <see langword="true"/>.
+    /// </summary>
     public partial class AddDeviceDialog : Window
     {
         public AddDeviceDialog()
@@ -21,6 +27,7 @@ namespace WizardSample
             InitializeComponent();
         }
 
+        /// <summary>Confirms the dialog and returns <see cref="Window.DialogResult"/> = <see langword="true"/>.</summary>
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;

@@ -10,14 +10,24 @@ using System.Windows.Input;
 
 namespace WizardSample
 {
-    public partial class ViewModel : INotifyPropertyChanged
-    {
-        bool CanCancelImport() => _canCancel;
-        void CancelImport() => _canceling = true;
+	public partial class ViewModel : INotifyPropertyChanged
+	{
+		/// <summary>Returns <see langword="true"/> while the import has not yet committed its database changes.</summary>
+		bool CanCancelImport() => _canCancel;
+		/// <summary>Sets the cancellation flag; the import loop checks it between entity iterations.</summary>
+		void CancelImport() => _canceling = true;
 
-        bool _canceling, _canCancel = true;
+		bool _canceling, _canCancel = true;
 
-        async Task Import()
+		/// <summary>
+		/// Performs the full import on a background thread:
+		/// creates the protocol row, optionally creates a variable group,
+		/// then iterates <see cref="SelectedEntities"/> to build the corresponding AppVision
+		/// variables before saving them all in a single batch call.
+		/// </summary>
+		/// <exception cref="OperationCanceledException">Thrown when the user cancels the import.</exception>
+		/// <exception cref="Exception">Thrown when the variable quota is exceeded.</exception>
+		async Task Import()
 		{
 			// leave UI thread 
 			await Task.Delay(1).ConfigureAwait(false);
@@ -169,6 +179,10 @@ namespace WizardSample
 		}
 
 
+		/// <summary>
+		/// Ensures the AppVision protocol row exists; creates it (with icon upload) if it does not.
+		/// The protocol name is sanitised to alphanumeric characters before use.
+		/// </summary>
 		private void CreateProtocol()
 		{
 			// safe protocol name
@@ -202,6 +216,12 @@ namespace WizardSample
 			}
 		}
 
+		/// <summary>
+		/// Returns the variable group matching <paramref name="groupName"/>, creating it first if it does not exist.
+		/// </summary>
+		/// <param name="groupName">Unique name for the group (also used as the AppVision group identifier).</param>
+		/// <param name="groupDescription">Human-readable description stored with the group.</param>
+		/// <returns>The existing or newly created <see cref="GroupRow"/>.</returns>
 		private GroupRow GetOrCreateGroup(string groupName, string groupDescription)
         {
             var group = appServer.GroupManager.GetRowByName(groupName);

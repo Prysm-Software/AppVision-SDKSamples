@@ -1,4 +1,4 @@
-﻿# TwoFactorAuthentication â€” Custom 2FA Login Plugin
+﻿# TwoFactorAuthentication — Custom 2FA Login Plugin
 
 ## Overview
 
@@ -10,7 +10,7 @@ startup.
 
 ```
 1. Client sends credentials with  Authentication=TwoFactor
-2. Server validates username + password   â†’  base.Login()
+2. Server validates username + password   →  base.Login()
 3. Server generates a 4-digit code, e-mails it, returns HTTP 401
    with body  "Continuation needed"
 4. Client prompts operator for the code and re-submits with  Code=XXXX
@@ -22,7 +22,7 @@ startup.
 
 **References:** `appCommon.dll`, `appData.dll`, `appSDK.dll`,
 `appServer.dll`, `appServer.Auth.dll`  
-**Output:** `TwoFactorAuthentication.dll` â†’ `AppVision 4\Bin\`
+**Output:** `TwoFactorAuthentication.dll` → `AppVision 4\Bin\`
 
 ---
 
@@ -48,7 +48,7 @@ public class TwoFactor : AppUserLogin
     public override UserRow Login(NameValue[] args)
     {
         UserRow user = base.Login(args); // validates name + password
-        // â€¦ second-factor logic â€¦
+        // … second-factor logic …
         return user;
     }
 }
@@ -65,7 +65,7 @@ string name = Helper.GetParameter("Name",           args); // username
 string pwd  = Helper.GetParameter("Password",       args); // password
 ```
 
-### 3. Continuation protocol â€” HTTP 401
+### 3. Continuation protocol — HTTP 401
 
 When the first factor succeeds but the code has not yet been provided:
 
@@ -111,7 +111,7 @@ void Housekeeping()
 Helper.SendMail(user.Email, "AppVision login code", $"Your code: {code}");
 ```
 
-Requires valid SMTP settings in AppVision (**Options â€º Mail**).
+Requires valid SMTP settings in AppVision (**Options › Mail**).
 
 ---
 
@@ -121,7 +121,7 @@ Requires valid SMTP settings in AppVision (**Options â€º Mail**).
 
 | Member | Description |
 |---|---|
-| `.Name` | Provider identifier â€” matched against `Authentication=` arg |
+| `.Name` | Provider identifier — matched against `Authentication=` arg |
 | `.Initialize(IServer)` | One-time initialisation at server startup |
 | `.Login(NameValue[] args)` | Authentication entry point |
 | `base.Login(args)` | Default username / password check |
@@ -144,15 +144,15 @@ new LoginException(LoginResult.IncorrectUserPassword, "message")
 ## Configuration in AppVision
 
 ```
-AppVision 4\Bin\   â† copy TwoFactorAuthentication.dll here
+AppVision 4\Bin\   ← copy TwoFactorAuthentication.dll here
 
-Configurator â€º Options â€º Authentication â€º Login provider
+Configurator › Options › Authentication › Login provider
     TwoFactorAuthentication.dll#TwoFactorAuthentication.TwoFactor
 
-Configurator â€º Options â€º Mail â€º SMTP settings
+Configurator › Options › Mail › SMTP settings
     Configure a valid SMTP server
 
-Security â€º Users â€º [user] â€º Email
+Security › Users › [user] › Email
     Ensure each user has a valid e-mail address
 ```
 
@@ -161,7 +161,7 @@ Security â€º Users â€º [user] â€º Email
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `TwoFactorAuthentication.dll` â†’ `AppVision 4\Bin\`.  
+2. Copy `TwoFactorAuthentication.dll` → `AppVision 4\Bin\`.  
 3. **Restart the AppVision server** to load the plugin.
 
 ---

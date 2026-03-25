@@ -39,20 +39,24 @@ namespace DriverAppControl
 		/// </summary>
 		internal event TraceEventHandler TraceEvent;
 
+		/// <summary>Gets whether the communication channel to the controller is open.</summary>
 		internal bool IsOpened
 		{
 			get { return _channel.IsOpened; }
 		}
+		/// <summary>AppVision variable row ID.</summary>
 		internal int Id
 		{
 			get;
 			private set;
 		}
+		/// <summary>AppVision variable name (e.g. <c>Access.C001</c>).</summary>
 		internal string Name
 		{
 			get;
 			private set;
 		}
+		/// <summary>Network address of the physical controller.</summary>
 		internal string Address
 		{
 			get { return _address; }
@@ -64,13 +68,22 @@ namespace DriverAppControl
 		public static Action<string, bool> ErrorDelegate = null;
 		#endregion
 
-		// access controler capacities
-		internal const int MAX_READER = 4;
-		internal const int MAX_HOLIDAY = 24;
-		internal const int MAX_TIMETABLE = 48;
-		internal const int MAX_USER = 10000;
-		internal const int MAX_PROFILE = 256;
+		// access controller hardware capacities
+		internal const int MAX_READER = 4;		// readers per controller
+		internal const int MAX_HOLIDAY = 24;	// public holiday slots
+		internal const int MAX_TIMETABLE = 48;	// timetable programme slots
+		internal const int MAX_USER = 10000;	// cardholder entries
+		internal const int MAX_PROFILE = 256;	// access profile slots
 
+		/// <summary>
+		/// Initialises the device with its AppVision identity and communication settings.
+		/// </summary>
+		/// <param name="id">AppVision variable row ID.</param>
+		/// <param name="name">AppVision variable name used to build sub-variable names.</param>
+		/// <param name="address">Network address of the physical controller.</param>
+		/// <param name="parameters">Key=value parameter string from the AppVision variable configuration.</param>
+		/// <param name="timeout">Communication timeout in milliseconds.</param>
+		/// <param name="maxRetry">Maximum number of retries before raising a connection error.</param>
 		internal Device(int id, string name, string address, string parameters, int timeout, int maxRetry)
 		{
 			Id = id;
@@ -172,6 +185,10 @@ namespace DriverAppControl
 		#endregion
 
 		#region ReadEvents()
+		/// <summary>
+		/// Reads incoming hardware events from the controller and raises the appropriate
+		/// <see cref="InputChanged"/> or <see cref="AccessControlEvent"/> events.
+		/// </summary>
 		private void ReadEvents()
 		{
 			// todo:
@@ -187,6 +204,9 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region OnConnect()
+		/// <summary>
+		/// Updates the connection state and raises <see cref="ConnectChanged"/> if the state changed.
+		/// </summary>
 		void OnConnect(ConnectType connected, string info = "")
 		{
 			if (_connected != connected)
@@ -217,6 +237,7 @@ namespace DriverAppControl
 					Download((command as CommandDownloadInfo).Parameter);
 			}
 		}
+		/// <summary>Processes a direct action command (e.g. door open/close) sent from AppVision.</summary>
 		void ProcessCommandAction(CommandAction cmd)
 		{
 			// todo:
@@ -323,6 +344,11 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region AddDeviceIndex()
+		/// <summary>
+		/// Appends a new <see cref="DeviceIndex"/> entry mapping <paramref name="appId"/> to the
+		/// next available device-side sequential ID.
+		/// </summary>
+		/// <returns>The newly assigned device ID.</returns>
 		private int AddDeviceIndex(ref DeviceIndex[] ids, int appId)
 		{
 			int deviceId = GetNextDeviceId(ids);
@@ -331,6 +357,7 @@ namespace DriverAppControl
 			ids = list.ToArray();
 			return deviceId;
 		}
+		/// <summary>Returns the next sequential device ID (max existing + 1, starting at 1).</summary>
 		private int GetNextDeviceId(DeviceIndex[] ids)
 		{
 			if( ids.Length==0)
@@ -520,7 +547,10 @@ namespace DriverAppControl
 				return count;
 			}
 		}
-		// download a user modification
+		/// <summary>
+		/// Downloads a single user modification: looks up the person's access rights, refreshes
+		/// (or removes) the entry on the device and updates the profile table if needed.
+		/// </summary>
 		void DownloadUser(IEnumerable<DeviceIndex> userIndexes, IEnumerable<DeviceIndex> timetableIndexes, List<DeviceProfile> profiles, int personId)
 		{
 			Datalayer dl = new Datalayer(Driver.Server);
@@ -551,6 +581,10 @@ namespace DriverAppControl
 			DownloadUser(userIndexes, right.Person, profile.Id);
 		}
 
+		/// <summary>
+		/// Returns a copy of <paramref name="profile"/> where each timetable ID has been
+		/// translated from the AppVision ID to the device-side sequential ID.
+		/// </summary>
 		private DeviceProfile BuildProfileWithDeviceIds(IEnumerable<DeviceIndex> timetableIndexes,DeviceProfile profile)
 		{
 			var profile2 = new DeviceProfile { Id = profile.Id, TimetableMap = new TimetableAndValidity[profile.TimetableMap.Length] };
@@ -564,6 +598,9 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region DownloadDeleteUser()
+		/// <summary>
+		/// Removes a person from the device and cleans up their entries in the user index file.
+		/// </summary>
 		private void DownloadDeleteUser(IEnumerable<DeviceIndex> userIndexes, int personId)
 		{
 			Trace("DownloadDeleteUser "+personId, true);
@@ -727,6 +764,7 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region LoadProfiles(),SaveProfiles()
+		/// <summary>Deserialises the access-profile cache from <c>{name}_P.xml</c>.</summary>
 		DeviceProfile[] LoadProfiles()
 		{
 			try
@@ -746,6 +784,7 @@ namespace DriverAppControl
 			}
 			return null;
 		}
+		/// <summary>Serialises the access-profile cache to <c>{name}_P.xml</c>.</summary>
 		void SaveProfiles(DeviceProfile[] profiles)
 		{
 			try
@@ -763,6 +802,7 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region LoadTimetableIndexes(),SaveTimetableIndexes(),LoadUserIndexes(),SaveUserIndexes()
+		/// <summary>Deserialises the timetable index map from <c>{name}_TID.xml</c>.</summary>
 		DeviceIndex[] LoadTimetableIndexes()
 		{
 			try
@@ -782,6 +822,7 @@ namespace DriverAppControl
 			}
 			return new DeviceIndex[]{};
 		}
+		/// <summary>Deserialises the user index map from <c>{name}_UID.xml</c>.</summary>
 		DeviceIndex[] LoadUserIndexes()
 		{
 			try
@@ -801,6 +842,7 @@ namespace DriverAppControl
 			}
 			return new DeviceIndex[] { };
 		}
+		/// <summary>Serialises the timetable index map to <c>{name}_TID.xml</c>.</summary>
 		void SaveTimetableIndexes(DeviceIndex[] timetableIds)
 		{
 			try
@@ -816,6 +858,7 @@ namespace DriverAppControl
 				Error("SaveTimetableIndexes(): " + ex.Message);
 			}
 		}
+		/// <summary>Serialises the user index map to <c>{name}_UID.xml</c>.</summary>
 		void SaveUserIndexes(DeviceIndex[] userIds)
 		{
 			try
@@ -833,10 +876,12 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region GetDeviceId(),GetDeviceIds()
+		/// <summary>Returns the first device ID mapped from <paramref name="appId"/>, or 0 if not found.</summary>
 		private int GetDeviceId(IEnumerable<DeviceIndex> dids, int appId)
 		{
 			return (from did in dids where did.AppId == appId select did.DeviceId).FirstOrDefault();
 		}
+		/// <summary>Returns all device IDs mapped from <paramref name="appId"/> (one per badge).</summary>
 		private IEnumerable<int> GetDeviceIds(IEnumerable<DeviceIndex> dids, int appId)
 		{
 			return (from did in dids where did.AppId == appId select did.DeviceId);
@@ -845,6 +890,7 @@ namespace DriverAppControl
 		#endregion
 
 		#region Trace(),Error()
+		/// <summary>Logs a diagnostic message; optionally raises a <see cref="TraceEvent"/>.</summary>
 		void Trace(string text, bool sendToServer = false)
 		{
 			TraceDelegate("[" + Name + "]: " + text, false);
@@ -852,6 +898,7 @@ namespace DriverAppControl
 				if (TraceEvent != null)
 					TraceEvent(this, new TraceEventArgs(Name, text, -1));
 		}
+		/// <summary>Logs an error message; optionally raises a <see cref="TraceEvent"/> with severity 1.</summary>
 		void Error(string text, bool sendToServer = true)
 		{
 			ErrorDelegate("[" + Name + "]: " + text, false);
@@ -866,6 +913,7 @@ namespace DriverAppControl
 		Thread _thread;
 		ChannelService _channel;
 
+		/// <summary>Lazily loaded timetable index map (AppVision ID → device ID).</summary>
 		DeviceIndex[] TimetableIndexes
 		{
 			get
@@ -909,9 +957,11 @@ namespace DriverAppControl
 		public int Id
 		{ get; set; }
 
+		/// <summary>Raw timetable data packed in the device-specific format.</summary>
 		public int[] Data
 		{ get; set; }
 
+		/// <summary>Converts an AppVision <see cref="Timetable"/> to the device representation.</summary>
 		public DeviceTimetable(int deviceId, Timetable t)
 		{
 			Id = deviceId;
@@ -970,6 +1020,7 @@ namespace DriverAppControl
 	}
 	#endregion
 	#region class DeviceUser
+	/// <summary>Person entry transferred to an access-control device.</summary>
 	public class DeviceUser
 	{
 		/// <summary>
@@ -978,23 +1029,30 @@ namespace DriverAppControl
 		public int Id
 		{ get; set; }
 
+		/// <summary>Personal identification number.</summary>
 		public string PinCode
 		{ get; set; }
+		/// <summary>Physical badge code (may be empty when entry is PIN-only).</summary>
 		public string BadgeCode
 		{ get; set; }
+		/// <summary>Display name sent to the device.</summary>
 		public string FullName
 		{ get; set; }
+		/// <summary>Validity start date.</summary>
 		public DateTime DateStart
 		{ get; set; }
+		/// <summary>Validity end date.</summary>
 		public DateTime DateEnd
 		{ get; set; }
 
+		/// <summary>Index of the access profile assigned to this user.</summary>
 		public int ProfileId
 		{ get; set; }
 	}
 	#endregion
 
 	#region enum DeviceEventType
+	/// <summary>Identifies the type of hardware event reported by a device input.</summary>
 	public enum DeviceEventType
 	{
 		None,
@@ -1006,7 +1064,9 @@ namespace DriverAppControl
 	#endregion
 
 	#region TraceEventHandler & TraceEventArgs
+	/// <summary>Delegate for device trace and error notifications.</summary>
 	public delegate void TraceEventHandler(object sender, TraceEventArgs e);
+	/// <summary>Data for a trace or error message raised by a device.</summary>
 	public class TraceEventArgs : EventArgs
 	{
 		public TraceEventArgs(string deviceName, string text, int severity)
@@ -1021,7 +1081,9 @@ namespace DriverAppControl
 	}
 	#endregion
 	#region InputChangedEventHandler & InputChangedEventArgs
+	/// <summary>Delegate for door/zone state or mode change notifications.</summary>
 	public delegate void InputChangedEventHandler(object sender, InputChangedEventArgs e);
+	/// <summary>Data for an input-state change event (door state or door mode).</summary>
 	public class InputChangedEventArgs : EventArgs
 	{
 		public InputChangedEventArgs(string deviceName, DeviceEventType type, int inputId, int inputValue, DateTimeOffset dateUtc)
@@ -1041,7 +1103,9 @@ namespace DriverAppControl
 	public enum InputType { Group, Zone, Output };
 	#endregion
 	#region ConnectChangedEventHandler & ConnectChangedEventArgs & ConnectType
+	/// <summary>Delegate for device connection-state change notifications.</summary>
 	public delegate void ConnectChangedEventHandler(object sender, ConnectChangedEventArgs e);
+	/// <summary>Data for a connection-state change event.</summary>
 	public class ConnectChangedEventArgs : EventArgs
 	{
 		public ConnectChangedEventArgs(string deviceName, ConnectType connected, string info)
@@ -1057,7 +1121,9 @@ namespace DriverAppControl
 	public enum ConnectType { Unknown = 0, Connected = 1, Disconnected = 2, Default = 3, Downloading = 4 };
 	#endregion
 	#region AccessControlEventHandler & AccessControlEventArgs
+	/// <summary>Delegate for badge-read (access granted or denied) notifications.</summary>
 	public delegate void AccessControlEventHandler(object sender, AccessControlEventArgs e);
+	/// <summary>Data for a badge-read event from an access-control reader.</summary>
 	public class AccessControlEventArgs : EventArgs
 	{
 		public AccessControlEventArgs(string deviceName, ReaderStatus status, int userId, string badgeId, DateTimeOffset dateUtc)

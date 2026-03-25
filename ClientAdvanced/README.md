@@ -1,4 +1,4 @@
-﻿# ClientAdvanced â€” Advanced AppVision Client
+﻿# ClientAdvanced — Advanced AppVision Client
 
 ## Overview
 
@@ -15,7 +15,7 @@ Compared to [ClientSimple](../ClientSimple/README.md), this sample:
 - Provides a clean disconnect flow including unsubscribing from events.
 
 **References:** `appCommon.dll`, `appSDK.dll`, `appUI.dll`  
-**Output:** `ClientAdvanced.exe` â€” standalone WPF application
+**Output:** `ClientAdvanced.exe` — standalone WPF application
 
 ---
 
@@ -33,7 +33,7 @@ Compared to [ClientSimple](../ClientSimple/README.md), this sample:
 ### 1. `Sdk.Server` singleton
 
 `Sdk.Server` is a static `AppServer` instance shared across the entire process.  
-All AppVision WPF controls reference `Sdk.Server` internally â€” always connect it
+All AppVision WPF controls reference `Sdk.Server` internally — always connect it
 **before** loading any embedded controls.
 
 ```csharp
@@ -44,7 +44,7 @@ await Sdk.Server.LoadDatabase(true);
 
 ### 2. `RColor.Load(true)`
 
-Called in the **constructor** before `InitializeComponent()` â€” loads the AppVision
+Called in the **constructor** before `InitializeComponent()` — loads the AppVision
 colour resource dictionary so embedded controls use the correct palette:
 
 ```csharp
@@ -94,7 +94,7 @@ the next launch.
 
 ## AppVision SDK Reference
 
-### `Sdk.Server` (static `AppServer` â€” `appSDK.dll`)
+### `Sdk.Server` (static `AppServer` — `appSDK.dll`)
 
 | Member | Description |
 |---|---|
@@ -141,6 +141,6 @@ the next launch.
 ## Learning Path
 
 ```
-ClientSimple  â†’  ClientAdvanced  â†’  WpfControlSimple / WpfControlAdvanced
+ClientSimple  →  ClientAdvanced  →  WpfControlSimple / WpfControlAdvanced
 Standalone        Sdk singleton        Embedded custom controls
 ```

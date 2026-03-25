@@ -1,4 +1,4 @@
-﻿# PlayerMetadata â€” Video Metadata / AI Overlay Provider
+﻿# PlayerMetadata — Video Metadata / AI Overlay Provider
 
 ## Overview
 
@@ -11,7 +11,7 @@ and annotates each frame on a WPF `Canvas`.
 
 **References:** `appSDK.dll`, `appVideo.dll`, `Prysm.AppVision.FFmpeg`,
 `Alturos.Yolo` (NuGet)  
-**Output:** `PlayerMetadata.dll` â†’ `AppVision 4\Bin\`
+**Output:** `PlayerMetadata.dll` → `AppVision 4\Bin\`
 
 ---
 
@@ -19,7 +19,7 @@ and annotates each frame on a WPF `Canvas`.
 
 | File | Role |
 |---|---|
-| `PlayerMetadata.cs` | `IPlayerOverlay` implementation: decode â†’ detect â†’ draw |
+| `PlayerMetadata.cs` | `IPlayerOverlay` implementation: decode → detect → draw |
 
 ---
 
@@ -126,7 +126,7 @@ of which server the client is connected to.
 ## Configuration in AppVision
 
 ```
-Configurator â€º Variables â€º Add node
+Configurator › Variables › Add node
     Address:  relative/path/to/video.mp4   (under Config/Param/Client/)
     Metadata: PlayerMetadata.dll#PlayerMetadata.PlayerMetadata
 ```
@@ -139,13 +139,13 @@ Configurator â€º Variables â€º Add node
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `PlayerMetadata.dll` â†’ `AppVision 4\Bin\`.  
-3. Copy YOLO model files â†’ `AppVision 4\Bin\`.  
+2. Copy `PlayerMetadata.dll` → `AppVision 4\Bin\`.  
+3. Copy YOLO model files → `AppVision 4\Bin\`.  
 4. Ensure FFmpeg native binaries are present.
 
 ---
 
 ## See Also
 
-- [PlayerSimple](../PlayerSimple/README.md) â€” simple live player
-- [PlayerAdvanced](../PlayerAdvanced/README.md) â€” full player with playback, PTZ, export
+- [PlayerSimple](../PlayerSimple/README.md) — simple live player
+- [PlayerAdvanced](../PlayerAdvanced/README.md) — full player with playback, PTZ, export

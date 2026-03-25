@@ -1,4 +1,4 @@
-﻿# OverlaySample â€” Overlay Manager Tool
+﻿# OverlaySample — Overlay Manager Tool
 
 ## Overview
 
@@ -17,7 +17,7 @@ AppVision clients in real time. Common use cases: moving vehicles, personnel
 tracking, asset positioning on a GIS map.
 
 **References:** `appCommon.dll`, `appData.dll`, `appSDK.dll`  
-**Output:** `OverlayManager.exe` â†’ `AppVision 4\Bin\`
+**Output:** `OverlayManager.exe` → `AppVision 4\Bin\`
 
 ---
 
@@ -54,7 +54,7 @@ server.ClientManager.OverlayUpdated += OnOverlayUpdated;
 server.AddFilterNotifications("NotificationType=Overlay");
 server.StartNotifications(false);
 
-// Now safe to list â€” any changes during the list will be caught by the event
+// Now safe to list — any changes during the list will be caught by the event
 var overlays = await server.ClientManager.GetOverlays();
 ```
 
@@ -125,14 +125,14 @@ grid.CommandBindings.Add(new CommandBinding(
 | `.Id` | Unique identifier |
 | `.Symbol` | Path to WPF symbol file |
 | `.Target` | Synoptic path or `"@geo"` |
-| `.Location` | `System.Windows.Point` â€” X=longitude, Y=latitude |
+| `.Location` | `System.Windows.Point` — X=longitude, Y=latitude |
 
 ---
 
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `OverlayManager.exe` â†’ `AppVision 4\Bin\`.
+2. Copy `OverlayManager.exe` → `AppVision 4\Bin\`.
 
 ---
 
@@ -145,5 +145,5 @@ Connection string format: `http://user:password@hostname`
 
 ## See Also
 
-- [DriverOverlay](../DriverOverlay/README.md) â€” push overlays from a driver
-- [MapProvider](../MapProvider/README.md) â€” custom GIS map background
+- [DriverOverlay](../DriverOverlay/README.md) — push overlays from a driver
+- [MapProvider](../MapProvider/README.md) — custom GIS map background

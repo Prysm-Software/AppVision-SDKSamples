@@ -1,4 +1,4 @@
-﻿# WizardSample â€” AppVision Configuration Wizard
+﻿# WizardSample — AppVision Configuration Wizard
 
 ## Overview
 
@@ -9,7 +9,7 @@ Use this as a starting template for a driver-specific setup wizard.
 Replace every `<todo>` placeholder with device-specific logic.
 
 **References:** `appCommon.dll`, `appData.dll`, `appSDK.dll`  
-**Output:** `WizardSample.exe` â€” standalone WPF application
+**Output:** `WizardSample.exe` — standalone WPF application
 
 ---
 
@@ -38,21 +38,21 @@ Replace every `<todo>` placeholder with device-specific logic.
 
 ```
 WelcomePage
-    â”‚
-AppLoginPage    â† skip if credentials are in the command line (http://user:pwd@host)
-    â”‚
-DiscoveryPage   â† remove if the device type has no discovery mechanism
-    â”‚
-DeviceLoginPage â† remove if the device requires no authentication
-    â”‚
+    │
+AppLoginPage    ← skip if credentials are in the command line (http://user:pwd@host)
+    │
+DiscoveryPage   ← remove if the device type has no discovery mechanism
+    │
+DeviceLoginPage ← remove if the device requires no authentication
+    │
 DeviceDetailsPage
-    â”‚
+    │
 SettingsPage
-    â”‚
+    │
 SummaryPage
-    â”‚
+    │
 ImportPage
-    â”‚
+    │
 CompletedPage
 ```
 
@@ -77,12 +77,12 @@ private void GotoDiscoveryPage()
 ### 2. Shared state via `ViewModel`
 
 Device details discovered in early pages are stored as `ViewModel` properties
-(`DeviceHostname`, `DeviceUsername`, `SelectedEntities`, â€¦) and read by
+(`DeviceHostname`, `DeviceUsername`, `SelectedEntities`, …) and read by
 later pages without explicit parameter passing.
 
 ### 3. `AppServer` in wizard context
 
-The wizard uses its **own** `AppServer` instance (not `Sdk.Server`) â€” it is a
+The wizard uses its **own** `AppServer` instance (not `Sdk.Server`) — it is a
 standalone tool, not a control hosted by the AppVision client:
 
 ```csharp
@@ -185,5 +185,5 @@ protocol and variables were created.
 
 ## See Also
 
-- [DriverAdvanced](../DriverAdvanced/README.md) â€” the driver the wizard would typically configure
-- [ClientAdvanced](../ClientAdvanced/README.md) â€” uses `Sdk.Server` (contrast with wizard `AppServer`)
+- [DriverAdvanced](../DriverAdvanced/README.md) — the driver the wizard would typically configure
+- [ClientAdvanced](../ClientAdvanced/README.md) — uses `Sdk.Server` (contrast with wizard `AppServer`)

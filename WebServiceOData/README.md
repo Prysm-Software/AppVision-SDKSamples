@@ -1,4 +1,4 @@
-﻿# WebServiceOData â€” AppVision OData Web Service Sample
+﻿# WebServiceOData — AppVision OData Web Service Sample
 
 ## Overview
 
@@ -13,10 +13,10 @@ Operations demonstrated:
 4. Add a timetable variable with an XML schedule expression.
 
 > Use this as a reference for any integration that needs to read or modify
-> the AppVision configuration database programmatically â€” without the SDK.
+> the AppVision configuration database programmatically — without the SDK.
 
 **References:** `System.Data.Services.Client`, `ParamServiceReference` (generated proxy)  
-**Output:** `WebServiceOData.exe` â€” standalone console application
+**Output:** `WebServiceOData.exe` — standalone console application
 
 ---
 
@@ -59,7 +59,7 @@ ctx.SaveChanges();
 ```csharp
 var opt = ctx.Options.Where(o => o.Name == "MyKey").FirstOrDefault();
 opt.Value = "NewValue";
-ctx.UpdateObject(opt);   // required â€” marks entity as modified
+ctx.UpdateObject(opt);   // required — marks entity as modified
 ctx.SaveChanges();
 ```
 
@@ -96,7 +96,7 @@ ctx.SaveChanges();
 
 ## AppVision OData Reference
 
-`AppVisionDataService.svc` â€” `http://localhost/AppVisionDataService.svc/`
+`AppVisionDataService.svc` — `http://localhost/AppVisionDataService.svc/`
 
 | Entity set | Key fields |
 |---|---|
@@ -125,5 +125,5 @@ The service returns human-readable XML error messages on failure.
 
 ## See Also
 
-- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) â€” same pattern for AppControl data
-- [AppControlSynchro](../AppControlSynchro/README.md) â€” CSV bulk import using the same OData approach
+- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) — same pattern for AppControl data
+- [AppControlSynchro](../AppControlSynchro/README.md) — CSV bulk import using the same OData approach

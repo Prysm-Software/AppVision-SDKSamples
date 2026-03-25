@@ -1,4 +1,4 @@
-﻿# DriverSimple â€” Simple AppVision Driver
+﻿# DriverSimple — Simple AppVision Driver
 
 ## Overview
 
@@ -7,14 +7,14 @@ A WPF driver that simulates a physical I/O device with **8 digital inputs,
 
 | Direction | Mechanism | Description |
 |---|---|---|
-| **Input** â†’ AppVision | `VariableManager.Set()` | CheckBox click simulates an external event |
-| AppVision â†’ **Output** | `VariableManager.StateChanged` | RadioButton shows the last received command |
+| **Input** → AppVision | `VariableManager.Set()` | CheckBox click simulates an external event |
+| AppVision → **Output** | `VariableManager.StateChanged` | RadioButton shows the last received command |
 | **Buffer** | `VariableManager.Set()` | Push a sequence of integers to AppVision |
 | **Event** | `EventManager.AddEvent()` | Raise a custom event in AppVision |
 | **Alarm** | `AlarmManager.AddAlarmExt()` | Raise a custom alarm in AppVision |
 
 **References:** `appCommon.dll`, `appData.dll`, `appSDK.dll`  
-**Output:** `DriverSimple.exe` â†’ `AppVision 4\Bin\`
+**Output:** `DriverSimple.exe` → `AppVision 4\Bin\`
 
 ---
 
@@ -93,7 +93,7 @@ _server.AlarmManager.AddAlarmExt(code, "Short message", "Full description");
 ## Configuration in AppVision
 
 ```
-Configurator â€º Protocols â€º Add
+Configurator › Protocols › Add
     Name:    DrvSample
     Manager: DriverSimple.exe
 
@@ -102,9 +102,9 @@ Variables:
     DrvSampleVar.Input1     Type: Logical
     ...
     DrvSampleVar.Input8     Type: Logical
-    DrvSampleVar.Output1    Type: Logical   Flag Command âœ“   Source: =$parent.Input1
+    DrvSampleVar.Output1    Type: Logical   Flag Command ✓   Source: =$parent.Input1
     ...
-    DrvSampleVar.Output8    Type: Logical   Flag Command âœ“
+    DrvSampleVar.Output8    Type: Logical   Flag Command ✓
     DrvSampleVar.Buffer     Type: Buffer    Buffer type: Int32
 ```
 
@@ -113,7 +113,7 @@ Variables:
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `DriverSimple.exe` â†’ `AppVision 4\Bin\`.
+2. Copy `DriverSimple.exe` → `AppVision 4\Bin\`.
 
 ---
 
@@ -128,6 +128,6 @@ Errors are forwarded to the AppVision server log.
 ## Learning Path
 
 ```
-DriverMinimal  â†’  DriverSimple  â†’  DriverAdvanced
+DriverMinimal  →  DriverSimple  →  DriverAdvanced
 No GUI             WPF + 8 I/O      Device pattern, alarms, caching
 ```

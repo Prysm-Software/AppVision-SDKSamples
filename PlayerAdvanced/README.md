@@ -1,4 +1,4 @@
-﻿# PlayerAdvanced â€” Full AppVision Video Player
+﻿# PlayerAdvanced — Full AppVision Video Player
 
 ## Overview
 
@@ -18,7 +18,7 @@ Every tick emits a new frame via `FireFrameDecoded` so the AppVision pipeline
 (recording, overlays, motion detection) receives the simulated stream.
 
 **References:** `appSDK.dll`, `appVideo.dll`, `appCommon.dll`  
-**Output:** `PlayerClock.dll` â†’ `AppVision 4\Bin\`
+**Output:** `PlayerClock.dll` → `AppVision 4\Bin\`
 
 ---
 
@@ -84,7 +84,7 @@ _timer.Interval = TimeSpan.FromMilliseconds(40 / PlaybackSpeed);
 ### 6. `DebugWriteLine()`
 
 Extension method (`Prysm.AppVision.Common`) that writes the caller's method
-name to the debug output â€” useful for tracing lifecycle calls:
+name to the debug output — useful for tracing lifecycle calls:
 
 ```csharp
 this.DebugWriteLine("connecting to " + address);
@@ -112,7 +112,7 @@ See [AppVision video SDK documentation] for the full interface contracts.
 ## Configuration in AppVision
 
 ```
-Configurator â€º Variables â€º Add node
+Configurator › Variables › Add node
     Player: PlayerClock.dll#PlayerClock.PlayerClockControl
 ```
 
@@ -121,7 +121,7 @@ Configurator â€º Variables â€º Add node
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `PlayerClock.dll` â†’ `AppVision 4\Bin\`.
+2. Copy `PlayerClock.dll` → `AppVision 4\Bin\`.
 
 ---
 
@@ -135,6 +135,6 @@ Use `DebugWriteLine()` in each override to trace lifecycle calls.
 ## Learning Path
 
 ```
-PlayerSimple  â†’  PlayerAdvanced  â†’  PlayerMetadata
+PlayerSimple  →  PlayerAdvanced  →  PlayerMetadata
 Live only         Full interface set   Metadata overlay (YOLO)
 ```

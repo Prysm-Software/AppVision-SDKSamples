@@ -1,11 +1,11 @@
-﻿# DriverAdvanced â€” Reference AppVision Driver
+﻿# DriverAdvanced — Reference AppVision Driver
 
 ## Overview
 
 This project is a **reference implementation** for developing a custom AppVision driver.
 
 A driver (also called a *connector*) is an executable that bridges AppVision with an
-external system â€” a security controller (PSIM), a field device, or a standard
+external system — a security controller (PSIM), a field device, or a standard
 protocol (MQTT, OPC-UA, BACnet, SIA, Modbus, etc.).
 
 The driver runs as a separate process and communicates with the AppVision server
@@ -22,7 +22,7 @@ the protocol configuration.
 | `App.Logger.dll` | `Prysm.Logger` | `Trace`, `LogLevel`, `LogBox` |
 | `App.Utility.dll` | `Prysm.Utility.Logger` | `AppServerLogAppender` |
 
-**Output:** `DriverAdvanced.exe` â†’ `AppVision 4\Bin\`
+**Output:** `DriverAdvanced.exe` → `AppVision 4\Bin\`
 
 ---
 
@@ -30,11 +30,11 @@ the protocol configuration.
 
 ```
 AppVision Server
-  â”‚
-  â”œâ”€â”€ ProtocolManager  â”€â”€â–º  launches and monitors  DriverAdvanced.exe
-  â”œâ”€â”€ VariableManager  â—„â”€â”€â–º Driver  (variable values and states)
-  â”œâ”€â”€ AlarmManager     â—„â”€â”€  Driver  (raises alarms on errors)
-  â””â”€â”€ ControllerManager â”€â”€â–º Driver  (restart / close events)
+  │
+  ├── ProtocolManager  ──►  launches and monitors  DriverAdvanced.exe
+  ├── VariableManager  ◄──► Driver  (variable values and states)
+  ├── AlarmManager     ◄──  Driver  (raises alarms on errors)
+  └── ControllerManager ──► Driver  (restart / close events)
 ```
 
 ---
@@ -99,7 +99,7 @@ server.AddFilterNotifications("Variable.StateType=1"); // Command flag only
 
 ### 5. Value caching
 
-`SetVariable()` suppresses redundant updates â€” no message is sent when the
+`SetVariable()` suppresses redundant updates — no message is sent when the
 new value equals the cached value.  
 Use `SetVariableNoCache()` to force-send regardless.
 
@@ -131,13 +131,13 @@ area path, and group descriptions.
 
 | Member | Description |
 |---|---|
-| `.Open(host)` | Connect â€” empty = local machine |
+| `.Open(host)` | Connect — empty = local machine |
 | `.Login(protocolName)` | Register as the protocol handler |
 | `.GetVariablesByProtocol()` | Return all variables linked to this protocol |
 | `.AddFilterNotifications(f)` | Subscribe to specific variable change events |
 | `.StartNotifications(false)` | Start receiving callbacks |
 | `.ProtocolSynchronized()` | Signal driver is ready |
-| `.CurrentProtocol` | Protocol config row (address, parameters, â€¦) |
+| `.CurrentProtocol` | Protocol config row (address, parameters, …) |
 | `.CheckWarrantyDate(date)` | Verify build date is within SDK warranty |
 | `.Restart` | Event: AppVision requests restart |
 | `.Download` | Event: AppVision sends a download command |
@@ -157,7 +157,7 @@ area path, and group descriptions.
 
 | Member | Description |
 |---|---|
-| `.AddAlarmExt(code, msg, â€¦)` | Raise a structured alarm |
+| `.AddAlarmExt(code, msg, …)` | Raise a structured alarm |
 
 ### `Helper` (`appCommon.dll`)
 
@@ -172,7 +172,7 @@ area path, and group descriptions.
 
 | Type | Description |
 |---|---|
-| `Trace` | Static entry point â€” dispatches to all registered `ILogAppender` |
+| `Trace` | Static entry point — dispatches to all registered `ILogAppender` |
 | `Trace.Info(msg)` | Write an informational message |
 | `Trace.Error(msg/ex)` | Write an error or exception |
 | `Trace.StatusText` | Update the status bar in MainWindow |
@@ -187,7 +187,7 @@ Trace.Logger.AddAppender(appender, LogLevel.Info, "tag");
 
 ### `AppServerLogAppender` (`App.Utility.dll`)
 
-Forwards `Trace` entries to the **AppVision server log** â€” visible in the
+Forwards `Trace` entries to the **AppVision server log** — visible in the
 AppVision Manager diagnostic console.
 
 ```csharp
@@ -203,16 +203,16 @@ Trace.Logger.AddAppender(
 ## Configuration in AppVision
 
 ```
-Configurator â€º Protocols â€º Add
+Configurator › Protocols › Add
     Name:    DriverAdvanced
     Manager: DriverAdvanced.exe
 
-Configurator â€º Variables â€º Add
+Configurator › Variables › Add
     Device1         Source: $P.DriverAdvanced
-    Device1.Comm    Type: Logical   Flag Command âœ“
+    Device1.Comm    Type: Logical   Flag Command ✓
 
     Device2         Source: $P.DriverAdvanced
-    Device2.Comm    Type: Logical   Flag Command âœ“
+    Device2.Comm    Type: Logical   Flag Command ✓
 ```
 
 Additional sub-variables (e.g. `Device1.Temperature`) can be added under each
@@ -223,8 +223,8 @@ device as needed.
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `DriverAdvanced.exe` â†’ `AppVision 4\Bin\`  
-   *(or a subfolder â€” the assembly resolver in `App.xaml.cs` searches parent folders)*.  
+2. Copy `DriverAdvanced.exe` → `AppVision 4\Bin\`  
+   *(or a subfolder — the assembly resolver in `App.xaml.cs` searches parent folders)*.  
 3. Start the protocol from AppVision Configurator or AppVision Manager.
 
 ---
@@ -244,14 +244,14 @@ device as needed.
 
 1. Rename the project, assembly, and namespace.  
 2. Update `BuildInfo.cs` with the correct build date.  
-3. **`Driver.cs`** â€” parse protocol-level settings from `CurrentProtocol.Address` / `.Parameters`:
+3. **`Driver.cs`** — parse protocol-level settings from `CurrentProtocol.Address` / `.Parameters`:
 
 ```csharp
 Helper.ParseEndPoint(CurrentProtocol.Address, defaultPort);
 Helper.GetParameter("timeout", CurrentProtocol.Parameters);
 ```
 
-4. **`Device.cs`** â€” implement the device lifecycle:
+4. **`Device.cs`** — implement the device lifecycle:
 
 | Override | Action |
 |---|---|
@@ -270,7 +270,7 @@ Helper.GetParameter("timeout", CurrentProtocol.Parameters);
 ## Dependencies
 
 All assemblies ship with AppVision and are marked `<Private>False</Private>` in the
-`.csproj` â€” they are **not** copied to the driver output folder.  
+`.csproj` — they are **not** copied to the driver output folder.  
 The driver resolves them at runtime from `AppVision 4\Bin\` via `LookForAssemblyInParentDir`.
 
 | Assembly | Namespace | Key types |
@@ -286,6 +286,6 @@ The driver resolves them at runtime from `AppVision 4\Bin\` via `LookForAssembly
 ## Learning Path
 
 ```
-DriverMinimal  â†’  DriverSimple  â†’  DriverAdvanced
+DriverMinimal  →  DriverSimple  →  DriverAdvanced
 No GUI             WPF + 8 I/O      Full reference implementation
 ```

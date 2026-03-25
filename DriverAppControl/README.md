@@ -1,4 +1,4 @@
-﻿# DriverAppControl â€” AppControl Access Controller Driver
+﻿# DriverAppControl — AppControl Access Controller Driver
 
 ## Overview
 
@@ -11,7 +11,7 @@ Use this as a reference for drivers that communicate with **access controllers,
 intrusion panels, or other security devices** through a device-specific SDK.
 
 **References:** `appCommon.dll`, `appData.dll`, `appSDK.dll`, `appControl.dll`  
-**Output:** `DriverAppControl.exe` â†’ `AppVision 4\Bin\`
+**Output:** `DriverAppControl.exe` → `AppVision 4\Bin\`
 
 ---
 
@@ -37,7 +37,7 @@ intrusion panels, or other security devices** through a device-specific SDK.
 |---|---|
 | `.ConnectChanged` | Controller connected / disconnected |
 | `.InputChanged` | Reader or digital input state changed |
-| `.AccessControlEvent` | Badge swipe â€” grant / deny / alarm |
+| `.AccessControlEvent` | Badge swipe — grant / deny / alarm |
 
 ### 2. Download command
 
@@ -63,7 +63,7 @@ server.AddFilterNotifications("$V." + deviceName + ".*.Cmd");
 ### 5. Thread-based main loop
 
 `Driver.Main()` runs on a dedicated background thread, polling device status
-and processing the download queue â€” the WPF dispatcher is never blocked.
+and processing the download queue — the WPF dispatcher is never blocked.
 
 ### 6. Per-device physical limits (`Device.cs`)
 
@@ -93,7 +93,7 @@ and processing the download queue â€” the WPF dispatcher is never blocked.
 ## Configuration in AppVision
 
 ```
-Configurator â€º Protocols â€º Add
+Configurator › Protocols › Add
     Name:    DriverAppControl
     Manager: DriverAppControl.exe
 
@@ -102,7 +102,7 @@ Variables (one set per controller):
                         Address: <controller IP>
     Device1.Reader01    Type: Logical
     Device1.Reader02    Type: Logical
-    Device1.Reader01.Cmd  Type: Logical   Flag Command âœ“
+    Device1.Reader01.Cmd  Type: Logical   Flag Command ✓
 ```
 
 ---
@@ -110,7 +110,7 @@ Variables (one set per controller):
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `DriverAppControl.exe` â†’ `AppVision 4\Bin\`.
+2. Copy `DriverAppControl.exe` → `AppVision 4\Bin\`.
 
 ---
 
@@ -123,6 +123,6 @@ The diagnostic window shows traces from both the Driver and Device layers.
 
 ## See Also
 
-- [DriverAdvanced](../DriverAdvanced/README.md) â€” driver template with the Device pattern
-- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) â€” OData access to AppControl people/badges
-- [AppControlSynchro](../AppControlSynchro/README.md) â€” CSV import of people into AppControl
+- [DriverAdvanced](../DriverAdvanced/README.md) — driver template with the Device pattern
+- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) — OData access to AppControl people/badges
+- [AppControlSynchro](../AppControlSynchro/README.md) — CSV import of people into AppControl

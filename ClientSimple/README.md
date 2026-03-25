@@ -1,4 +1,4 @@
-﻿# ClientSimple â€” Simple AppVision Client
+﻿# ClientSimple — Simple AppVision Client
 
 ## Overview
 
@@ -15,7 +15,7 @@ The sample also shows how to read all current variable values and set a
 variable value interactively.
 
 **References:** `appData.dll`, `appSDK.dll`  
-**Output:** `ClientSimple.exe` â€” standalone WPF application
+**Output:** `ClientSimple.exe` — standalone WPF application
 
 ---
 
@@ -59,7 +59,7 @@ server.StartNotifications(false, false);     // begin receiving callbacks
 
 ### 4. `GetStates()`
 
-Snapshot of all current variable values â€” useful to populate a grid without
+Snapshot of all current variable values — useful to populate a grid without
 waiting for a change event:
 
 ```csharp
@@ -118,6 +118,6 @@ according to the variable's command flag.
 ## Learning Path
 
 ```
-ClientSimple  â†’  ClientAdvanced
+ClientSimple  →  ClientAdvanced
 Standalone        Sdk.Server singleton, RColor theme, embedded WPF controls
 ```

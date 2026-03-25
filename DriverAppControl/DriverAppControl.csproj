@@ -103,6 +103,7 @@
     </None>
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Notes.txt" />

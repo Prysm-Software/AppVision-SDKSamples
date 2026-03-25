@@ -1,4 +1,4 @@
-﻿# WpfControlAdvanced â€” Advanced Embeddable WPF Control
+﻿# WpfControlAdvanced — Advanced Embeddable WPF Control
 
 ## Overview
 
@@ -18,7 +18,7 @@ The control also demonstrates:
 - Interactive synoptic navigation
 
 **References:** `appCommon.dll`, `appData.dll`, `appSDK.dll`, `appUI.dll`  
-**Output:** `WpfControlAdvanced.dll` â†’ `AppVision 4\Bin\`
+**Output:** `WpfControlAdvanced.dll` → `AppVision 4\Bin\`
 
 ---
 
@@ -144,7 +144,7 @@ Sdk.Server.UserManager.CurrentUser?.FullName
 
 | Interface | Methods |
 |---|---|
-| `IPersistable` | `GetConfig()` â†’ `string`, `SetConfig(s)` |
+| `IPersistable` | `GetConfig()` → `string`, `SetConfig(s)` |
 | `ICommandable` | `Execute(cmd, args)` |
 | `IContainer` | `.Name` property |
 
@@ -153,7 +153,7 @@ Sdk.Server.UserManager.CurrentUser?.FullName
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `WpfControlAdvanced.dll` â†’ `AppVision 4\Bin\`.
+2. Copy `WpfControlAdvanced.dll` → `AppVision 4\Bin\`.
 
 ---
 
@@ -167,6 +167,6 @@ The **Log()** rolling list in the control UI shows received events at runtime.
 ## Learning Path
 
 ```
-WpfControlSimple  â†’  WpfControlAdvanced  â†’  PlayerSimple / PlayerAdvanced
+WpfControlSimple  →  WpfControlAdvanced  →  PlayerSimple / PlayerAdvanced
 Basic read/write      Full interface set        Video controls
 ```

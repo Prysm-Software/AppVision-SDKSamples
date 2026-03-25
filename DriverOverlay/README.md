@@ -1,4 +1,4 @@
-﻿# DriverOverlay â€” GIS Overlay Driver
+﻿# DriverOverlay — GIS Overlay Driver
 
 ## Overview
 
@@ -12,7 +12,7 @@ Use this as a starting point for any driver that needs to push **live position
 data** (vehicles, people, assets) onto a map in the AppVision client.
 
 **References:** `appCommon.dll` (`Helper`), `appSDK.dll` (`AppServerForDriver`, `ClientManager`)  
-**Output:** `DriverOverlay.exe` + `target.xaml` + `map.xaml` â†’ `AppVision 4\Bin\`
+**Output:** `DriverOverlay.exe` + `target.xaml` + `map.xaml` → `AppVision 4\Bin\`
 
 ---
 
@@ -64,12 +64,12 @@ var loc = new Point(baseLon + dLon, baseLat + dLat);
 
 | Pattern | Purpose |
 |---|---|
-| `"item_0"` | Single target â€” same id every tick, just moves |
-| `"tail_" + t` | Trail dot â€” predictable id allows selective deletion |
+| `"item_0"` | Single target — same id every tick, just moves |
+| `"tail_" + t` | Trail dot — predictable id allows selective deletion |
 
 ### 5. Timer-driven update loop
 
-A `DispatcherTimer` fires every 500 ms on the WPF UI thread â€” overlay
+A `DispatcherTimer` fires every 500 ms on the WPF UI thread — overlay
 updates are serialised with no locking required.
 
 ---
@@ -97,20 +97,20 @@ updates are serialised with no locking required.
 
 | Member | Description |
 |---|---|
-| `.GetOffsetLongitude(xMeters, latDeg)` | East/West metres â†’ longitude delta |
-| `.GetOffsetLatitude(yMeters)` | North/South metres â†’ latitude delta |
+| `.GetOffsetLongitude(xMeters, latDeg)` | East/West metres → longitude delta |
+| `.GetOffsetLatitude(yMeters)` | North/South metres → latitude delta |
 
 ---
 
 ## Configuration in AppVision
 
 ```
-Configurator â€º Protocols â€º Add
+Configurator › Protocols › Add
     Name:    DriverOverlay
     Manager: DriverOverlay.exe
 ```
 
-> No variables are needed â€” the protocol node is for lifecycle only.  
+> No variables are needed — the protocol node is for lifecycle only.  
 > A geographical synoptic must be open in a client to see the overlays.
 
 ---
@@ -118,7 +118,7 @@ Configurator â€º Protocols â€º Add
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `DriverOverlay.exe`, `target.xaml`, `map.xaml` â†’ `AppVision 4\Bin\`.
+2. Copy `DriverOverlay.exe`, `target.xaml`, `map.xaml` → `AppVision 4\Bin\`.
 
 ---
 
@@ -131,5 +131,5 @@ Open a geographical synoptic in an AppVision client to see the moving target.
 
 ## See Also
 
-- [DriverSimple](../DriverSimple/README.md) â€” variable I/O without overlays
-- [OverlaySample](../OverlaySample/README.md) â€” standalone overlay CRUD tool (client mode)
+- [DriverSimple](../DriverSimple/README.md) — variable I/O without overlays
+- [OverlaySample](../OverlaySample/README.md) — standalone overlay CRUD tool (client mode)

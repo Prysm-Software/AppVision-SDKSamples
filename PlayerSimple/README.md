@@ -1,4 +1,4 @@
-﻿# PlayerSimple â€” Simple AppVision Video Player
+﻿# PlayerSimple — Simple AppVision Video Player
 
 ## Overview
 
@@ -6,11 +6,11 @@ A minimal WPF video player control for AppVision that streams **live video**
 using FFmpeg.
 
 The control inherits from `PlayerBaseControl` and implements only `IPlayerLive`
-(live streaming only â€” no playback, PTZ, or export).
+(live streaming only — no playback, PTZ, or export).
 See [PlayerAdvanced](../PlayerAdvanced/README.md) for a full-featured player.
 
 **References:** `appSDK.dll`, `appVideo.dll`, `appCommon.dll`, `Prysm.FFmpeg.Next`  
-**Output:** `PlayerSimple.dll` â†’ `AppVision 4\Bin\`
+**Output:** `PlayerSimple.dll` → `AppVision 4\Bin\`
 
 ---
 
@@ -110,7 +110,7 @@ player.ErrorOccured += (err, ex) => SetError(err);
 ## Configuration in AppVision
 
 ```
-Configurator â€º Variables â€º Add node
+Configurator › Variables › Add node
     Name:    MyCam
     Source:  rtsp://camera-ip/stream
     Player:  PlayerSimple.dll#PlayerSimple.PlayerSimple
@@ -123,7 +123,7 @@ Then add a **Camera** object on a synoptic and assign `MyCam` to it.
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `PlayerSimple.dll` â†’ `AppVision 4\Bin\`.  
+2. Copy `PlayerSimple.dll` → `AppVision 4\Bin\`.  
 3. Ensure FFmpeg native binaries (`avcodec-*.dll`, etc.) are present in `Bin\`.
 
 ---
@@ -138,6 +138,6 @@ Test `Play()` independently by assigning a local file path as the URL.
 ## Learning Path
 
 ```
-PlayerSimple  â†’  PlayerAdvanced  â†’  PlayerMetadata
+PlayerSimple  →  PlayerAdvanced  →  PlayerMetadata
 Live only         Playback+PTZ+Export  Overlay / YOLO metadata
 ```

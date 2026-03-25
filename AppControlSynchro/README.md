@@ -1,4 +1,4 @@
-﻿# AppControlSynchro â€” AppControl People Import Tool
+﻿# AppControlSynchro — AppControl People Import Tool
 
 ## Overview
 
@@ -13,7 +13,7 @@ For each CSV row the tool:
 4. Batches all changes into a single `SaveChanges()` call.
 
 **References:** `System.Data.Services.Client`, `AppControlServiceReference` (generated proxy)  
-**Output:** `SynchroAppControl.exe` â€” standalone console application
+**Output:** `SynchroAppControl.exe` — standalone console application
 
 ---
 
@@ -36,9 +36,9 @@ FirstName;LastName;PersonID;Department;ValidDateFrom;ValidDateTo;DateOfBirth
 
 | Column | Required | Description |
 |---|---|---|
-| `FirstName` | âœ“ | Person first name |
-| `LastName` | âœ“ | Person last name |
-| `PersonID` | âœ“ | Unique company identifier (badge correlation key) |
+| `FirstName` | ✓ | Person first name |
+| `LastName` | ✓ | Person last name |
+| `PersonID` | ✓ | Unique company identifier (badge correlation key) |
 | `Department` | | Department name (matched by description in AppControl) |
 | `ValidDateFrom` | | ISO date, e.g. `2024-01-01`. Defaults to today |
 | `ValidDateTo` | | ISO date. Defaults to `ValidDateFrom` + 1 year |
@@ -61,7 +61,7 @@ var ctx = new AppControlContext(
     new Uri("http://localhost/AppControlDataService.svc/"));
 ctx.Credentials = new NetworkCredential("ADM", "123");
 
-// LINQ â†’ OData $filter
+// LINQ → OData $filter
 Person existing = ctx.People
     .Where(p => p.CompanyId == id)
     .FirstOrDefault();
@@ -74,13 +74,13 @@ if (existing == null)
     ctx.AddToPeople(newPerson);       // INSERT
 else if (HasChanged(existing, row))
     UpdateFields(existing, row);      // UPDATE (mark via ctx.UpdateObject)
-// else: skip â€” no changes
+// else: skip — no changes
 ```
 
 ### 3. Batched `SaveChanges()`
 
 All insert/update operations are queued and committed in **one HTTP batch
-request** at the end â€” significantly faster than per-row commits:
+request** at the end — significantly faster than per-row commits:
 
 ```csharp
 ctx.SaveChanges();
@@ -94,11 +94,11 @@ Per-row errors are logged and the row is skipped; the import continues.
 
 ## AppControl OData Reference
 
-`AppControlDataService.svc` â€” `http://localhost/AppControlDataService.svc/`
+`AppControlDataService.svc` — `http://localhost/AppControlDataService.svc/`
 
 | Entity set | Key fields |
 |---|---|
-| `People` | `Id`, `FirstName`, `LastName`, `CompanyId`, `Email`, `DepartmentId`, `CategoryId`, `IsActive`, `ValidityStart`, `ValidityEnd`, `Info1`â€“`Info5` |
+| `People` | `Id`, `FirstName`, `LastName`, `CompanyId`, `Email`, `DepartmentId`, `CategoryId`, `IsActive`, `ValidityStart`, `ValidityEnd`, `Info1`–`Info5` |
 | `Badges` | `Id`, `Code`, `PersonId`, `BadgeTypeId`, `IsActive` |
 | `Departments` | `Id`, `Description` |
 | `Categories` | `Id`, `Description` |
@@ -124,5 +124,5 @@ SynchroAppControl.exe people.csv > import.log
 
 ## See Also
 
-- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) â€” interactive AppControl OData CRUD
-- [WebServiceOData](../WebServiceOData/README.md) â€” OData access to AppVision config data
+- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) — interactive AppControl OData CRUD
+- [WebServiceOData](../WebServiceOData/README.md) — OData access to AppVision config data

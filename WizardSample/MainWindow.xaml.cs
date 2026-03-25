@@ -17,6 +17,12 @@ using System.Windows.Shapes;
 
 namespace WizardSample
 {
+    /// <summary>
+    /// Shell window for the WizardSample application.
+    /// Sets the title to the AppVision product name and version, and binds the <see cref="ViewModel"/>
+    /// as the root <see cref="Window.DataContext"/>.
+    /// All wizard page transitions are controlled by <see cref="ViewModel.CurrentPage"/>.
+    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()

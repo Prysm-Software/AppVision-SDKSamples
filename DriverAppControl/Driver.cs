@@ -13,18 +13,25 @@ using System.Net;
 
 namespace DriverAppControl
 {
+	/// <summary>
+	/// AppControl driver — connects to AppVision as a protocol driver, manages a set of
+	/// access-control devices and bridges events between them and the AppVision server.
+	/// </summary>
 	class Driver
 	{
 		#region public events & properties
+		/// <summary>AppVision server connection shared by all devices.</summary>
 		internal static AppServer Server
 		{
 			get { return _this._appServer; }
 		}
+		/// <summary>Returns the hostname of the connected AppVision server.</summary>
 		internal static string GetHostname()
 		{
 			return _this._appServer.Hostname;
 		}
 
+		/// <summary>Gets whether the driver thread is running.</summary>
 		internal bool IsAlive
 		{
 			get
@@ -34,6 +41,7 @@ namespace DriverAppControl
 				return _thread.IsAlive;
 			}
 		}
+		/// <summary>Raised when the driver thread terminates (normal or after a restart).</summary>
 		internal event Action Closed;
 		/// <summary>
 		/// Delegates for trace and error
@@ -65,11 +73,13 @@ namespace DriverAppControl
 		}
 
 		#region Start(),Stop()
+		/// <summary>Starts the driver on a background thread.</summary>
 		internal void Start()
 		{
 			_thread = new Thread(new ThreadStart(Main));
 			_thread.Start();
 		}
+		/// <summary>Requests an orderly shutdown: stops each device then disconnects from AppVision.</summary>
 		internal void Stop()
 		{
 			_serverStopWaiting = true;
@@ -77,6 +87,10 @@ namespace DriverAppControl
 		#endregion
 
 		#region Main()
+		/// <summary>
+		/// Driver main loop: connects to AppVision, creates devices, processes the event queue
+		/// and handles periodic modification downloads until <see cref="Stop"/> is called.
+		/// </summary>
 		void Main()
 		{
 			try
@@ -189,6 +203,10 @@ namespace DriverAppControl
 		#endregion
 
 		#region CreateDevices(),CloseDevices(),IsAllDevicesClosed()
+		/// <summary>
+		/// Instantiates one <see cref="Device"/> per variable declared under this protocol
+		/// and starts each device's acquisition thread.
+		/// </summary>
 		void CreateDevices(IEnumerable<VariableRow> variablesProtocol)
 		{
 			foreach (var v in variablesProtocol)
@@ -207,6 +225,7 @@ namespace DriverAppControl
 					SendInfo(1, v.Description + ": " + ex.Message);
 				}
 		}
+		/// <summary>Requests all devices to stop their acquisition threads.</summary>
 		void CloseDevices()
 		{
 			foreach (var d in _devices)
@@ -219,6 +238,7 @@ namespace DriverAppControl
 					SendInfo(1, d.Name + ": " + ex.Message);
 				}
 		}
+		/// <summary>Returns <see langword="true"/> when every device channel is closed.</summary>
 		bool IsAllDevicesClosed()
 		{
 			foreach (var d in _devices)
@@ -228,19 +248,21 @@ namespace DriverAppControl
 		}
 		#endregion
 
-		#region appServer_Restart,appServer_Closed,appServer_NewModification
+		#region appServer_Restart
+		/// <summary>AppVision requested a restart: sets the restart flag and stops the driver.</summary>
 		void appServer_Restart()
 		{
 			_restart = true;
 			Stop();
 		}
 		bool _restart = false;
+		/// <summary>AppVision connection closed: stops the driver.</summary>
 		void appServer_Closed()
 		{
 			Stop();
 		}
 
-
+		/// <summary>AppVision signals that a configuration modification is pending.</summary>
 		void appServer_NewModification()
 		{
 			_newModification = true;
@@ -249,10 +271,15 @@ namespace DriverAppControl
 
 		#endregion
 		#region appServer_VariableStateChanged()
+		/// <summary>Enqueues an incoming variable state change for processing on the driver thread.</summary>
 		void appServer_VariableStateChanged(VariableState obj)
 		{
 			_events.Enqueue(obj);
 		}
+		/// <summary>
+		/// Processes a variable state change: decodes the variable name to identify the target
+		/// device and forwards the command (e.g. <c>Door1.Cmd</c>) to that device.
+		/// </summary>
 		private void OnVariableState(VariableState variableState)
 		{
 			string val = variableState.Value.ToString();
@@ -271,10 +298,14 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region appServer_Download()
+		/// <summary>Enqueues a full-download request from AppVision for processing on the driver thread.</summary>
 		void appServer_Download(string varNames, string parameter)
 		{
 			_events.Enqueue(new DownloadInfo { VarNames = varNames, Parameter = parameter });
 		}
+		/// <summary>
+		/// Dispatches a full-download command to each device named in <paramref name="di"/>.
+		/// </summary>
 		private void OnDownload(DownloadInfo di)
 		{
 			Trace("OnDownload: " + di.VarNames + " " + di.Parameter);
@@ -291,10 +322,14 @@ namespace DriverAppControl
 		#endregion
 
 		#region device_ConnectChanged()
+		/// <summary>Enqueues a device connection-state change for processing on the driver thread.</summary>
 		void device_ConnectChanged(object sender, ConnectChangedEventArgs e)
 		{
 			_events.Enqueue(e);
 		}
+		/// <summary>
+		/// Publishes the device connection state to AppVision via the <c>&lt;device&gt;.Comm</c> variable.
+		/// </summary>
 		void OnConnectChanged(ConnectChangedEventArgs e)
 		{
 			// send variable state with variable .Comm
@@ -304,10 +339,14 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region device_InputChanged()
+		/// <summary>Enqueues a device input change (door state/mode) for processing on the driver thread.</summary>
 		void device_InputChanged(object sender, InputChangedEventArgs e)
 		{
 			_events.Enqueue(e);
 		}
+		/// <summary>
+		/// Maps a device input event to an AppVision variable name and publishes the value.
+		/// </summary>
 		void OnInputChanged(InputChangedEventArgs e)
 		{
 			string varName;
@@ -326,10 +365,15 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region device_AccessControlEvent()
+		/// <summary>Enqueues a badge-read event for processing on the driver thread.</summary>
 		void device_AccessControlEvent(object sender, AccessControlEventArgs e)
 		{
 			_events.Enqueue(e);
 		}
+		/// <summary>
+		/// Publishes a badge-read result (granted/denied, person ID, badge code) to AppVision
+		/// via the <c>&lt;device&gt;.Reader1</c> variable.
+		/// </summary>
 		private void OnAccessControlEvent(AccessControlEventArgs e)
 		{
 			string varName = string.Format("{0}.Reader1", e.DeviceName);
@@ -337,10 +381,14 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region device_TraceEvent()
+		/// <summary>Enqueues a device trace/error message for processing on the driver thread.</summary>
 		void device_TraceEvent(object sender, TraceEventArgs e)
 		{
 			_events.Enqueue(e);
 		}
+		/// <summary>
+		/// Forwards a device trace message to AppVision via the <c>&lt;device&gt;.Trace</c> variable.
+		/// </summary>
 		void OnTraceEvent(TraceEventArgs e)
 		{
 			string varName = e.DeviceName + ".Trace";
@@ -349,6 +397,10 @@ namespace DriverAppControl
 		#endregion
 
 		#region DownloadModifications()
+		/// <summary>
+		/// Polls AppVision for configuration changes since the last known modification ID and
+		/// dispatches incremental download commands to each affected device.
+		/// </summary>
 		private void DownloadModifications()
 		{
 			Trace("DownloadModifications");
@@ -382,6 +434,10 @@ namespace DriverAppControl
 			}
 		}
 		int _lastModificationId = -1;
+		/// <summary>
+		/// Classifies a single modification record and adds the affected entity IDs to the
+		/// appropriate download lists.
+		/// </summary>
 		void OnModification(Prysm.AppControl.SDK.AppVisionHistoDataServiceReference.ModifRow m, ref List<int> downloadUsers, ref List<int> downloadTimetables, ref List<int> downloadVariables, ref bool downloadHolidays)
 		{
 			Trace(string.Format("OnModif: table={0},type={1},index={2}", m.Table, m.Type, m.SourceId));
@@ -450,6 +506,11 @@ namespace DriverAppControl
 		#endregion
 
 		#region SendInfo()
+		/// <summary>
+		/// Sends an informational message or alarm to AppVision.
+		/// </summary>
+		/// <param name="severity">0 = informational event, &gt;0 = alarm.</param>
+		/// <param name="info">Message text.</param>
 		void SendInfo(int severity, string info)
 		{
 			Trace("SendInfo " + info);
@@ -467,6 +528,7 @@ namespace DriverAppControl
 		}
 		#endregion
 		#region SendVariable,SendVariableBadge
+		/// <summary>Writes a scalar variable value to AppVision.</summary>
 		void SendVariable(string varName, object v, string info, DateTimeOffset? date=null, int severity = -1)
 		{
 			try
@@ -479,6 +541,7 @@ namespace DriverAppControl
 				Error("VariableManager.Set: " + ex.Message, false);
 			}
 		}
+		/// <summary>Writes a badge-read result to AppVision via <c>VariableManager.SetBadge</c>.</summary>
 		void SendVariableBadge(string varName, ReaderStatus status, int personId, string badgeCode, DateTimeOffset date)
 		{
 			try
@@ -494,10 +557,12 @@ namespace DriverAppControl
 		#endregion
 
 		#region GetDeviceByName(),GetDeviceByAddress
+		/// <summary>Finds a device by its AppVision variable name.</summary>
 		Device GetDeviceByName(string name)
 		{
 			return _devices.Where(v => v.Name == name).FirstOrDefault();
 		}
+		/// <summary>Finds a device by its network address.</summary>
 		Device GetDeviceByAddress(string address)
 		{
 			return _devices.Where(v => v.Address == address).FirstOrDefault();
@@ -505,6 +570,7 @@ namespace DriverAppControl
 		#endregion
 
 		#region Trace(),Error(),Log()
+		/// <summary>Logs a diagnostic message; optionally forwards it to AppVision as an event.</summary>
 		void Trace(string text, bool sendToServer = false)
 		{
 			if (_appServer.IsConnected && sendToServer)
@@ -514,6 +580,7 @@ namespace DriverAppControl
 			if (TraceDelegate != null)
 				TraceDelegate(text);
 		}
+		/// <summary>Logs an error message; optionally raises an alarm in AppVision.</summary>
 		void Error(string text, bool sendToServer = true)
 		{
 			if (_appServer.IsConnected && sendToServer)
@@ -522,6 +589,7 @@ namespace DriverAppControl
 			if (ErrorDelegate != null)
 				ErrorDelegate(text);
 		}
+		/// <summary>Writes a line to the AppVision rolling log file.</summary>
 		void Log(string line)
 		{
 			_appServer.Log(line);
@@ -539,29 +607,42 @@ namespace DriverAppControl
 		{
 			get { return _appServer.CurrentProtocol; }
 		}
-		int _tempoDownloadModifications = 5;		// in second
-		List<Device> _devices = new List<Device>();	// devices list attached with this protocol
+		int _tempoDownloadModifications = 5;		// minimum seconds between two incremental downloads
+		List<Device> _devices = new List<Device>();	// devices managed by this driver instance
 	}
 
+	/// <summary>Event data for a full download request from AppVision.</summary>
 	class DownloadInfo
 	{
+		/// <summary>Comma-separated controller variable names (e.g. <c>Access.C001</c>).</summary>
 		internal string VarNames;
+		/// <summary>Download type flags (e.g. <c>Holidays,Timetables,Rights</c>).</summary>
 		internal string Parameter;
 	}
+	/// <summary>Command: perform a full download with the given parameter string.</summary>
 	class CommandDownloadInfo
 	{
+		/// <summary>Download type flags forwarded from AppVision.</summary>
 		public string Parameter;
 	}
+	/// <summary>Command: send an action (e.g. door open/close) to the device.</summary>
 	class CommandAction
 	{
+		/// <summary>Composite name of the target input, e.g. <c>Door1.Cmd</c>.</summary>
 		public string Name;
+		/// <summary>Command value as a string.</summary>
 		public string Value;
 	}
+	/// <summary>Command: perform an incremental download of selected data categories.</summary>
 	class CommandDownloadList
 	{
+		/// <summary>Person IDs to re-download.</summary>
 		public List<int> Users;
+		/// <summary>Timetable IDs to re-download.</summary>
 		public List<int> Timetables;
+		/// <summary>Whether to re-download all holiday definitions.</summary>
 		public bool Holidays;
+		/// <summary>Whether to re-download device parameters.</summary>
 		public bool Parameters;
 	}
 }

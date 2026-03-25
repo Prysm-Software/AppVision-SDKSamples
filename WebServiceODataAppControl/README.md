@@ -1,4 +1,4 @@
-﻿# WebServiceODataAppControl â€” AppControl OData Web Service Sample
+﻿# WebServiceODataAppControl — AppControl OData Web Service Sample
 
 ## Overview
 
@@ -17,7 +17,7 @@ Operations demonstrated:
 > to create or query badge-holder records in AppControl.
 
 **References:** `System.Data.Services.Client`, `AppControlDataServiceReference` (generated proxy)  
-**Output:** `WebServiceODataAppControl.exe` â€” standalone console application
+**Output:** `WebServiceODataAppControl.exe` — standalone console application
 
 ---
 
@@ -52,7 +52,7 @@ foreach (var p in ctx.People.Where(p => p.CategoryId == categoryId))
     Console.WriteLine(p.FirstName);
 ```
 
-### 3. OData `$expand` â€” load navigation properties
+### 3. OData `$expand` — load navigation properties
 
 ```csharp
 foreach (var p in ctx.People.Expand("Badges"))
@@ -107,19 +107,19 @@ ctx.SaveChanges();
 
 | Field | Default exists | Description |
 |---|---|---|
-| `CategoryId` | âœ“ (Id 1) | Person category |
-| `BadgeTypeId` | âœ“ (Id 1) | Badge type |
+| `CategoryId` | ✓ (Id 1) | Person category |
+| `BadgeTypeId` | ✓ (Id 1) | Badge type |
 | `DepartmentId` | optional | May be `null` |
 
 ---
 
 ## AppControl OData Reference
 
-`AppControlDataService.svc` â€” `http://localhost/AppControlDataService.svc/`
+`AppControlDataService.svc` — `http://localhost/AppControlDataService.svc/`
 
 | Entity set | Key fields |
 |---|---|
-| `People` | `Id`, `FirstName`, `LastName`, `CompanyId`, `Email`, `CategoryId`, `DepartmentId`, `IsActive`, `ValidityStart`, `ValidityEnd`, `Info1`â€“`Info5` |
+| `People` | `Id`, `FirstName`, `LastName`, `CompanyId`, `Email`, `CategoryId`, `DepartmentId`, `IsActive`, `ValidityStart`, `ValidityEnd`, `Info1`–`Info5` |
 | `Badges` | `Id`, `Code`, `PersonId`, `BadgeTypeId`, `IsActive`, `ValidityStart`, `ValidityEnd` |
 | `Departments` | `Id`, `Description` |
 | `Categories` | `Id`, `Description` |
@@ -151,6 +151,6 @@ The service returns XML error details on constraint violations.
 
 ## See Also
 
-- [WebServiceOData](../WebServiceOData/README.md) â€” OData for AppVision config (options, variables)
-- [AppControlSynchro](../AppControlSynchro/README.md) â€” CSV bulk import using the same context
-- [DriverAppControl](../DriverAppControl/README.md) â€” driver that talks to AppControl hardware
+- [WebServiceOData](../WebServiceOData/README.md) — OData for AppVision config (options, variables)
+- [AppControlSynchro](../AppControlSynchro/README.md) — CSV bulk import using the same context
+- [DriverAppControl](../DriverAppControl/README.md) — driver that talks to AppControl hardware

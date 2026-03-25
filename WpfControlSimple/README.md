@@ -1,4 +1,4 @@
-﻿# WpfControlSimple â€” Simple Embeddable WPF Control
+﻿# WpfControlSimple — Simple Embeddable WPF Control
 
 ## Overview
 
@@ -13,7 +13,7 @@ Features:
 - Open a second instance via `Sdk.Client.Open()`.
 
 **References:** `appCommon.dll`, `appData.dll`, `appSDK.dll`, `appUI.dll`  
-**Output:** `WpfControlSimple.dll` â†’ `AppVision 4\Bin\`
+**Output:** `WpfControlSimple.dll` → `AppVision 4\Bin\`
 
 ---
 
@@ -27,9 +27,9 @@ Features:
 
 ## Key Concepts
 
-### 1. `Sdk.Server` â€” server interaction
+### 1. `Sdk.Server` — server interaction
 
-The control must **never** call `Open()` or `Login()` â€” the client host has
+The control must **never** call `Open()` or `Login()` — the client host has
 already connected `Sdk.Server`.
 
 ```csharp
@@ -43,7 +43,7 @@ Sdk.Server.OperandManager.Write("$V.NodeName.VarName", newValue);
 `OperandManager.Read/Write` accept the full operand path (`$V.node.var`) and
 return / accept `object` values.
 
-### 2. `Sdk.Client` â€” host interaction
+### 2. `Sdk.Client` — host interaction
 
 Open a new floating window containing this same control:
 
@@ -59,7 +59,7 @@ Format: `assemblyFileName#fullyQualifiedClassName`.
 ### 3. Embedding in a synoptic
 
 ```
-Configurator â€º Synoptics â€º [synoptic] â€º Add object
+Configurator › Synoptics › [synoptic] › Add object
     Type:      Third-party .Net object
     Assembly:  WpfControlSimple.dll
     Class:     WpfControlSimple.UserControl1
@@ -68,7 +68,7 @@ Configurator â€º Synoptics â€º [synoptic] â€º Add object
 ### 4. Design-time guard
 
 Always check `Sdk.Server.IsConnected` before querying the server in the
-constructor â€” the XAML designer does not have an active connection:
+constructor — the XAML designer does not have an active connection:
 
 ```csharp
 if (!Sdk.Server.IsConnected) return;
@@ -98,22 +98,22 @@ if (!Sdk.Server.IsConnected) return;
 ## How to Build and Deploy
 
 1. Build in **Release** configuration.  
-2. Copy `WpfControlSimple.dll` â†’ `AppVision 4\Bin\`.  
+2. Copy `WpfControlSimple.dll` → `AppVision 4\Bin\`.  
 3. Restart the AppVision client (or reload the synoptic).
 
 ---
 
 ## Debugging
 
-Attach to the AppVision client process (**Debug â€º Attach to Process**) and set
+Attach to the AppVision client process (**Debug › Attach to Process**) and set
 breakpoints inside the control.  
-In the XAML designer the control will appear empty â€” this is expected.
+In the XAML designer the control will appear empty — this is expected.
 
 ---
 
 ## Learning Path
 
 ```
-WpfControlSimple  â†’  WpfControlAdvanced
+WpfControlSimple  →  WpfControlAdvanced
 Read/Write             IPersistable, ICommandable, IContainer, async loading
 ```
