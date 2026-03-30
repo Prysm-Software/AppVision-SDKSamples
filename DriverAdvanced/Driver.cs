@@ -42,7 +42,7 @@ namespace DriverAdvanced
 		/// </summary>
 		public Driver()
 		{
-			Trace.Info(Environment.CommandLine);
+			Trace.Info(Environment.CommandLine.HidePasswords());
 
 			// Create the SDK gateway. No network connection is made at this point.
 			AppServer = new AppServerForDriver();
