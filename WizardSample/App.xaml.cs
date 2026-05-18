@@ -20,7 +20,7 @@ namespace WizardSample
 		static Assembly LookForAssemblyInParentDir(object sender, ResolveEventArgs a)
         {
             Console.WriteLine(a.Name);
-            var dir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            var dir = AppDomain.CurrentDomain.BaseDirectory;
             var ass = $@"{dir}\..\{a.Name.Split(',')[0]}.dll";
             return File.Exists(ass) ? Assembly.LoadFrom(ass) : null;
         }
