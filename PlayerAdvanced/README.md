@@ -113,7 +113,7 @@ See [AppVision video SDK documentation] for the full interface contracts.
 
 ```
 Configurator › Variables › Add node
-    Player: PlayerClock.dll#PlayerClock.PlayerClockControl
+    Parameters: CreateControlPlayer=PlayerClock.dll
 ```
 
 ---
