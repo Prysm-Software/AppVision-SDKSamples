@@ -148,6 +148,10 @@ Add `Icon = "Icons/library.png"` to show your logo on the library node (image as
    reference, and the library appears at the bottom of the toolbox.
 5. **Generate** the client configuration, as after any change of reference.
 
+![Third-party .Net objects: the library and its widgets before adding](add-library.png)
+
+![The library in the toolbox](toolbox.png)
+
 The reference is what makes the client compilation find the types of your DLL. Without it, the generation fails
 with *The type or namespace name '…' could not be found*.
 
