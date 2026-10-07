@@ -57,6 +57,7 @@ AppVision-SDKSamples/
 |
 +-- WpfControlSimple/           Embeddable control -- OperandManager read/write
 +-- WpfControlAdvanced/         Embeddable control -- IPersistable, ICommandable
++-- WidgetLibrary/              Widget DLL -- synoptic toolbox entries, live variables
 |
 +-- PlayerSimple/               Video player -- IPlayerLive, FFmpeg software decode
 +-- PlayerAdvanced/             Video player -- IPlayerPlayback, PTZ, Export
@@ -109,6 +110,7 @@ AppVision synoptic, alongside the built-in widgets.
 |---|---|---|
 | [WpfControlSimple](WpfControlSimple/README.md) | Read/write variables from inside a synoptic | Intermediate |
 | [WpfControlAdvanced](WpfControlAdvanced/README.md) | `IPersistable`, `ICommandable`, `IContainer`, async data | Advanced |
+| [WidgetLibrary](WidgetLibrary/README.md) | Widget DLL listed in the synoptic toolbox (`[AppWidget]`), live variables | Intermediate |
 
 ### Video players
 
@@ -152,7 +154,7 @@ Useful for integrations from non-.NET platforms (Python, Java, PowerShell, etc.)
 
 | Assembly | Namespace | Key types |
 |---|---|---|
-| `appSDK.dll` | `Prysm.AppVision.SDK` | `AppServerForDriver`, `AppServer`, `Sdk.Server`, `Sdk.Client` |
+| `appSDK.dll` | `Prysm.AppVision.SDK` | `AppServerForDriver`, `AppServer`, `Sdk.Server`, `Sdk.Client`, `AppWidget` (`.Widgets`) |
 | `appData.dll` | `Prysm.AppVision.Data` | `VariableRow`, `VariableState`, `AlarmInfo`, `EventRow`, `OverlayItem` |
 | `appCommon.dll` | `Prysm.AppVision.Common` | `Helper`, `RColor`, `RT`, `CommStatus` |
 | `appVideo.dll` | `Prysm.AppVision.Video` | `PlayerBaseControl`, `IPlayerLive`, `IPlayerPlayback`, `IPlayerPtz`, `IPlayerExport` |
@@ -173,7 +175,8 @@ Intermediate
   +- DriverSimple           ->  add I/O, alarms, events to a driver
   +- DriverAdvanced         ->  Device pattern + caching + structured logging
   +- ClientAdvanced         ->  Sdk.Server singleton + theme integration
-  \- WpfControlSimple       ->  embed a read/write control in a synoptic
+  +- WpfControlSimple       ->  embed a read/write control in a synoptic
+  \- WidgetLibrary          ->  deliver controls through the synoptic toolbox
 
 Advanced
   +- WpfControlAdvanced     ->  IPersistable, ICommandable, async data loading
