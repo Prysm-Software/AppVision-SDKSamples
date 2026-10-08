@@ -7,6 +7,6 @@ xmlns:app="http://prysm.fr/AppVision"
 xmlns:video="http://prysm.fr/AppVideo"
 xmlns:gen="clr-namespace:appClient_gen" InitialHeight="50" InitialWidth="80" Format="2.0" AppVersion="4.7.1.3" Date="2021-11-18 11:52:53Z" Fill="#800000FF">
   <app:SynoItem.AnimationItems>
-    <app:PropertyAnim x:Key="ToolTip" Expression="&quot;Id:   &quot; + ((OverlayItem)Tag).Id&#xD;&#xA;&quot;Pos: &quot; + ((OverlayItem)Tag).Position" />
+    <app:PropertyAnim x:Key="ToolTip" Expression="&quot;Name: &quot; + ((OverlayItem)Tag).Name&#xD;&#xA;&quot;Pos: &quot; + ((OverlayItem)Tag).Position" />
   </app:SynoItem.AnimationItems>
 </app:Symbol>

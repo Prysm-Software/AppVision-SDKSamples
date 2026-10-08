@@ -93,17 +93,20 @@ namespace DriverAppControl
 		/// </summary>
 		void Main()
 		{
+			_serverStopWaiting = false;
 			try
 			{
 				// 1. initialisation
 				Trace("Server connection ...");
 				_appServer.Open(_serverHostname);
-				_appServer.Login(_protocolName);
-				if (_appServer.CurrentProtocol == null)
-				{ Trace("No protocol " + _protocolName); return; }
+				_appServer.Login(_protocolName);		// throws if the protocol does not exist
+
+				// The device index files ({name}_TID.xml, ...) are written in the current directory:
+				// here the Param folder of the configuration (the driver must run on the server machine).
 				Environment.CurrentDirectory = _appServer.GetPathParam();
 
-				// to get output command from the server
+				// to get output command from the server: subscribe to the command variables
+				// of every controller, e.g. "$V.Access.C001.*.Cmd" (Access.C001.Door1.Cmd, ...)
 				var variablesProtocol = _appServer.GetVariablesByProtocol(_protocolName);
 				if (variablesProtocol.Length == 0)
 					Trace("No variable connected to this protocol");
@@ -117,7 +120,6 @@ namespace DriverAppControl
 				CreateDevices(variablesProtocol);
 
 				// 2. main loop
-				_serverStopWaiting = false;
 				bool deviceStopWaiting = false;
 				DateTime dateDownloadModifications = DateTime.MinValue;
 				for(;;)
@@ -142,7 +144,14 @@ namespace DriverAppControl
 					{
 						_newModification = false;
 						dateDownloadModifications = DateTime.UtcNow.AddSeconds(_tempoDownloadModifications);
-						DownloadModifications();
+						try
+						{
+							DownloadModifications();
+						}
+						catch (Exception ex)	// e.g. AppControl data service not reachable: keep the driver running
+						{
+							Error("DownloadModifications: " + ex.Message);
+						}
 					}
 
 					int count = 0;
@@ -169,22 +178,28 @@ namespace DriverAppControl
 			}
 			catch (Exception ex)
 			{
-				Trace(ex.ToString());
+				Error(ex.Message);
+				Log(ex.ToString());
 			}
 			finally
 			{
 				#region 3. finalisation
+				// stop the device threads still running (main loop left on an exception)
+				CloseDevices();
+				_devices.Clear();
+
 				try
 				{
 					if (_appServer.IsConnected)
-					{
-						_appServer.Logout();
-						_appServer.Close();
-					}
+						_appServer.Close();		// also logs the protocol out
 				}
-				catch { }
+				catch (Exception ex)
+				{
+					Log("Close: " + ex.Message);
+				}
 
-				// check restart
+				// check restart (connection lost): reconnect with a new set of devices.
+				// If the server is still unreachable, Open fails and the driver ends (Closed).
 				if (_restart)
 				{
 					_restart = false;
@@ -249,25 +264,32 @@ namespace DriverAppControl
 		#endregion
 
 		#region appServer_Restart
-		/// <summary>AppVision requested a restart: sets the restart flag and stops the driver.</summary>
+		/// <summary>
+		/// Raised by the SDK when the connection to the server is lost (keep-alive failure):
+		/// sets the restart flag and stops the driver, which then tries to reconnect once.
+		/// (Since AppVision 4.8.5 a protocol restart requested by the server is a Close followed by a new process.)
+		/// </summary>
 		void appServer_Restart()
 		{
 			_restart = true;
 			Stop();
 		}
-		bool _restart = false;
-		/// <summary>AppVision connection closed: stops the driver.</summary>
+		volatile bool _restart = false;
+		/// <summary>AppVision stops the protocol: stops the driver.</summary>
 		void appServer_Closed()
 		{
 			Stop();
 		}
 
-		/// <summary>AppVision signals that a configuration modification is pending.</summary>
+		/// <summary>
+		/// AppVision signals that the configuration changed (people, badges, rights, timetables, holidays...):
+		/// the main loop reads the modification list at most every <see cref="_tempoDownloadModifications"/> seconds.
+		/// </summary>
 		void appServer_NewModification()
 		{
 			_newModification = true;
 		}
-		bool _newModification = true;
+		volatile bool _newModification = true;
 
 		#endregion
 		#region appServer_VariableStateChanged()
@@ -376,7 +398,8 @@ namespace DriverAppControl
 		/// </summary>
 		private void OnAccessControlEvent(AccessControlEventArgs e)
 		{
-			string varName = string.Format("{0}.Reader1", e.DeviceName);
+			// same naming as Device._readerNames: <device>.Reader01 .. <device>.Reader04
+			string varName = string.Format("{0}.Reader{1:00}", e.DeviceName, e.ReaderId);
 			SendVariableBadge(varName, e.Status, e.UserId, e.BadgeId, e.DateUtc);
 		}
 		#endregion
@@ -600,7 +623,7 @@ namespace DriverAppControl
 		string _serverHostname = "";
 		string _protocolName;
 		Thread _thread;
-		bool _serverStopWaiting;
+		volatile bool _serverStopWaiting;		// set by Stop() from other threads
 		ConcurrentQueue<object> _events = new ConcurrentQueue<object>();
 		AppServerForDriver _appServer;
 		ProtocolRow _protocol

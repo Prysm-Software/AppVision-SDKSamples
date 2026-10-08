@@ -1,0 +1,3 @@
+node_modules/
+# The lock file pins the SDK tarball URL of one AppVision server: each partner installs from its own server
+package-lock.json

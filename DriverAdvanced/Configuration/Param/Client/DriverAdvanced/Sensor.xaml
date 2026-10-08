@@ -9,7 +9,7 @@ xmlns:gen="clr-namespace:appClient_gen" InitialHeight="50" InitialWidth="150" Fo
   <app:SynoItem.AnimationItems>
     <app:PropertyAnim x:Key="ToolTip" Expression="%1#Desc&#xD;&#xA;&quot;Status: &quot; + %1.Status#State" />
     <app:ColorAnim x:Key="Fill" DefaultColor="#FF808080">
-      <app:ColorEntry Condition="%1.Status" Color="#FF00B050" />
+      <app:ColorEntry Condition="%1.Status" Color="#FFE03C31" />
     </app:ColorAnim>
     <app:PropertyAnim x:Key="DragData" Expression="&quot;%1&quot;" />
     <app:ActionAnim x:Key="MouseRightButtonUp">

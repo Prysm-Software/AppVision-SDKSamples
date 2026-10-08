@@ -1,0 +1,204 @@
+---
+title: Histo database (history) - AppVision 4.10
+---
+erDiagram
+    Alarms {
+        bigint AlarmId PK
+        datetimeoffset(7) AlarmDateReceive
+        datetimeoffset(7) AlarmDateStart
+        datetimeoffset(7) AlarmDateAck
+        datetimeoffset(7) AlarmDateReport
+        datetimeoffset(7) AlarmDateEnd
+        int AlarmSeverity
+        int AlarmCount
+        int ParentId "null"
+        int AlarmCustomId "null"
+        int AreaId "null"
+        int SiteId "null"
+        int SiteAlarmId "null"
+        int UserIdAck "null"
+        int UserIdReport "null"
+        nvarchar(max) UserNameAck "null"
+        nvarchar(max) UserNameReport "null"
+        int AlarmType
+        int SourceId
+        int SourceId2
+        int SourceId3
+        int SourceId4 "null"
+        nvarchar(max) AlarmStateDesc "null"
+        nvarchar(max) AlarmAreaDesc "null"
+        nvarchar(max) AlarmDescription "null"
+        nvarchar(max) AlarmInfo "null"
+        nvarchar(max) AlarmOriginDesc "null"
+        nvarchar(max) AlarmInstructions "null"
+        nvarchar(max) AlarmReport "null"
+        nvarchar(max) AlarmUrl "null"
+        nvarchar(max) AlarmGroupNames "null"
+        nvarchar(max) AlarmGroupDesc "null"
+        nvarchar(max) AlarmAttachments "null"
+        nvarchar(max) AlarmPhoto "null"
+        nvarchar(max) AlarmVideo "null"
+        nvarchar(max) AlarmExtension "null"
+        nvarchar(max) AlarmCustomExtension "null"
+        nvarchar(max) AlarmParameters "null"
+        nvarchar(max) SourceName "null"
+        bit WaitAcknowledge
+        bit WaitReport
+        bit WaitProcess "null"
+        nvarchar(256) ServerName "null"
+        datetime DateWrite "null"
+        nvarchar(256) AlarmGuid "null"
+        datetimeoffset(7) AlarmDateClose "null"
+        nvarchar(64) UserNameClose "null"
+        bit ReadyToClose
+    }
+    ChatMessages {
+        bigint Id PK
+        bigint TalkId
+        nvarchar(max) Message
+        nvarchar(max) MessageType "null"
+        datetimeoffset(7) Date "null"
+        int AuthorId
+    }
+    ChatTalkMembers {
+        bigint Id PK
+        bigint TalkId FK
+        int UserId
+        bigint LastMessageRead "null"
+    }
+    ChatTalks {
+        bigint Id PK
+        datetimeoffset(7) CreatedDate
+        int CreatorId
+        nvarchar(max) Title "null"
+        nvarchar(max) Icon "null"
+    }
+    Events {
+        bigint EventId PK
+        datetimeoffset(7) EventDate
+        datetimeoffset(7) EventDateReceive
+        int EventType
+        int EventSubType
+        int SourceId
+        int SourceId2
+        int SourceId3
+        int SourceId4 "null"
+        bigint AlarmId "null"
+        int EventCustomId "null"
+        int AreaId "null"
+        int SiteId "null"
+        int SiteEventId "null"
+        int OriginId
+        int EventValue
+        nvarchar(max) EventValueString "null"
+        nvarchar(max) EventStateDesc "null"
+        nvarchar(max) EventAreaDesc "null"
+        nvarchar(max) EventDescription "null"
+        nvarchar(max) EventInfo "null"
+        nvarchar(max) EventOriginDesc "null"
+        nvarchar(max) EventReport "null"
+        nvarchar(max) EventGroupNames "null"
+        nvarchar(max) EventGroupDesc "null"
+        nvarchar(max) EventUrl "null"
+        nvarchar(max) EventAttachments "null"
+        nvarchar(max) EventPhoto "null"
+        nvarchar(max) EventVideo "null"
+        int EventQuality "null"
+        nvarchar(max) EventExtension "null"
+        nvarchar(max) EventCustomExtension "null"
+        nvarchar(max) EventParameters "null"
+        nvarchar(max) SourceName "null"
+        nvarchar(256) ServerName "null"
+        datetime DateWrite "null"
+        nvarchar(64) EventGuid "null"
+    }
+    Modifs {
+        bigint ModifId PK "identity"
+        datetimeoffset(7) ModifDate
+        int ModifType
+        nvarchar(max) ModifTable "null"
+        int SourceId
+        int SourceId2
+        int SourceId3
+        nvarchar(max) ModifDescription "null"
+        nvarchar(max) ModifInfo "null"
+        int UserId "null"
+        nvarchar(max) ModifExtension "null"
+        nvarchar(max) ModifCustomExtension "null"
+        int SiteId "null"
+        int SiteModifId "null"
+        nvarchar(256) ServerName "null"
+        nvarchar(256) UserName "null"
+        nvarchar(64) ModifGuid "null"
+    }
+    Tasks {
+        int TaskId PK
+        datetimeoffset(7) TaskDate
+        datetimeoffset(7) TaskDateAck
+        datetimeoffset(7) TaskDateReport
+        int TaskType
+        int TaskCount
+        int AreaId "null"
+        int SiteId "null"
+        int SiteTaskId "null"
+        nvarchar(max) TaskGroupNames "null"
+        int UserId "null"
+        int UserIdAck "null"
+        int UserIdReport "null"
+        nvarchar(max) TaskContent "null"
+        nvarchar(max) TaskInfo "null"
+        nvarchar(max) TaskSourceItems "null"
+        nvarchar(max) TaskAreaDesc "null"
+        nvarchar(max) TaskGroupDesc "null"
+        nvarchar(max) TaskOriginDesc "null"
+        nvarchar(max) TaskAttachments "null"
+        nvarchar(max) TaskUrl "null"
+        nvarchar(max) TaskPhoto "null"
+        nvarchar(max) TaskVideo "null"
+        nvarchar(max) TaskExtension "null"
+        nvarchar(max) TaskCustomExtension "null"
+    }
+    UserMessages {
+        datetimeoffset(7) UserMessageDateCreate
+        datetimeoffset(7) UserMessageDateClose
+        bigint AlarmId "null"
+        int AreaId "null"
+        nvarchar(max) UserMessageAreaDesc "null"
+        nvarchar(max) UserMessageDescription "null"
+        nvarchar(max) UserMessageGroupNames "null"
+        nvarchar(max) UserMessageGroupDesc "null"
+        nvarchar(max) UserMessageAttachments "null"
+        nvarchar(max) UserMessagePhoto "null"
+        nvarchar(max) UserMessageVideo "null"
+        int UserIdCreate "null"
+        int UserIdClose "null"
+        nvarchar(max) UserNameCreate "null"
+        nvarchar(max) UserNameClose "null"
+        int UserMessageSeverity
+        int UserMessageStatus
+        nvarchar(max) UserMessageTo "null"
+        nvarchar(max) UserMessageCategory "null"
+        nvarchar(max) UserMessageComment "null"
+        nvarchar(max) UserMessageContentCategory "null"
+        nvarchar(max) UserMessageContentReferences "null"
+        bit UserMessageIsIncident
+        nvarchar(max) UserMessageExtension "null"
+        nvarchar(max) UserMessageCustomExtension "null"
+        bigint UserMessageId PK
+        nvarchar(256) ServerName "null"
+        datetime DateWrite "null"
+        nvarchar(64) UserMessageGuid "null"
+    }
+    Values {
+        bigint ValueId PK "identity"
+        int VariableId
+        datetimeoffset(7) ValueDate
+        float ValueValue
+        int ValueQuality "null"
+        int SiteId "null"
+        int SiteValueId "null"
+        nvarchar(256) ServerName "null"
+        datetime DateWrite "null"
+        nvarchar(64) ValueGuid "null"
+    }
+    ChatTalks ||--o{ ChatTalkMembers : "TalkId"

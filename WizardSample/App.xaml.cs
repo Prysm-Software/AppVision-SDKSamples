@@ -10,20 +10,22 @@ namespace WizardSample
     {
         static App() => AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
+		// Probes the AppVision assemblies (appSDK.dll, appCommon.dll, Telerik...) one and two folders up.
+		// Needed when the wizard is deployed in a sub-folder of the AppVision 'Bin' folder,
+		// e.g. Bin\Drivers\MyDriver\appMyDriverWizard.exe, without copying the AppVision DLLs next to it.
+		// Do not reference AppVision types in this method: it runs before they can be loaded.
 		private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
+			var fileName = new AssemblyName(args.Name).Name + ".dll";
+			var dir = AppDomain.CurrentDomain.BaseDirectory;
+			foreach (var candidate in new[] { Path.Combine(dir, "..", fileName), Path.Combine(dir, "..", "..", fileName) })
+			{
+				var path = Path.GetFullPath(candidate);
+				if (File.Exists(path))
+					return Assembly.LoadFrom(path);
+			}
 			return null;
 		}
-
-		// probing assemblies in the parent folder
-		// to be used if your driver is deployed in a sub-directory of the 'bin' folder (i.e. bin\MyDriver\my_driver.exe)
-		static Assembly LookForAssemblyInParentDir(object sender, ResolveEventArgs a)
-        {
-            Console.WriteLine(a.Name);
-            var dir = AppDomain.CurrentDomain.BaseDirectory;
-            var ass = $@"{dir}\..\{a.Name.Split(',')[0]}.dll";
-            return File.Exists(ass) ? Assembly.LoadFrom(ass) : null;
-        }
 
         public App()
         {

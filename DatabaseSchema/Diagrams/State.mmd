@@ -1,0 +1,123 @@
+---
+title: State database (current state) - AppVision 4.10
+---
+erDiagram
+    Alarms {
+        bigint AlarmId PK
+        datetimeoffset(7) AlarmDateReceive
+        datetimeoffset(7) AlarmDateStart
+        datetimeoffset(7) AlarmDateAck
+        datetimeoffset(7) AlarmDateReport
+        datetimeoffset(7) AlarmDateEnd
+        int AlarmSeverity
+        int AlarmCount
+        int ParentId "null"
+        int AlarmCustomId "null"
+        int AreaId "null"
+        int SiteId "null"
+        int SiteAlarmId "null"
+        int UserIdAck "null"
+        int UserIdReport "null"
+        nvarchar(max) UserNameAck "null"
+        nvarchar(max) UserNameReport "null"
+        int AlarmType
+        int SourceId
+        int SourceId2
+        int SourceId3
+        int SourceId4 "null"
+        nvarchar(max) AlarmStateDesc "null"
+        nvarchar(max) AlarmAreaDesc "null"
+        nvarchar(max) AlarmDescription "null"
+        nvarchar(max) AlarmInfo "null"
+        nvarchar(max) AlarmOriginDesc "null"
+        nvarchar(max) AlarmInstructions "null"
+        nvarchar(max) AlarmReport "null"
+        nvarchar(max) AlarmUrl "null"
+        nvarchar(max) AlarmGroupNames "null"
+        nvarchar(max) AlarmGroupDesc "null"
+        nvarchar(max) AlarmAttachments "null"
+        nvarchar(max) AlarmPhoto "null"
+        nvarchar(max) AlarmVideo "null"
+        nvarchar(max) AlarmExtension "null"
+        nvarchar(max) AlarmCustomExtension "null"
+        nvarchar(max) AlarmParameters "null"
+        nvarchar(max) SourceName "null"
+        bit WaitAcknowledge
+        bit WaitReport
+        bit WaitProcess "null"
+        nvarchar(256) ServerName "null"
+        datetime DateWrite "null"
+        nvarchar(64) AlarmGuid "null"
+        datetimeoffset(7) AlarmDateClose "null"
+        nvarchar(64) UserNameClose "null"
+        bit ReadyToClose
+    }
+    CurrentStates {
+        int VariableId PK
+        nvarchar(max) VariableName "null"
+        ntext Value "null"
+        datetimeoffset(7) Date
+        nvarchar(max) Info "null"
+        int Quality "null"
+        int OriginId
+        bit IsLocked
+        bit IsAlarmMasked
+        nvarchar(max) Parameters "null"
+        nvarchar(256) ServerName "null"
+        nvarchar(64) VariableGuid "null"
+        datetime2(7) DateUnlock "null"
+        datetime2(7) DateUnmask "null"
+        nvarchar(max) OriginAction "null"
+    }
+    Overlays {
+        nvarchar(255) Name PK
+        datetimeoffset(7) Date "null"
+        nvarchar(max) Synoptic "null"
+        nvarchar(max) Recipient "null"
+        nvarchar(max) Symbol "null"
+        nvarchar(max) PositionString "null"
+        nvarchar(max) SymbolParameters "null"
+        nvarchar(max) SymbolProperties "null"
+        nvarchar(max) Parameters "null"
+        nvarchar(max) SizeString "null"
+        nvarchar(max) Layers "null"
+        int ZIndex "null"
+        float SymbolZoomLevel "null"
+    }
+    ScenarioStates {
+        int Id PK
+        int ScenarioId
+        nvarchar(max) TriggerSerialized "null"
+    }
+    Tasks {
+        int TaskId PK
+        datetimeoffset(7) TaskDate
+        datetimeoffset(7) TaskDateAck
+        datetimeoffset(7) TaskDateReport
+        int TaskType
+        int TaskCount
+        int AreaId "null"
+        int SiteId "null"
+        int SiteTaskId "null"
+        nvarchar(max) TaskGroupNames "null"
+        int UserId "null"
+        int UserIdAck "null"
+        int UserIdReport "null"
+        nvarchar(max) TaskContent "null"
+        nvarchar(max) TaskInfo "null"
+        nvarchar(max) TaskSourceItems "null"
+        nvarchar(max) TaskAreaDesc "null"
+        nvarchar(max) TaskGroupDesc "null"
+        nvarchar(max) TaskOriginDesc "null"
+        nvarchar(max) TaskAttachments "null"
+        nvarchar(max) TaskUrl "null"
+        nvarchar(max) TaskPhoto "null"
+        nvarchar(max) TaskVideo "null"
+        nvarchar(max) TaskExtension "null"
+        nvarchar(max) TaskCustomExtension "null"
+    }
+    UserStates {
+        int Id PK
+        nvarchar(max) Name
+        nvarchar(max) Parameters "null"
+    }

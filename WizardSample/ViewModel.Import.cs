@@ -29,10 +29,16 @@ namespace WizardSample
 		/// <exception cref="Exception">Thrown when the variable quota is exceeded.</exception>
 		async Task Import()
 		{
-			// leave UI thread 
+			// the wizard can import several devices in a row ("Import new device"): reset the state of the previous import
+			_canceling = false;
+			_canCancel = true;
+			Success = true;
+			Progress = 0;
+
+			// leave UI thread
 			await Task.Delay(1).ConfigureAwait(false);
 
-			CreateProtocol();
+			var protocolName = CreateProtocol();
 
 			if (CreateGroup)
 				GetOrCreateGroup(NodeName, NodeDescription);
@@ -45,8 +51,11 @@ namespace WizardSample
 			VariableRow varDevice = appServer.VariableManager.GetRowByName(NodeName);
 			if (varDevice != null)
 			{
-				if (MessageBox.Show(NodeName + " already exists.\r\nDo you want to continue?", "Confirmation", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-					return;
+				// this code runs on a background thread: show the dialog on the UI thread, owned by the wizard window
+				var answer = Application.Current.Dispatcher.Invoke(() => MessageBox.Show(Application.Current.MainWindow,
+					NodeName + " already exists.\r\nDo you want to add the entities to this device?", "Confirmation", MessageBoxButton.YesNo));
+				if (answer != MessageBoxResult.Yes)
+					throw new OperationCanceledException("Import was canceled by user.");
 			}
 			else
 			{
@@ -56,7 +65,7 @@ namespace WizardSample
 					Name = NodeName,
 					Description = NodeDescription,
 					Type = VariableType.Node,
-					Expression = "$P." + ProtocolName,
+					Expression = "$P." + protocolName,  // link to the protocol: the driver receives this node and its children
 					Address = $"{DeviceUsername}:{DevicePassword}@{DeviceHostname}",
 					// <todo> add custom parameter as needed
 					//Parameters = "name=value",
@@ -159,7 +168,7 @@ namespace WizardSample
 
 			// beyond this point, canceling import is no longer possible
 			_canCancel = false;
-			CommandManager.InvalidateRequerySuggested();
+			InvokeUI(CommandManager.InvalidateRequerySuggested); // must run on the UI thread to refresh the Cancel button
 
 
 			Log("Saving variables...");
@@ -183,7 +192,8 @@ namespace WizardSample
 		/// Ensures the AppVision protocol row exists; creates it (with icon upload) if it does not.
 		/// The protocol name is sanitised to alphanumeric characters before use.
 		/// </summary>
-		private void CreateProtocol()
+		/// <returns>The protocol name actually used (sanitised).</returns>
+		private string CreateProtocol()
 		{
 			// safe protocol name
 			var protocolName = ProtocolName.ToAlphaNum();
@@ -207,13 +217,17 @@ namespace WizardSample
 
 				protocol = new ProtocolRow
 				{
-					Name = ProtocolName,
+					Name = protocolName,
 					Description = "Protocol " + ProtocolName,
+					// path of the driver executable, relative to the AppVision 'Bin' folder of the server,
+					// e.g. $@"Drivers\{protocolName}\appDriver{protocolName}.exe" if the driver has its own sub-folder
 					Executable = $"appDriver{protocolName}.exe",
 					Icon = iconPath
 				};
-				appServer.ProtocolManager.AddProtocol(protocol);
+				if (!appServer.ProtocolManager.AddProtocol(protocol))
+					throw new Exception("Failed to create protocol " + protocolName);
 			}
+			return protocolName;
 		}
 
 		/// <summary>

@@ -6,7 +6,8 @@ public class ScriptPost_it : Prysm.AppVision.Script.ScriptServerBase
 	{
 		if (ev.SubType != EventSubType.UserUpdateEvent) return;
 		
-		var over = (await Server.ClientManager.GetOverlays("Id=Event_" + ev.AlarmId)).FirstOrDefault();
+		// The overlay of a Post-it is named "Event_" + id of the user message (see Post-it.xaml)
+		var over = (await Server.ClientManager.GetOverlays("Name=Event_" + ev.AlarmId)).FirstOrDefault();
 		if (over == null) return;
 		
 		var msg = await Server.EventManager.GetUserMessageById(ev.AlarmId ?? 0);
@@ -14,7 +15,7 @@ public class ScriptPost_it : Prysm.AppVision.Script.ScriptServerBase
 
 		if (msg.IsCompleted)
 		{
-			Server.ClientManager.RemoveOverlay(over.Id);
+			Server.ClientManager.RemoveOverlay(over.Name);
 		}
 		else
 		{

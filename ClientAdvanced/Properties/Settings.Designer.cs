@@ -46,17 +46,5 @@ namespace ClientAdvanced.Properties {
                 this["user"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("123")]
-        public string pwd {
-            get {
-                return ((string)(this["pwd"]));
-            }
-            set {
-                this["pwd"] = value;
-            }
-        }
     }
 }

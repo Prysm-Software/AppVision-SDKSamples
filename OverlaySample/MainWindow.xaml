@@ -13,11 +13,12 @@
             <Button Content="Connect" Margin="4 0"  Width="75" Click="Connect_Click"/>
         </WrapPanel>
 
-        <DataGrid x:Name="dataGrid" IsEnabled="False" SelectionMode="Extended" CommandManager.PreviewCanExecute="DataGrid_PreviewCanExecute"
-                  AutoGeneratingColumn="DataGrid_AutoGeneratingColumn" InitializingNewItem="DataGrid_InitializingNewItem" RowEditEnding="DataGrid_RowEditEnding">
+        <DataGrid x:Name="dataGrid" IsEnabled="False" SelectionMode="Extended" CommandManager.PreviewExecuted="DataGrid_PreviewExecuted"
+                  AutoGeneratingColumn="DataGrid_AutoGeneratingColumn" InitializingNewItem="DataGrid_InitializingNewItem"
+                  BeginningEdit="DataGrid_BeginningEdit" RowEditEnding="DataGrid_RowEditEnding">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
-                <DataGridTextColumn Header="Date" Binding="{Binding Date}"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date}" IsReadOnly="True"/>
                 <DataGridTemplateColumn Header="Symbol">
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>

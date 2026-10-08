@@ -50,8 +50,8 @@ namespace DriverAdvanced
 			// Log every variable state change received from AppVision (useful for debugging).
 			AppServer.VariableManager.StateChanged += s => Trace.Info($">app> {s.Name}={s.Value}");
 
-			// AppVision requests a full restart of the driver (e.g. after a configuration reload).
-			AppServer.Restart += () => { Stop(); Start(); };
+			// Note: restart and stop requests are handled in App.xaml.cs with AppServer.ControllerManager.Closed
+			// and .Restart. AppServerForDriver.Restart is obsolete and never raised: do not use it.
 
 			// AppVision sends a download command (e.g. push config to an AppControl controller).
 			AppServer.Download += Download;
@@ -59,8 +59,9 @@ namespace DriverAdvanced
 			// AppVision sends a refresh command (e.g. resync all device states).
 			AppServer.Refresh += Refresh;
 
-			// Forward driver log entries to the AppVision server log so they appear
-			// in the AppVision Manager diagnostic console alongside other server logs.
+			// Write the Trace entries to the driver log file through AppServer.Log():
+			// C:\ProgramData\AppVision 4\LogFiles\<year>\<product>\<protocol>_<yyMM>.log
+			// Entries are filtered by the "Log level" of the protocol (Configurator > Protocols > Parameters).
 			Trace.Logger.AddAppender(new AppServerLogAppender(AppServer), LogLevel.All, "app");
 		}
 
@@ -72,7 +73,8 @@ namespace DriverAdvanced
 		{
 			try
 			{
-				// AppVision launches this driver with: DriverAdvanced.exe protocolName[@hostname]
+				// AppVision launches this driver with: DriverAdvanced.exe protocolName[@hostname] [-password=...]
+				// (the password of the protocol, if any, is read by Login from the command line).
 				// Split the argument to separate the protocol name from the optional server host.
 				var args = Environment.GetCommandLineArgs();
 				var a = args[1].Split('@');
@@ -85,12 +87,13 @@ namespace DriverAdvanced
 
 				// Login tells AppVision which protocol this driver manages.
 				// AppVision will then route all events for that protocol to this process.
+				// Login throws if the protocol does not exist (Configurator > Protocols).
 				AppServer.Login(protocolName);
 
-				// Ensure this driver binary was compiled within the SDK warranty period.
-				// If the warranty has expired the driver is not allowed to run.
+				// Optional: refuse to run a driver built after the end of the AppVision warranty
+				// of the site (license). BuildInfo.Date is generated at each build by BuildInfo.tt.
 				if (!AppServer.CheckWarrantyDate(BuildInfo.Date))
-					throw new Exception("This driver was built after your warranty has expied.");
+					throw new Exception("This driver was built after the end of the AppVision warranty of this site.");
 
 				// --- Read protocol-level settings from AppVision configuration ---
 				// The protocol row (AppServer.CurrentProtocol) holds global settings shared
@@ -111,7 +114,8 @@ namespace DriverAdvanced
 
 				// Build a notification filter so AppVision only sends us events we care about.
 				// "$V.Device1.*" matches all sub-variables of Device1 (e.g. Device1.Comm, Device1.Temperature, ...).
-				// Multiple filters are joined with "|" (logical OR).
+				// Multiple masks are joined with "|" (logical OR) in ONE call: a new "$V." filter
+				// replaces the previous one. An empty filter is ignored (no variable notification).
 				// todo: adjust the filter if you need a different scope (e.g. a single specific variable).
 				var filter = deviceVars.Select(v => "$V." + v.Name + ".*").Join("|");
 				AppServer.AddFilterNotifications(filter);
@@ -121,7 +125,8 @@ namespace DriverAdvanced
 				// or AppVision rules write to in order to send commands to the driver.
 				AppServer.AddFilterNotifications("Variable.StateType=1");
 
-				// Begin receiving notification callbacks. Pass false for synchronous (inline) delivery.
+				// Begin receiving notifications (variable changes and the Close/Download/Refresh commands).
+				// false: do not send the current values of the subscribed variables now (true sends them at once).
 				AppServer.StartNotifications(false);
 
 				// Signal to AppVision that this driver has finished its initialisation and is
@@ -145,8 +150,7 @@ namespace DriverAdvanced
 					}
 				}
 
-				// Display a summary in the MainWindow status bar.
-				Trace.StatusText = _devices.Count + " device(s) running";
+				Trace.Info(_devices.Count + " device(s) running");
 			}
 			catch (Exception ex)
 			{
@@ -159,7 +163,8 @@ namespace DriverAdvanced
 
 		/// <summary>
 		/// Stops all <see cref="Device"/> instances and disconnects from the AppVision server.
-		/// Called on graceful shutdown (Ctrl+close) or before a restart.
+		/// Called when AppVision closes the protocol, when the connection to the server is lost,
+		/// or when the user closes the window with Ctrl held (see App.xaml.cs).
 		/// </summary>
 		public void Stop()
 		{
@@ -191,9 +196,11 @@ namespace DriverAdvanced
 		/// to a physical controller.
 		/// Remove this method if your system does not support download.
 		/// </summary>
-		internal void Download(string command, string parameters)
+		/// <param name="varNames">Comma-separated names of the device variables to download (e.g. "Access.C001").</param>
+		/// <param name="parameter">What to download, e.g. "Holidays,Timetables,Rights".</param>
+		internal void Download(string varNames, string parameter)
 		{
-			Trace.Info("Download");
+			Trace.Info($"Download {varNames} {parameter}");
 			try
 			{
 				// todo: push configuration/data to the external system.
@@ -210,9 +217,10 @@ namespace DriverAdvanced
 		/// for example after a communication interruption.
 		/// Remove this method if your system does not support refresh.
 		/// </summary>
-		public void Refresh(string message)
+		/// <param name="parameter">Parameter of the refresh request (empty when started from the driver window).</param>
+		public void Refresh(string parameter)
 		{
-			Trace.Info("Refresh");
+			Trace.Info($"Refresh {parameter}");
 			try
 			{
 				// todo: re-read all device states and call SetVariable for each value.
@@ -258,18 +266,23 @@ namespace DriverAdvanced
 					_alrCount = 0;
 				}
 #endif
-				Trace.Error(ex, $"[{row.Name}]");
+				Trace.Error(ex, $"[{row?.Name}]");
 
 				// AddAlarmExt parameters:
-				//   alarmCode        : numeric code used to identify the alarm type in AppVision rules
-				//   shortMessage     : brief description shown in the alarm list
-				//   objectDescription: the variable's full description (displayed in context)
-				//   detailMessage    : full exception text (shown in alarm detail view)
-				//   areaDescription  : the area path of the variable (for area-based filtering)
-				//   groupDescriptions: group membership of the variable (for group-based filtering)
-				AppServer.AlarmManager.AddAlarmExt(10, ex.Message, row?.FullDescription, ex.ToString(), row?.AreaDescription, row?.FullGroupDescriptions);
+				//   severity    : 1 (low) .. 100 (high), here 10
+				//   state       : short text shown in the State column of the alarm list
+				//   description : description of the object in alarm (here the variable's full description)
+				//   info        : additional information (here the full exception text)
+				//   areaName    : area of the alarm (for area-based filtering and user rights)
+				//   groupNames  : groups of the alarm (for group-based filtering)
+				// For a protocol-level error (row == null), the protocol description is used instead.
+				AppServer.AlarmManager.AddAlarmExt(10, ex.Message, row?.FullDescription ?? AppServer.CurrentProtocol?.Description, ex.ToString(), row?.AreaDescription, row?.FullGroupDescriptions);
 			}
-			catch { }
+			catch (Exception ex2)
+			{
+				// never let error reporting crash the driver
+				Trace.Error(ex2);
+			}
 		}
 #if MAX_ALARMS_COUNT_PER_MIN
 		DateTime _alrDate;
@@ -282,16 +295,27 @@ namespace DriverAdvanced
 		/// </summary>
 		/// <param name="name">Full variable name (e.g. "Device1.Temperature").</param>
 		/// <param name="value">New value to set.</param>
-		/// <param name="info">Optional free-text information attached to the value (visible in logs).</param>
-		/// <param name="operation">Optional operation qualifier (e.g. "ack", "reset").</param>
+		/// <param name="info">Optional free-text information attached to the value (Info column of the events).</param>
+		/// <param name="operation">
+		/// Optional operation flags, comma separated: "@init" (initial value: not archived, no server script),
+		/// "@changeonly" (the server ignores the value if it did not change), "@log" (value read from a device log).
+		/// </param>
+		/// <remarks>
+		/// VariableManager.Set is queued and sent asynchronously by the SDK: it does not throw on network errors.
+		/// </remarks>
 		internal void SetVariableNoCache(string name, object value, string info = null, string operation = null)
 		{
 			try
 			{
 				Trace.Info($"<drv< {name}={value}	{info}");
+				_cache[name] = value;
 				AppServer.VariableManager.Set(name, value, info, operation);
 			}
-			catch { }
+			catch (Exception ex)
+			{
+				_cache.TryRemove(name, out _);      // send it again next time
+				Trace.Error(ex, $"[{name}]");
+			}
 		}
 
 		/// <summary>
@@ -311,8 +335,7 @@ namespace DriverAdvanced
 				if (value?.Equals(val) == true)
 					return;
 
-			_cache[name] = value;
-			SetVariableNoCache(name, value, info, operation);
+			SetVariableNoCache(name, value, info, operation);       // updates the cache
 		}
 	}
 }

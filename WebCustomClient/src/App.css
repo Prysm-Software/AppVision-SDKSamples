@@ -1,11 +1,19 @@
-
 .App {
-    text-align: center;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 10px;
-  }
+  padding: 12px;
+}
 
-  .Custom {
-    padding: 30px;
-  }
+.App table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.App th,
+.App td {
+  border-bottom: 1px solid #ddd;
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.App td.nowrap {
+  white-space: nowrap;
+}

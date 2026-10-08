@@ -39,8 +39,17 @@ namespace DriverSimple
 
 			_appServer = new AppServerForDriver();
 			_appServer.VariableManager.StateChanged += VariableManager_StateChanged;
-			_appServer.ControllerManager.Closed += CloseRequested;
-			_appServer.ControllerManager.Restart += RestartRequested;
+
+			// SDK events are raised on background threads: go back to the UI thread before closing the window.
+			// Closed : AppVision stops the protocol (configurator, server shutdown, protocol restart).
+			// Restart: the SDK lost the connection to the server (keep-alive failure) and closes the session.
+			//          AppVision relaunches the protocols marked "Autostart", so the driver just exits.
+			_appServer.ControllerManager.Closed += () => Dispatcher.BeginInvoke((Action)Close);
+			_appServer.ControllerManager.Restart += () => Dispatcher.BeginInvoke((Action)(() =>
+			{
+				Error("Connection to the AppVision server lost");
+				Close();
+			}));
 		}
 
 		#region Load
@@ -51,13 +60,15 @@ namespace DriverSimple
 		/// </summary>
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			// CommandLine: DriverSample.exe protocolName[@hostname]
-
+			// Command line: DriverSimple.exe protocolName[@hostname]
+			// The AppVision server starts the driver with the protocol name as first argument
+			// (and may append other arguments such as -password=..., read by Login).
 			string[] args = Environment.GetCommandLineArgs();
 
 			if (args == null || args.Length < 2)
 			{
-				MessageBox.Show("Usage: DriverSample.exe protocol_name");
+				MessageBox.Show("Usage: DriverSimple.exe protocolName[@hostname]", Title);
+				Close();
 				return;
 			}
 			string[] ss = args[1].Split('@');
@@ -71,27 +82,25 @@ namespace DriverSimple
 				// Log into AppVision server as a driver using the protocol name.
 				// Note: an empty hostname will connect to localhost 
 				_appServer.Open(serverHostname);
+				// Login throws if {protocolName} does not exist in the configuration (Configurator > Protocols).
 				_appServer.Login(protocolName);
 
-				// {protocolName} does not exist in AppVision configuration. See Configurator/Protocols
-				if (_appServer.CurrentProtocol == null)
-					throw new Exception("Invalid protocol " + protocolName);
-
-				// One node variable must have its parameter 'Source' set to '$P.{protocolName}'
+				// One node variable must have its 'Source' set to '$P.{protocolName}'
 				_protocolVariable = _appServer.GetVariablesByProtocol(protocolName).FirstOrDefault();
 				if (_protocolVariable == null)
-					throw new Exception("No variable linked to protocol " + protocolName);
+					throw new Exception($"No variable has its Source set to $P.{protocolName}");
 
-				// Subscribe to received the change of value for Output variables
+				// Subscribe to the changes of the node's children (InputN, OutputN, Buffer).
 				_appServer.AddFilterNotifications($"$V.{_protocolVariable.Name}.*");
-				_appServer.StartNotifications(false);   // true to receive the output initial values
+				_appServer.StartNotifications(false);   // true to receive the current values of the outputs now
 				_appServer.ProtocolSynchronized();
 				Trace("Connected");
 
 
 				// Set the initial value of Input variables.
-				// The '@init' operation flag sets values without recording them as real device events
-				// in the history database (useful for startup state synchronisation).
+				// The '@init' operation updates the value without archiving it in the history database
+				// and without running the server scripts (VariableChanged): use it to synchronise the
+				// initial state at startup, not for real device events.
 				for (int i = 1; i <= 8; i++)
 				{
 					_appServer.VariableManager.Set(_protocolVariable.Name + ".Input" + i, 0, operation: "@init");
@@ -108,40 +117,28 @@ namespace DriverSimple
 
 		#region Close
 
-		/// <summary>Stops the driver and triggers a restart when requested by AppVision.</summary>
-		void RestartRequested()
-		{
-			_restart = true;
-			Close();
-		}
-		/// <summary>Closes the driver window when AppVision terminates this driver process.</summary>
-		void CloseRequested()
-		{
-			Close(); // Close driver window
-		}
-
 		/// <summary>
-		/// Disconnects from AppVision and optionally relaunches the driver process
-		/// when a restart was requested by the server.
+		/// Disconnects from AppVision when the window closes (AppVision request, connection lost or user).
 		/// </summary>
+		/// <remarks>
+		/// The driver does not relaunch itself: since AppVision 4.8.5 the server restarts a protocol by
+		/// closing the driver then starting a new process, and it relaunches the "Autostart" protocols
+		/// whose driver stopped answering. A driver that relaunched itself could run twice.
+		/// </remarks>
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			try
 			{
-				// Disconnect from AppVision server
+				// Disconnect from AppVision server (logs the protocol out)
 				if (_appServer.IsConnected)
 					_appServer.Close();
 			}
-			catch
-			{ }
-			// If a restart has been requested by the server, relaunch the driver with the same command line arguments
-			if (_restart)
+			catch (Exception ex)
 			{
-				var args = Environment.GetCommandLineArgs();
-				Process.Start(args[0], args.Skip(1).Join(" "));
+				// The process is exiting: nothing else to do than keeping a trace
+				Debug.WriteLine("Close: " + ex.Message);
 			}
 		}
-		bool _restart = false;
 
 		#endregion
 
@@ -173,6 +170,8 @@ namespace DriverSimple
 		/// </summary>
 		private void Inputs_Click(object sender, RoutedEventArgs e)
 		{
+			if (_protocolVariable == null)		// not connected
+				return;
 			var checkBox = (CheckBox)e.Source;
 			var variableName = _protocolVariable.Name + "." + checkBox.Name;
 
@@ -189,6 +188,8 @@ namespace DriverSimple
 		/// </summary>
 		private void SetBuffer_Click(object sender, RoutedEventArgs e)
 		{
+			if (_protocolVariable == null)		// not connected
+				return;
 			var rand = new Random();
 			var buffer = string.Join(" ", Enumerable.Range(0, 25).Select(i => rand.Next()).ToArray());
 
@@ -202,14 +203,18 @@ namespace DriverSimple
 		/// <summary>Raises a custom free-text event in the AppVision event log.</summary>
 		private void SetEvent_Click(object sender, RoutedEventArgs e)
 		{
-			// Set a custom event in AppVision server
+			if (!_appServer.IsConnected)
+				return;
+			// Add a custom event: AddEvent(state, description, info, areaName, groupNames, ...)
 			_appServer.EventManager.AddEvent("test", "Sample Event");
 		}
 
-		/// <summary>Raises a custom numbered alarm in the AppVision alarm table.</summary>
+		/// <summary>Raises a custom alarm (not linked to a variable) in the AppVision alarm list.</summary>
 		private void TriggerAlarm_Click(object sender, RoutedEventArgs e)
 		{
-			// Trigger a custom alarm in AppVision server
+			if (!_appServer.IsConnected)
+				return;
+			// Add a custom alarm: AddAlarmExt(severity 1..100, state, description, info, areaName, groupNames, ...)
 			_appServer.AlarmManager.AddAlarmExt(1, "test", "Sample Alarm");
 		}
 
@@ -224,10 +229,13 @@ namespace DriverSimple
 			{
 				TraceWindow("Error: " + text);
 				_appServer.Log("Error: " + text);
-				if (_appServer.IsConnected)
+				if (_appServer.CurrentProtocol != null)      // logged in
 					_appServer.AlarmManager.AddAlarmExt(10, text, _appServer.CurrentProtocol.Description);
 			}
-			catch { }
+			catch (Exception ex)
+			{
+				Debug.WriteLine("Error: " + ex.Message);    // never let error reporting crash the driver
+			}
 		}
 
 		/// <summary>
@@ -248,7 +256,7 @@ namespace DriverSimple
 				while (listBox1.Items.Count > 250)
 					listBox1.Items.RemoveAt(0);
 
-				text = DateTime.Now.ToString("hh:mm:ss.fff ") + text;
+				text = DateTime.Now.ToString("HH:mm:ss.fff ") + text;
 				this.listBox1.Items.Add(text);
 				listBox1.ScrollIntoView(text);
 			});

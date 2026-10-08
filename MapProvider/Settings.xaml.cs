@@ -1,28 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MapProvider
 {
-	/// <summary>
-	/// Interaction logic for Settings.xaml
-	/// </summary>
+	/// <summary>Settings panel of <see cref="TileServerProvider"/>, bound to the provider.</summary>
 	public partial class Settings : UserControl
 	{
 		public Settings()
 		{
 			InitializeComponent();
+		}
+
+		TileServerProvider Provider => (TileServerProvider)DataContext;
+
+		void OpenStreetMap_Click(object sender, RoutedEventArgs e) => Preset(TileServerProvider.OpenStreetMap, 19);
+
+		void OpenTopoMap_Click(object sender, RoutedEventArgs e) => Preset("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", 17);
+
+		void Preset(string url, int maxZoom)
+		{
+			Provider.UrlTemplate = url;     // the provider notifies the change: the text boxes follow
+			Provider.MaxZoom = maxZoom;
 		}
 	}
 }

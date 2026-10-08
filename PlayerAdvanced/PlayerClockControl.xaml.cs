@@ -44,7 +44,15 @@ namespace PlayerClock
 		/// Compared against <see cref="_date"/> in <see cref="NewFrame"/> to detect end-of-sequence.
 		/// </summary>
 		DateTime? _playbackEnd;
-		
+
+		/// <summary>
+		/// Current mode, known by the player itself: <see cref="Play()"/> starts the live,
+		/// <see cref="Play(DateTime, TimeSpan, double)"/> starts a playback, <see cref="Stop"/> ends both.
+		/// </summary>
+		/// <remarks>
+		/// <c>PlayerBaseControl.Mode</c> is obsolete: a player must not depend on its host to know what it is playing.
+		/// </remarks>
+		PlayerMode _mode = PlayerMode.None;
 
 		/// <summary>
 		/// Initialises the control, configures the simulation timer and shows the initial status.
@@ -56,9 +64,13 @@ namespace PlayerClock
 			// Fire NewFrame at <fps> Hz to simulate incoming video frames.
 			_fakeVideo.Interval = TimeSpan.FromSeconds(1.0 / fps);
 			_fakeVideo.Tick += NewFrame;
-			// Show the current Mode and Status in the bottom status bar for debugging.
-			tbBottom.Text = Mode + ": " + Status;
+			// Show the mode and the status (set by AppVision: Connecting, Connected, Playing...) at the bottom of the image.
+			StatusChanged += (s, e) => Dispatcher.InvokeAsync(UpdateStatusText);
+			UpdateStatusText();
 		}
+
+		/// <summary>Displays the current mode and status at the bottom of the image, for debugging.</summary>
+		void UpdateStatusText() => tbBottom.Text = $"{_mode}: {Status}";
 
 		#region IPlayerVideoDevice
 
@@ -72,15 +84,18 @@ namespace PlayerClock
 		/// </remarks>
 		/// <param name="cameraName">Human-readable camera name shown at the top of the tile.</param>
 		/// <param name="address">
-		/// Camera address in the format <c>user:password@host:port</c>.
-		/// Parsed with <see cref="Helper.ParseUri"/> to extract credentials and endpoint.
+		/// Address field of the camera variable, or of its parent node when empty (typically the video system node),
+		/// e.g. <c>user:password@host:port</c>.
 		/// </param>
-		/// <param name="param">Optional driver-specific parameters (unused in this sample).</param>
+		/// <param name="param">Parameters field of the camera variable and of its parents, one <c>key=value</c> per line
+		/// (unused in this sample).</param>
 		public override async Task Connect(string cameraName, string address, string param)
 		{
-			this.DebugWriteLine(address);
+			// Never write the address in a log: it may contain a password.
+			this.DebugWriteLine(cameraName);
 
-			// Parse address to extract username, password and host/port.
+			// Parse the address to extract the credentials and the endpoint of the video system.
+			// A real player would open its SDK session or check the RTSP URL here.
 			var adr = Helper.ParseUri(address ?? "user:pwd@localhost:80");
 			var user = adr.GetUsername();
 			var pwd = adr.GetPassword();
@@ -101,6 +116,7 @@ namespace PlayerClock
 			// Simulate network teardown / device release.
 			await Task.Delay(_random.Next(100, 200));
 			_fakeVideo.Stop();
+			_mode = PlayerMode.None;
 		}
 
 		/// <summary>
@@ -136,8 +152,8 @@ namespace PlayerClock
 			await Task.Delay(_random.Next(100, 200));
 
 			PlaybackSpeed = 1;
-			// Tag the timer so NewFrame knows which branch to execute.
-			_fakeVideo.Tag = "live";
+			// NewFrame uses the mode to know which branch to execute.
+			_mode = PlayerMode.Live;
 			_fakeVideo.Start();
 		}
 		/// <summary>
@@ -198,7 +214,7 @@ namespace PlayerClock
 			else
 				_playbackEnd = null; // no defined end — play until Stop() is called
 
-			_fakeVideo.Tag = "playback";
+			_mode = PlayerMode.Playback;
 			_fakeVideo.Start();
 
 			// Return true: recorded video is assumed available at any requested time.
@@ -213,7 +229,9 @@ namespace PlayerClock
 			this.DebugWriteLine();
 
 			_fakeVideo.Stop();
+			_mode = PlayerMode.None;
 			tbClock.Text = "Stopped";
+			UpdateStatusText();
 		}
 
 		/// <summary>
@@ -266,6 +284,11 @@ namespace PlayerClock
 		/// Simulates a video export by reporting progress in 1% increments and writing
 		/// a placeholder text file. A real implementation would write a video container file.
 		/// </summary>
+		/// <remarks>
+		/// AppVision runs an export on a separate instance of the player, hosted in a hidden window:
+		/// it calls <see cref="Connect"/> then <see cref="Export"/>, without <see cref="Play()"/>.
+		/// The export job is shown as completed when the progress reaches 100.
+		/// </remarks>
 		/// <param name="start">Start of the export time range.</param>
 		/// <param name="end">End of the export time range.</param>
 		/// <param name="filePath">Destination directory for the exported file.</param>
@@ -290,9 +313,10 @@ namespace PlayerClock
 			// Write a stub file instead of a real video — demonstrates the expected output location.
 			File.WriteAllText(
 				Path.Combine(filePath, Path.ChangeExtension(fileName, ".txt")),
-				$@"Video export demo
-				from: {start}
-				to:   {end}");
+				$"Video export demo\r\nfrom: {start}\r\nto:   {end}\r\n");
+
+			// 100 = done: AppVision marks the export job as completed.
+			FireExportProgress(100, "");
 		}
 		/// <summary>Flag set by <see cref="CancelExport"/> to interrupt an ongoing export loop.</summary>
 		bool _cancelExport;
@@ -311,16 +335,16 @@ namespace PlayerClock
 		public override bool CanContinuousMove => true;
 
 		/// <summary>
-		/// Starts a simulated continuous pan/tilt animation.
-		/// A real implementation would send velocity commands to the camera hardware.
+		/// Starts a simulated continuous pan/tilt movement: the clock face slides in the requested direction.
+		/// A real implementation would send velocity commands to the camera.
 		/// </summary>
 		/// <param name="panSpeed">
-		/// Horizontal speed — positive = right, negative = left, 0 = stop.
+		/// Horizontal speed from -1000 to 1000: positive = right, negative = left, 0 = stop.
 		/// Magnitude determines the WPF animation duration.
 		/// </param>
 		/// <param name="tiltSpeed">
-		/// Vertical speed — positive = down, negative = up, 0 = stop.
-		/// Negated internally to match camera convention (positive tilt = look down).
+		/// Vertical speed from -1000 to 1000: positive = up (AppVision PTZ "up" button sends +500), negative = down, 0 = stop.
+		/// Negated internally because the WPF Y axis points down.
 		/// </param>
 		public override async Task ContinuousMove(double panSpeed, double tiltSpeed)
 		{
@@ -340,7 +364,7 @@ namespace PlayerClock
 		/// Positive speed zooms in toward x8 magnification; negative speed zooms back out to 100%.
 		/// </summary>
 		/// <param name="zoomSpeed">
-		/// Zoom velocity — positive = zoom in, negative = zoom out, 0 = stop.
+		/// Zoom speed from -1000 to 1000: positive = zoom in, negative = zoom out, 0 = stop.
 		/// </param>
 		public override async Task ContinuousZoom(double zoomSpeed)
 		{
@@ -485,7 +509,7 @@ namespace PlayerClock
 		/// </summary>
 		void NewFrame(object sender, EventArgs e)
 		{
-			if ((string)_fakeVideo.Tag == "playback")
+			if (_mode == PlayerMode.Playback)
 			{
 				var date = _date.AddSeconds(PlaybackSpeed / fps);
 				// Prevent fast-forward from going beyond the current wall time.
@@ -495,7 +519,8 @@ namespace PlayerClock
 				if (PlaybackSpeed > 0 && date > _playbackEnd ||
 					PlaybackSpeed < 0 && date < _playbackEnd)
 				{
-					Stop();
+					// Stop() completes synchronously in this sample: no need to await it in a timer handler.
+					_ = Stop();
 					return;
 				}
 				SetDate(date);
@@ -508,18 +533,18 @@ namespace PlayerClock
 
 		/// <summary>
 		/// Updates the internal clock position, refreshes all UI labels and calls
-		/// <see cref="PlayerBaseControl.FireFrameDecoded(DateTime)"/> so AppVision records
-		/// the frame timestamp for the timeline display and recording.
+		/// <c>FireFrameDecoded</c> so that AppVision knows that images arrive (status Playing)
+		/// and, in playback, moves the timeline to the frame timestamp.
 		/// </summary>
-		/// <param name="date">The new clock value (frame presentation time).</param>
+		/// <param name="date">The new clock value (frame presentation time, local time).</param>
 		void SetDate(DateTime date)
 		{
 			_date = date;
 			clock.Value = date;
 			tbClock.Text = $"{date:d}\r\n{date:HH:mm:ss.fff}";
-			tbBottom.Text = Mode + ": " + Status;
+			UpdateStatusText();
 
-			// Notify AppVision of the new frame timestamp — drives the recording timeline.
+			// Notify AppVision of the new frame and of its timestamp.
 			FireFrameDecoded(date);
 		}
 		#endregion

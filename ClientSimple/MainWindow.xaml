@@ -11,8 +11,8 @@
             <Label>User</Label>
             <TextBox Name="txtUser">ADM</TextBox>
             <Label>Password</Label>
-            <TextBox Name="txtPwd">123</TextBox>
-            <Button Width="100" Click="ButtonConnect_Click">Connect</Button>
+            <PasswordBox Name="txtPwd" Password="123" MinWidth="75" VerticalContentAlignment="Center"/>
+            <Button Width="100" Click="ButtonConnect_Click" IsDefault="True">Connect</Button>
         </WrapPanel>
         <WrapPanel DockPanel.Dock="Top" Margin="6 0" IsEnabled="False" Name="panelSetVar">
             <Label>Variable name</Label>

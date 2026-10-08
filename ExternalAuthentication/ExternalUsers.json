@@ -1,0 +1,29 @@
+{
+  "users": [
+    {
+      "name": "jdoe",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "groups": [ "Operators" ],
+      "password": "pbkdf2$100000$Rl4yoeU2ljyEEU1kwFjxMA==$xY4cq8B9F6kQ/0TSLOW3Meh76JlpF1FZLOvbXzXFoLE="
+    },
+    {
+      "name": "asmith",
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "email": "alice.smith@example.com",
+      "groups": [ "Supervisors", "Operators" ],
+      "password": "pbkdf2$100000$83TpZpbi4G8kJtSgWI2Jsw==$G7egq+pNf6oRdm0oiA+cCXIi6pPAZYQZi8Xjq7H88AE="
+    },
+    {
+      "name": "bmartin",
+      "firstName": "Bruno",
+      "lastName": "Martin",
+      "email": "bruno.martin@example.com",
+      "groups": [ "Contractors" ],
+      "disabled": true,
+      "password": "pbkdf2$100000$4SiUkNaLSwb/zSZWHrgbWg==$xR56T4fPfRuUYFPbqBXn6bZMDIHTzfwFKX4fV0ZdZBQ="
+    }
+  ]
+}

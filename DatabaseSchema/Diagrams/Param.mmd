@@ -1,0 +1,310 @@
+---
+title: Param database (configuration) - AppVision 4.10
+---
+erDiagram
+    Actions {
+        nvarchar(128) ActionName PK
+        nvarchar(max) ActionDescription "null"
+        int ActionContext
+        int ActionType
+        bit ActionIsActive
+        nvarchar(max) ActionParameterDescriptions "null"
+        nvarchar(max) ActionReturnDescription "null"
+        nvarchar(max) ActionScript "null"
+        nvarchar(max) ActionExtension "null"
+        nvarchar(max) ActionUrl "null"
+        nvarchar(max) ActionCustomExtension "null"
+    }
+    Areas {
+        int AreaId PK
+        nvarchar(max) AreaName "null"
+        nvarchar(max) AreaDescription "null"
+        nvarchar(max) AreaIcon "null"
+        nvarchar(max) AreaParameters "null"
+        nvarchar(max) AreaExtension "null"
+        nvarchar(max) AreaUrl "null"
+        nvarchar(max) AreaCustomExtension "null"
+        nvarchar(max) AreaCustomField1 "null"
+        nvarchar(max) AreaCustomField2 "null"
+        nvarchar(max) AreaCustomField3 "null"
+        nvarchar(max) AreaCustomField4 "null"
+        nvarchar(max) AreaCustomField5 "null"
+        nvarchar(max) AreaSynoptic "null"
+        nvarchar(max) AreaSound "null"
+        nvarchar(max) AreaSiteInfo "null"
+        nvarchar(max) AreaColorInfo "null"
+        nvarchar(64) AreaGuid "null"
+    }
+    FileInfos {
+        int FileInfoId PK
+        nvarchar(128) FileInfoName
+        nvarchar(max) FileInfoDescription "null"
+        int FileInfoType
+        int FileInfoContext
+        int FileInfoSiteId "null"
+        nvarchar(max) FileInfoParameters "null"
+        nvarchar(max) FileInfoExtension "null"
+        nvarchar(max) FileInfoUrl "null"
+        nvarchar(max) FileInfoCustomExtension "null"
+        nvarchar(64) FileInfoGuid "null"
+    }
+    Groups {
+        int GroupId PK
+        nvarchar(max) GroupName "null"
+        nvarchar(max) GroupDescription "null"
+        nvarchar(max) GroupIcon "null"
+        nvarchar(max) GroupParameters "null"
+        nvarchar(max) GroupExtension "null"
+        nvarchar(max) GroupUrl "null"
+        nvarchar(max) GroupCustomExtension "null"
+        nvarchar(max) GroupCustomField1 "null"
+        nvarchar(max) GroupCustomField2 "null"
+        nvarchar(max) GroupCustomField3 "null"
+        nvarchar(max) GroupCustomField4 "null"
+        nvarchar(max) GroupCustomField5 "null"
+        nvarchar(max) GroupSynoptic "null"
+        nvarchar(max) GroupSound "null"
+        nvarchar(max) GroupColorInfo "null"
+        nvarchar(64) GroupGuid "null"
+    }
+    GroupVariables {
+        int VariableId PK,FK
+        int GroupId PK,FK
+    }
+    Holidays {
+        int HolidayId PK
+        datetime HolidayDate
+        int HolidayType
+        bit HolidayIsAnnual
+        nvarchar(max) HolidayCulture "null"
+        nvarchar(max) HolidayExtension "null"
+        nvarchar(max) HolidayUrl "null"
+        nvarchar(max) HolidayCustomExtension "null"
+        nvarchar(64) HolidayGuid "null"
+    }
+    Instructions {
+        int InstructionId PK
+        nvarchar(max) InstructionName "null"
+        nvarchar(max) InstructionValue "null"
+        int InstructionType
+        int InstructionNeedValidation
+        nvarchar(max) InstructionParameters "null"
+        nvarchar(max) InstructionExtension "null"
+        nvarchar(max) InstructionUrl "null"
+        nvarchar(max) InstructionCustomExtension "null"
+        nvarchar(64) InstructionGuid "null"
+    }
+    InstructionVariables {
+        int VariableId PK,FK
+        int InstructionId PK,FK
+    }
+    Links {
+        int LinkId PK
+        nvarchar(max) LinkName "null"
+        nvarchar(max) LinkDescription "null"
+        int LinkType
+        datetime LinkDate "null"
+        bit LinkIsActive
+        nvarchar(max) LinkSource "null"
+        nvarchar(max) LinkAction "null"
+        nvarchar(max) LinkParameters "null"
+        nvarchar(max) LinkExtension "null"
+        nvarchar(max) LinkUrl "null"
+        nvarchar(max) LinkCustomExtension "null"
+        nvarchar(256) FilterServerName "null"
+        nvarchar(64) LinkGuid "null"
+    }
+    Mailings {
+        int MailingId PK
+        nvarchar(max) MailingName "null"
+        nvarchar(max) MailingDescription "null"
+        int MailingType
+        nvarchar(max) MailingTo "null"
+        int MailingFilterTimeTableId FK "null"
+        nvarchar(max) MailingFilters "null"
+        nvarchar(max) MailingFilterSeverity "null"
+        nvarchar(max) MailingConditions "null"
+        nvarchar(max) MailingGrouping "null"
+        bit MailingIsActive
+        int MailingTempoRetry
+        int MailingMaxRetry
+        nvarchar(max) MailingParameters "null"
+        nvarchar(max) MailingExtension "null"
+        nvarchar(max) MailingUrl "null"
+        nvarchar(max) MailingCustomExtension "null"
+        nvarchar(max) MailingModelEmail "null"
+        nvarchar(max) MailingModelSMS "null"
+        nvarchar(max) MailingModelOther "null"
+        nvarchar(64) MailingGuid "null"
+    }
+    Options {
+        nvarchar(128) OptionName PK
+        nvarchar(max) OptionValue "null"
+        int OptionType
+        nvarchar(max) OptionExtension "null"
+        nvarchar(max) OptionUrl "null"
+        nvarchar(max) OptionCustomExtension "null"
+    }
+    Passwords {
+        nvarchar(128) Name PK
+        nvarchar(max) Value "null"
+        int Type "null"
+        nvarchar(max) Extension "null"
+    }
+    ProfileUsers {
+        int ProfileId PK
+        nvarchar(max) ProfileName "null"
+        nvarchar(max) ProfileDescription "null"
+        bit ProfileIsAdmin
+        int ProfilePriorityLevel
+        nvarchar(max) ProfileOptions "null"
+        nvarchar(max) ProfileRoles "null"
+        nvarchar(max) ProfileFilters "null"
+        nvarchar(max) ProfileFiltersWrite "null"
+        nvarchar(max) ProfileFiltersFile "null"
+        nvarchar(max) ProfileWebHomePage "null"
+        nvarchar(max) ProfileWindowsHomePage "null"
+        nvarchar(max) ProfileExtension "null"
+        nvarchar(max) ProfileParameters "null"
+        nvarchar(max) ProfileUrl "null"
+        nvarchar(max) ProfileCustomExtension "null"
+        nvarchar(64) ProfileGuid "null"
+    }
+    Protocols {
+        int ProtocolId PK
+        nvarchar(max) ProtocolName "null"
+        nvarchar(max) ProtocolDescription "null"
+        nvarchar(max) ProtocolAddress "null"
+        nvarchar(max) ProtocolParameters "null"
+        nvarchar(max) ProtocolExecutable "null"
+        bit ProtocolIsExclude
+        bit ProtocolAutoStart
+        int ProtocolLogLevel
+        nvarchar(max) ProtocolLogFilename "null"
+        int ProtocolMaxRetry
+        int ProtocolTimeout
+        nvarchar(max) ProtocolExtension "null"
+        nvarchar(max) ProtocolUrl "null"
+        nvarchar(max) ProtocolCustomExtension "null"
+        nvarchar(64) ProtocolGuid "null"
+        nvarchar(max) ProtocolIcon "null"
+        nvarchar(256) ProtocolPassword "null"
+        int ProtocolTempoStart "null"
+    }
+    Scenarios {
+        int ScenarioId PK
+        bit Activated
+        bit StoreEvent
+        nvarchar(max) Name "null"
+        nvarchar(max) Execution "null"
+        nvarchar(max) Designer "null"
+        nvarchar(max) TimeTableVarName "null"
+        nvarchar(max) Triggers "null"
+        bit Unique
+        nvarchar(max) Extension "null"
+        nvarchar(256) FilterServerName "null"
+        nvarchar(64) ScenarioGuid "null"
+    }
+    TextReports {
+        int TextReportId PK
+        nvarchar(max) TextReportValue "null"
+        int TextReportType
+        nvarchar(max) TextReportExtension "null"
+        nvarchar(max) TextReportUrl "null"
+        nvarchar(max) TextReportCustomExtension "null"
+        nvarchar(256) TextReportName "null"
+        nvarchar(64) TextReportGuid "null"
+    }
+    Users {
+        int UserId PK
+        nvarchar(max) UserName "null"
+        nvarchar(max) UserLastName "null"
+        nvarchar(max) UserFirstName "null"
+        nvarchar(max) UserPassword "null"
+        int ProfileId FK
+        bit UserIsLocked
+        nvarchar(max) UserLanguage "null"
+        nvarchar(max) UserCulture "null"
+        nvarchar(max) UserEmail "null"
+        nvarchar(max) UserPhone "null"
+        nvarchar(max) UserNotes "null"
+        nvarchar(max) UserFilterClients "null"
+        int UserFilterTimeTableId "null"
+        datetime UserValidityStart
+        datetime UserValidityEnd
+        datetime UserCreateDate
+        nvarchar(max) UserExtension "null"
+        nvarchar(max) UserParameters "null"
+        nvarchar(max) UserOptions "null"
+        nvarchar(max) UserRoles "null"
+        nvarchar(max) UserUrl "null"
+        nvarchar(max) UserCustomExtension "null"
+        datetime UserPasswordDate "null"
+        nvarchar(64) UserGuid "null"
+        nvarchar(max) UserPicture "null"
+        nvarchar(max) UserSecurity "null"
+    }
+    Variables {
+        int VariableId PK
+        nvarchar(max) VariableName
+        nvarchar(max) VariableDescription "null"
+        int VariableType
+        int SiteId "null"
+        int AreaId FK "null"
+        nvarchar(max) VariableStateDescs "null"
+        bit VariableSendMailing
+        bit VariableStoreEvent
+        bit VariableStoreValue
+        int VariableStoreTempo
+        float VariableStoreDeltaMin
+        float VariableStoreDeltaMax
+        bit VariableIsExclude
+        int VariableStateType
+        nvarchar(max) VariableAddress "null"
+        bit VariableIsAlarm
+        nvarchar(max) VariableInstructions "null"
+        bit VariableIsAlarmMultiple
+        bit VariableAlarmNeedAcknowledge
+        bit VariableAlarmResetOnAcknowledge
+        bit VariableAlarmNeedReport
+        int VariableAlarmSeverity
+        int VariableAlarmSeverity2
+        int VariableAlarmTempo
+        float VariableAlarmMinValue
+        float VariableAlarmMaxValue
+        float VariableAlarmMinValue2
+        float VariableAlarmMaxValue2
+        nvarchar(max) VariableSynoptic "null"
+        nvarchar(max) VariableSound "null"
+        float VariableGraphMin
+        float VariableGraphMax
+        float VariableGraphScale
+        nvarchar(max) VariableVideoLink "null"
+        nvarchar(max) VariableParameters "null"
+        nvarchar(max) VariableSymbol "null"
+        nvarchar(max) VariableIcon "null"
+        bit VariableNoVisible
+        nvarchar(max) VariableExpression "null"
+        nvarchar(max) VariableScript "null"
+        nvarchar(max) VariablePosition "null"
+        nvarchar(max) VariableNotes "null"
+        int VariableBufferLength
+        int VariableBufferType
+        nvarchar(max) VariableExtension "null"
+        nvarchar(max) VariableUrl "null"
+        nvarchar(max) VariableCustomExtension "null"
+        nvarchar(max) VariableCustomField1 "null"
+        nvarchar(max) VariableCustomField2 "null"
+        nvarchar(max) VariableCustomField3 "null"
+        nvarchar(max) VariableCustomField4 "null"
+        nvarchar(max) VariableCustomField5 "null"
+        nvarchar(64) VariableGuid "null"
+        nvarchar(max) VariableLinks "null"
+    }
+    Groups ||--o{ GroupVariables : "GroupId"
+    Variables ||--o{ GroupVariables : "VariableId"
+    Instructions ||--o{ InstructionVariables : "InstructionId"
+    Variables ||--o{ InstructionVariables : "VariableId"
+    Variables |o--o{ Mailings : "MailingFilterTimeTableId"
+    ProfileUsers ||--o{ Users : "ProfileId"
+    Areas |o--o{ Variables : "AreaId"

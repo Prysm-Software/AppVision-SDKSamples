@@ -11,9 +11,9 @@ xmlns:gen="clr-namespace:appClient_gen" InitialWidth="800" InitialHeight="600" F
   <app:RectangleItem Fill="Image:Images/logo.png" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem2" Width="88" Height="68" Canvas.Left="704" Canvas.Top="8" app:WfCanvas.Anchor="Top, Right" />
   <app:RectangleItem Text="Driver Advanced" Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF0070C0" FontSize="12" x:Name="RectangleItem3" Width="152" Height="24" Canvas.Left="48" Canvas.Top="164" />
   <app:RectangleItem Text="Build a driver that can handle multiple devices." Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" FontSize="12" x:Name="RectangleItem4" Width="472" Height="60" Canvas.Left="228" Canvas.Top="164" />
-  <app:RectangleItem Fill="Image:Images/warning.png" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem7" Width="24" Height="24" ToolTip="DriverAdvanced.exe not found. Did you build SDK samples?" Canvas.Left="164" Canvas.Top="160">
+  <app:RectangleItem Fill="Image:Images/warning.png" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem7" Width="24" Height="24" ToolTip="DriverAdvanced.exe not found in Bin\Drivers\DriverAdvanced. Did you build SDK samples?" Canvas.Left="164" Canvas.Top="160">
     <app:SynoItem.AnimationItems>
-      <app:PropertyAnim x:Key="SynoItem.IsAnimVisible" Expression="!File.Exists(Helper.PathBin + &quot;\\DriverAdvanced.exe&quot;) " />
+      <app:PropertyAnim x:Key="SynoItem.IsAnimVisible" Expression="!File.Exists(Helper.PathBin + &quot;\\Drivers\\DriverAdvanced\\DriverAdvanced.exe&quot;) &amp;&amp; !File.Exists(Helper.PathBin + &quot;\\DriverAdvanced.exe&quot;)" />
     </app:SynoItem.AnimationItems>
   </app:RectangleItem>
   <app:RectangleItem Fill="Image:Images/app-logo.png" BorderBrush="#FF808080" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem24" Width="132" Height="72" Canvas.Left="8" Canvas.Top="4" />

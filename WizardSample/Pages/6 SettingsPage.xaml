@@ -48,7 +48,7 @@
         </Grid>
 
         <WrapPanel Grid.Row="3" HorizontalAlignment="Right">
-            <Button Width="75" Margin="10" Content="Previous" IsCancel="True" Command="{Binding DeviceDetailCommand}" />
+            <Button Width="75" Margin="10" Content="Previous" IsCancel="True" Command="{Binding DeviceDetailsCommand}" />
             <Button Width="75" Margin="10" Content="Next" IsDefault="True" Command="{Binding SummaryCommand}" />
         </WrapPanel>
 

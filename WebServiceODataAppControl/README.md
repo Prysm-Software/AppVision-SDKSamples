@@ -1,156 +1,105 @@
-﻿# WebServiceODataAppControl — AppControl OData Web Service Sample
+# WebServiceODataAppControl — People and badges of AppControl over OData
 
-## Overview
+**Used for:** reading and creating access-control data (people, badges, categories, departments, access
+profiles...) from another application: HR system, visitor management, badge printing. AppControl is the
+access-control module of AppVision.
 
-An interactive console application that demonstrates **CRUD operations** against
-the AppControl OData web service (`AppControlDataService.svc`).
+**Available in:** AppVision 4.x with AppControl (OData V3 service `AppControlDataService.svc`). Automatic person ids
+(`Id = 0` on creation) need AppVision 4.9 or later.
 
-Operations demonstrated:
-
-1. List all people.
-2. List people filtered by category.
-3. List people **with their badges** (OData `$expand`).
-4. Add a new person.
-5. Add a person together with a new badge.
-
-> Use this as a reference for any HR or visitor-management system that needs
-> to create or query badge-holder records in AppControl.
-
-**References:** `System.Data.Services.Client`, `AppControlDataServiceReference` (generated proxy)  
-**Output:** `WebServiceODataAppControl.exe` — standalone console application
+**Audience:** .NET developers; the HTTP requests are the same from any language (see
+[WebServiceOData](../WebServiceOData/README.md#without-net)).
 
 ---
 
-## Project Structure
+## How it works
+
+`http(s)://<server>/AppControlDataService.svc/` publishes the AppControl database: `People`, `Badges`,
+`BadgeTypes`, `Categories`, `Departments`, `AccessProfiles`, `AccessProfileRights`, `PersonProfiles`,
+`PersonRights`, `Zones`, `Visitors`, `Locations`... Authentication and conventions are those of
+[WebServiceOData](../WebServiceOData/README.md): HTTP Basic, generated client classes, `IgnoreMissingProperties`.
 
 | File | Role |
 |---|---|
-| `Program.cs` | Interactive menu and all CRUD operations |
-| `AppControlDataServiceReference/` | Auto-generated OData proxy classes |
+| `Program.cs` | Menu, `CreateContext()` (URL, credentials) and the five operations |
+| `Service References/AppControlDataServiceReference/` | Generated client classes (`AppControlContext`, `Person`, `Badge`...) |
 
----
-
-## Key Concepts
-
-### 1. `AppControlContext` (OData proxy)
+**References:** NuGet `Microsoft.Data.Services.Client` 5.8.4. **Output:** `WebServiceODataAppControl.exe`, in the
+AppVision `Bin` folder.
 
 ```csharp
-var ctx = new AppControlContext(
-    new Uri("http://localhost/AppControlDataService.svc/"));
-ctx.Credentials = new NetworkCredential("ADM", "123");
+var ctx = CreateContext();                                   // URL + NetworkCredential + IgnoreMissingProperties
+
+foreach (var p in ctx.People.Where(p => p.CategoryId == 1))  // GET People?$filter=CategoryId eq 1
+	Console.WriteLine($"{p.FirstName} {p.LastName}");
+
+foreach (var p in ctx.People.Expand("Badges"))               // GET People?$expand=Badges
+	foreach (var b in p.Badges)
+		Console.WriteLine(b.Code);
 ```
 
-### 2. Querying people (GET)
+Without `Expand("Badges")`, `p.Badges` stays empty: navigation properties are not loaded by default.
+
+**Creating a person and its badge.** Leave `person.Id` to 0: the server gives the next free id (4.9 and later) and
+`SaveChanges` copies it into the object. Then create the badge with this id:
 
 ```csharp
-// All people
-foreach (var p in ctx.People)
-    Console.WriteLine($"{p.FirstName} {p.LastName}");
+ctx.AddToPeople(person);           // person.Id = 0
+ctx.SaveChanges();                 // POST People -> person.Id is now the id given by the server
 
-// Filtered by category
-foreach (var p in ctx.People.Where(p => p.CategoryId == categoryId))
-    Console.WriteLine(p.FirstName);
-```
-
-### 3. OData `$expand` — load navigation properties
-
-```csharp
-foreach (var p in ctx.People.Expand("Badges"))
-{
-    Console.WriteLine(p.FirstName);
-    foreach (var b in p.Badges)
-        Console.WriteLine($"  badge: {b.Code}");
-}
-```
-
-Without `.Expand("Badges")`, `p.Badges` is an empty collection.
-
-### 4. Adding a person (POST)
-
-```csharp
-var person = new Person
-{
-    FirstName      = "Alice",
-    LastName       = "Dupont",
-    IsActive       = true,
-    ValidityStart  = DateTime.Now,
-    ValidityEnd    = DateTime.Now.AddHours(8),
-    CategoryId     = 1   // must exist
-};
-ctx.AddToPeople(person);
-ctx.SaveChanges();
-```
-
-### 5. Adding a person with a badge (two linked POSTs)
-
-AppControl requires `badge.PersonId` and `person.Id` to be set before
-`SaveChanges()`. Since the server generates `Id`, read the highest existing
-Id and increment:
-
-```csharp
-person.Id = ctx.People
-    .OrderByDescending(p => p.Id)
-    .ToArray()
-    .Select(p => p.Id)
-    .FirstOrDefault() + 1;
-
-badge.PersonId = person.Id;
-ctx.AddToPeople(person);
+badge.PersonId = person.Id;        // key of a badge: Code + Format + BadgeTypeId
 ctx.AddToBadges(badge);
-ctx.SaveChanges();
+ctx.SaveChanges();                 // POST Badges
 ```
 
-> **Note:** In production prefer a server-side stored procedure or the
-> AppControl REST API to avoid race conditions on Id generation.
-
-### 6. Required foreign keys
-
-| Field | Default exists | Description |
-|---|---|---|
-| `CategoryId` | ✓ (Id 1) | Person category |
-| `BadgeTypeId` | ✓ (Id 1) | Badge type |
-| `DepartmentId` | optional | May be `null` |
-
----
-
-## AppControl OData Reference
-
-`AppControlDataService.svc` — `http://localhost/AppControlDataService.svc/`
-
-| Entity set | Key fields |
+| Field | Rule |
 |---|---|
-| `People` | `Id`, `FirstName`, `LastName`, `CompanyId`, `Email`, `CategoryId`, `DepartmentId`, `IsActive`, `ValidityStart`, `ValidityEnd`, `Info1`–`Info5` |
-| `Badges` | `Id`, `Code`, `PersonId`, `BadgeTypeId`, `IsActive`, `ValidityStart`, `ValidityEnd` |
-| `Departments` | `Id`, `Description` |
-| `Categories` | `Id`, `Description` |
-| `BadgeTypes` | `Id`, `Description` |
+| `Person.CategoryId` | Category of the person; must exist (`Categories`). The sample uses 1. |
+| `Person.ValidityStart` / `ValidityEnd` | Validity of the person (the sample: now, for 8 hours). |
+| `Person.CompanyId` | Free identifier (employee number). Unique when the option `AppControl.People.CompanyIdUnique` is `true`. |
+| `Badge.Code`, `Badge.Format`, `Badge.BadgeTypeId` | Key of the badge; `BadgeTypeId` must exist (`BadgeTypes`, 1 by default). |
 
-**Navigation properties:**
+The user needs the AppControl rights: display people, add/delete people, update badges.
 
-| Property | Description |
+---
+
+## Run the sample
+
+**Prerequisites:** an AppVision 4.x server with AppControl, its web service on HTTP (port 80) or HTTPS (port 443), a
+category and a badge type with id 1 (create them in AppControl if the database is empty), a user with the AppControl
+rights (test bench: `ADM` / `123`). Change `ServiceUrl`, `UserName` and `Password` at the top of `Program.cs` for
+another server.
+
+1. Build the project, run `WebServiceODataAppControl.exe`.
+2. **4** asks a first name and a last name and creates the person: `person 12 added`.
+3. **5** does the same with a badge code: `person 13 and badge 123456 added`.
+4. **1** lists the people (`13: John Smith`), **2** those of category 1, **3** the people with their badges:
+   ```
+   13: John Smith
+     badge: 123456
+   ```
+5. **0** quits. The people appear in AppControl (web client or AppControl client).
+
+---
+
+## Troubleshooting
+
+| Symptom | Cause |
 |---|---|
-| `Person.Badges` | Collection of badges belonging to this person |
-| `Badge.Person` | Parent person |
+| `DataServiceClientException: 401 Unauthorized` on read | Wrong credentials. |
+| `401 Unauthorized` on creation | The user lacks the AppControl right to add people or update badges. |
+| Error on creation mentioning a foreign key | Category 1 or badge type 1 does not exist. |
+| `Company ID ... is already used` | `AppControl.People.CompanyIdUnique` is enabled and another person has this `CompanyId`. |
+| Error on badge creation | A badge with the same code, format and type already exists. |
+| A list is empty | No data yet, or the user's profile filters categories / departments. |
+
+See also the troubleshooting of [WebServiceOData](../WebServiceOData/README.md#troubleshooting) (connection,
+regeneration of the client classes).
 
 ---
 
-## How to Build and Run
+## See also
 
-1. Ensure AppVision with AppControl is running on `localhost`.  
-2. Build in **Release** configuration.  
-3. Run `WebServiceODataAppControl.exe` and select an operation.
-
----
-
-## Debugging
-
-Use **Fiddler** to inspect OData HTTP requests.  
-The service returns XML error details on constraint violations.
-
----
-
-## See Also
-
-- [WebServiceOData](../WebServiceOData/README.md) — OData for AppVision config (options, variables)
-- [AppControlSynchro](../AppControlSynchro/README.md) — CSV bulk import using the same context
-- [DriverAppControl](../DriverAppControl/README.md) — driver that talks to AppControl hardware
+- [AppControlSynchro](../AppControlSynchro/README.md) — import people from a CSV file with the same service
+- [DriverAppControl](../DriverAppControl/README.md) — driver for access-control hardware
+- [DatabaseSchema](../DatabaseSchema/README.md) — the `Apc_*` tables

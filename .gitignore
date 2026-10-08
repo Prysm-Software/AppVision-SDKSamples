@@ -350,3 +350,6 @@ healthchecksdb
 /WebServiceREST/.vscode/launch.json
 /DriverAdvanced/BuildInfo.cs
 /docs
+
+# Output of the WebServiceREST web site project
+PrecompiledWeb/

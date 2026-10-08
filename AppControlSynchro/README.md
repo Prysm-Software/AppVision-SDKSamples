@@ -1,128 +1,115 @@
-﻿# AppControlSynchro — AppControl People Import Tool
+# AppControlSynchro — Import people from a CSV file into AppControl
 
-## Overview
+**Used for:** keeping the AppControl cardholders in line with an external list (HR export, contractor list): new
+people are added, changed people are updated, unchanged people are left as they are. Typically run by a scheduled
+task.
 
-A console utility that imports **cardholders from a CSV file** into the
-AppControl access control module via its OData web service.
+**Available in:** AppVision 4.9 and later with AppControl (service `AppControlDataService.svc`; automatic person ids).
 
-For each CSV row the tool:
-
-1. Looks up the department by name.
-2. Checks whether a person with the same `CompanyId` already exists.
-3. **Inserts** new people; **updates** changed records; **skips** unchanged records.
-4. Batches all changes into a single `SaveChanges()` call.
-
-**References:** `System.Data.Services.Client`, `AppControlServiceReference` (generated proxy)  
-**Output:** `SynchroAppControl.exe` — standalone console application
+**Audience:** .NET developers or integrators who adapt the CSV columns to their source.
 
 ---
 
-## Project Structure
+## How it works
+
+For each line of the CSV file:
+
+1. the department is looked up by its description (`Departments`);
+2. the person is looked up by `CompanyId` (the `PersonID` column);
+3. unknown person: **added** (category 1, active); known person with different values: **updated**
+   (`UpdateObject`); identical: skipped.
+
+The additions and updates are queued in the OData context and sent by one `SaveChanges()` at the end (one HTTP
+request per person). Each step is printed and appended to `SynchroAppControl.log` in the current folder.
 
 | File | Role |
 |---|---|
-| `Program.cs` | Main loop, CSV parsing, upsert logic |
-| `AppControlServiceReference/` | Auto-generated OData proxy classes |
+| `Program.cs` | CSV reading, comparison, upsert |
+| `Service References/AppControlServiceReference/` | Generated client classes (`AppControlContext`, `Person`...) |
+
+**References:** NuGet `Microsoft.Data.Services.Client` 5.8.4. **Output:** `SynchroAppControl.exe`, in the AppVision
+`Bin` folder. Authentication and client classes: see [WebServiceOData](../WebServiceOData/README.md).
 
 ---
 
-## CSV Format
+## CSV format
 
-Semicolon-separated, one person per line, **no header row**:
+Semicolon-separated, **no header line**, 7 columns:
 
 ```
 FirstName;LastName;PersonID;Department;ValidDateFrom;ValidDateTo;DateOfBirth
+John;Smith;EMP001;Maintenance;2026-01-01;2026-12-31;1990-06-15
+Alice;Martin;EMP002;;2026-01-01;;1985-02-20
 ```
 
-| Column | Required | Description |
+| Column | Stored in | Rule |
 |---|---|---|
-| `FirstName` | ✓ | Person first name |
-| `LastName` | ✓ | Person last name |
-| `PersonID` | ✓ | Unique company identifier (badge correlation key) |
-| `Department` | | Department name (matched by description in AppControl) |
-| `ValidDateFrom` | | ISO date, e.g. `2024-01-01`. Defaults to today |
-| `ValidDateTo` | | ISO date. Defaults to `ValidDateFrom` + 1 year |
-| `DateOfBirth` | | Stored in `Info1` field |
+| `FirstName`, `LastName` | `FirstName`, `LastName` | |
+| `PersonID` | `CompanyId` | Key used to find the person again: must be unique in the file. |
+| `Department` | `DepartmentId` | Matched on the department description; empty or unknown: no department. |
+| `ValidDateFrom` | `ValidityStart` | Date (ISO `yyyy-MM-dd` recommended); empty: today. |
+| `ValidDateTo` | `ValidityEnd` | Date; empty: `ValidDateFrom` + 1 year. |
+| `DateOfBirth` | `Info1` | Free text. |
 
-**Example:**
-
-```
-Alice;Dupont;EMP001;Security;2024-01-01;2025-01-01;1990-06-15
-```
+A line without exactly 7 columns, or with an invalid date, is reported and skipped.
 
 ---
 
-## Key Concepts
+## Run the sample
 
-### 1. `AppControlContext` (OData proxy)
+**Prerequisites:** AppVision 4.9+ with AppControl, web service on HTTP (port 80) or HTTPS (port 443), a category with
+id 1 (`DEFAULT_CATEGORY_ID`), the departments of the file created in AppControl (optional), a user with the rights to
+add and update people (test bench: `ADM` / `123`; change `ServiceUrl`, `UserName`, `Password` in `Program.cs`).
 
-```csharp
-var ctx = new AppControlContext(
-    new Uri("http://localhost/AppControlDataService.svc/"));
-ctx.Credentials = new NetworkCredential("ADM", "123");
-
-// LINQ → OData $filter
-Person existing = ctx.People
-    .Where(p => p.CompanyId == id)
-    .FirstOrDefault();
+```
+SynchroAppControl.exe people.csv
 ```
 
-### 2. Upsert pattern
+Expected output, first run then second run with John's end date changed:
 
-```csharp
-if (existing == null)
-    ctx.AddToPeople(newPerson);       // INSERT
-else if (HasChanged(existing, row))
-    UpdateFields(existing, row);      // UPDATE (mark via ctx.UpdateObject)
-// else: skip — no changes
+```
+Start SynchroAppControl
+ add EMP001 John Smith
+ add EMP002 Alice Martin
+2 people added or updated.
+End SynchroAppControl
+...
+ update EMP001 John Smith
+ no change EMP002 Alice Martin
+1 people added or updated.
 ```
 
-### 3. Batched `SaveChanges()`
-
-All insert/update operations are queued and committed in **one HTTP batch
-request** at the end — significantly faster than per-row commits:
-
-```csharp
-ctx.SaveChanges();
-```
-
-### 4. Error handling
-
-Per-row errors are logged and the row is skipped; the import continues.
+The people appear in AppControl, with their department and validity dates.
 
 ---
 
-## AppControl OData Reference
+## Adapting it
 
-`AppControlDataService.svc` — `http://localhost/AppControlDataService.svc/`
+- **Other columns:** map them to the other `Person` fields (`Email`, `Phone`, `Company`, `Info2`... see the
+  `Apc_People` table in [DatabaseSchema](../DatabaseSchema/README.md)) in `ImportLine`, and add
+  them to the comparison.
+- **People removed from the file:** the sample never deletes. To deactivate them, list the people of the category
+  and set `IsActive = false` (or `ValidityEnd`) for those absent from the file.
+- **Badges:** create them after `SaveChanges()`, once the people have their id (see
+  [WebServiceODataAppControl](../WebServiceODataAppControl/README.md)).
+- **Errors:** `SaveChanges()` stops at the first rejected person; the ones sent before are kept. Call `SaveChanges()`
+  after each line to isolate errors, at the cost of speed.
 
-| Entity set | Key fields |
+---
+
+## Troubleshooting
+
+| Symptom | Cause |
 |---|---|
-| `People` | `Id`, `FirstName`, `LastName`, `CompanyId`, `Email`, `DepartmentId`, `CategoryId`, `IsActive`, `ValidityStart`, `ValidityEnd`, `Info1`–`Info5` |
-| `Badges` | `Id`, `Code`, `PersonId`, `BadgeTypeId`, `IsActive` |
-| `Departments` | `Id`, `Description` |
-| `Categories` | `Id`, `Description` |
+| `Exception ... 401 Unauthorized` | Wrong credentials, or no right to add / update people. |
+| `Company ID ... is already used` | Option `AppControl.People.CompanyIdUnique` enabled and the id is used by another person (or twice in the file). |
+| `Incorrect line` | Not 7 columns separated by `;` (check the separator of your export). |
+| `Validity start invalid` | Date not readable in the culture of the machine: use `yyyy-MM-dd`. |
+| Everything is updated at each run | A value differs in format between the file and AppControl (spaces, time part of a date). |
 
 ---
 
-## How to Build and Run
+## See also
 
-1. Build in **Release** configuration.  
-2. Run:
-
-```
-SynchroAppControl.exe path\to\people.csv
-```
-
-Redirect output to a log file:
-
-```
-SynchroAppControl.exe people.csv > import.log
-```
-
----
-
-## See Also
-
-- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) — interactive AppControl OData CRUD
-- [WebServiceOData](../WebServiceOData/README.md) — OData access to AppVision config data
+- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) — read and create people and badges
+- [WebServiceOData](../WebServiceOData/README.md) — OData basics, HTTP requests without .NET

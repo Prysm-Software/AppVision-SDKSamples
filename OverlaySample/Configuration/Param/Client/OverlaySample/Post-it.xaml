@@ -15,7 +15,7 @@ public static async void Create(string synoptic, Point position)
 	var msg = new UserMessageRow { Category = "Post-it", Description = "new Post-it", ContentCategory= "content" };
 	var id = await Sdk.Server.EventManager.AddUserMessage(msg);
 	Sdk.Server.ClientManager.UpdateOverlay(new OverlayItem {
-		Id = "Event_" + id, Symbol = "OverlaySample\\Post-it.xaml", Synoptic = synoptic, Position = position, SymbolParameters = msg.Description + ";" + msg.ContentCategory, ZIndex = 10 });
+		Name = "Event_" + id, Symbol = "OverlaySample\\Post-it.xaml", Synoptic = synoptic, Position = position, SymbolParameters = msg.Description + ";" + msg.ContentCategory, ZIndex = 10 });
 }
 
 public override void OnLoaded() 
@@ -56,7 +56,7 @@ Task t;
 // retrieve the UserMessage associated with this overlay instance
 public Task<UserMessageRow> GetLinkedUserMessage()
 {
-	var id = ((OverlayItem)Tag).Id.Substring(6).ToInt();  // "Event_nnn"
+	var id = ((OverlayItem)Tag).Name.Substring(6).ToInt();  // "Event_nnn"
 	return Server.EventManager.GetUserMessageById(id);
 }
 
@@ -69,7 +69,7 @@ public Task<UserMessageRow> GetLinkedUserMessage()
     <app:SynoItem.AnimationItems>
       <app:ActionAnim x:Key="MouseLeftButtonUp">
         <app:CData xml:space="preserve"><![CDATA[// Set the UserMessage status to Completed.
-// The server script 'Post-it.cs' will then remove the overlay from every clients
+// The server script 'Posit-it.pcs' will then remove the overlay from every client
 var msg = await GetLinkedUserMessage();
 if (msg != null)
 {

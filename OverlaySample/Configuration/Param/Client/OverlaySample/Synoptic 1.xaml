@@ -33,9 +33,12 @@ xmlns:gen="clr-namespace:appClient_gen" InitialWidth="800" InitialHeight="600" F
   <app:ButtonItem Text="Remove overlays" Foreground="#FF000000" x:Name="ButtonItem1" Width="130" Height="30" Canvas.ZIndex="20" Canvas.Left="70" Canvas.Top="130">
     <app:SynoItem.AnimationItems>
       <app:ActionAnim x:Key="MouseLeftButtonUp">
-        <app:CData xml:space="preserve"><![CDATA[// Delete all overlays matching the pattern id: 101_*
+        <app:CData xml:space="preserve"><![CDATA[// Delete all overlays whose name matches the pattern 101_*
+// From a client, RemoveOverlay deletes one overlay by its exact name:
+// list the matching overlays first (GetOverlays accepts * in its filters).
 
-Server.ClientManager.RemoveOverlay("101_*");]]></app:CData>
+foreach (var overlay in await Server.ClientManager.GetOverlays("Name=101_*"))
+	Server.ClientManager.RemoveOverlay(overlay.Name);]]></app:CData>
       </app:ActionAnim>
     </app:SynoItem.AnimationItems>
   </app:ButtonItem>
@@ -65,7 +68,7 @@ Server.ClientManager.UpdateOverlay(
 // with a custom parameter
 
 Server.ClientManager.UpdateOverlay(
-	id: "101_B",
+	name: "101_B",
 	 symbol: "OverlaySample\\Symbol B.xaml",
 	 synoptic: "OverlaySample\\Synoptic 1.xaml", 
 	position: new Point(rand.Next(100, 700), rand.Next(50, 500)),
@@ -79,7 +82,7 @@ Server.ClientManager.UpdateOverlay(
       <app:ActionAnim x:Key="MouseLeftButtonUp">
         <app:CData xml:space="preserve"><![CDATA[ToggleLayer("grid");]]></app:CData>
       </app:ActionAnim>
-      <app:PropertyAnim x:Key="Text" Expression="IsLayerVisible(&quot;grid&quot;) ? &quot;Hide grid&quot; : &quot;Show grid&quot;" />
+      <app:PropertyAnim x:Key="Text" Expression="IsLayerVisible(&quot;grid&quot;) == true ? &quot;Hide grid&quot; : &quot;Show grid&quot;" />
     </app:SynoItem.AnimationItems>
   </app:ButtonItem>
 </app:Synoptic>

@@ -1,128 +1,171 @@
-﻿# DriverAppControl — AppControl Access Controller Driver
+﻿# DriverAppControl — Driver for an access controller fed by AppControl
 
-## Overview
+**Used for:** integrating a third-party **access controller** (door controller, reader concentrator) with AppVision.
+The access rights are managed in **AppControl**, the access control module of AppVision (people, badges, access
+profiles, timetables, holidays). The driver downloads them to the controller, keeps the controller up to date when
+they change, and reports badge reads, door states and the connection status to AppVision.
 
-An AppVision driver that bridges AppVision with an **AppControl** access control
-system. It connects to AppControl hardware via the AppControl SDK, mirrors
-reader states and access events into AppVision variables, and forwards
-AppVision commands (door unlock, etc.) to the physical controllers.
+**Audience:** C# developers who know [DriverAdvanced](../DriverAdvanced/README.md) and integrate an access control
+hardware. The communication with the controller itself is a stub (`ChannelService`): this sample shows the AppVision
+and AppControl side.
 
-Use this as a reference for drivers that communicate with **access controllers,
-intrusion panels, or other security devices** through a device-specific SDK.
-
-**References:** `appCommon.dll`, `appData.dll`, `appSDK.dll`, `appControl.dll`  
-**Output:** `DriverAppControl.exe` → `AppVision 4\Bin\`
+**References:** `appSDK.dll`, `appData.dll`, `appCommon.dll`, `AppControl.Sdk.dll` (`Prysm.AppControl.SDK.Datalayer`),
+and the OData client DLLs `Microsoft.Data.*` / `System.Spatial` (in the AppVision `Bin` folder).
+**Output:** `DriverAppControl.exe`.
 
 ---
 
-## Project Structure
+## How it works
 
 | File | Role |
 |---|---|
-| `App.xaml.cs` | WPF entry point, lifecycle management |
-| `MainWindow.xaml.cs` | Diagnostic window (log display) |
-| `Driver.cs` | Protocol level: AppVision connection, device creation, main loop |
-| `Device.cs` | Device level: AppControl lifecycle, event mirroring |
-| `ChannelService.cs` | Low-level TCP/IP channel to one AppControl controller |
+| `MainWindow.xaml.cs` | Trace window; starts the `Driver`; *Ctrl + close* stops it |
+| `Driver.cs` | Protocol level: connection, one `Device` per controller, event queue, commands, modifications |
+| `Device.cs` | Controller level: own thread, command queue, full and incremental download, data classes |
+| `ChannelService.cs` | Communication with one controller: **stubs to replace** (they simulate a success) |
+| `Notes.txt` | Notes on the re-indexing of the downloaded data |
 
----
+### Threads
 
-## Key Concepts
+`Driver.Main` runs on its own thread. The SDK events (`StateChanged`, `Download`) and the device events are pushed
+into a `ConcurrentQueue` and processed by this thread, so the AppVision calls are made from one place. Each `Device`
+also runs its own thread, with a queue of commands (`SendCommand`), so that a slow controller does not block the
+others. The window only displays the trace (`Dispatcher.BeginInvoke`).
 
-### 1. AppControl SDK (`appControl.dll`)
+### From AppControl to the controller
 
-`ChannelService` manages the connection to one physical access controller.
+| Trigger | SDK | Driver |
+|---|---|---|
+| Full download requested in AppVision | `AppServerForDriver.Download(varNames, parameter)`; `varNames` = controllers, `parameter` = `Holidays,Timetables,Rights,Parameters` | `Device.Download`: holidays, timetables, access profiles, users, parameters |
+| AppControl data modified (person, badge, rights, timetable, holiday, controller variable) | `AppServerForDriver.NewModification` | `Driver.DownloadModifications` (at most every 5 s): reads the modification log with `Datalayer.GetLastModifications(lastId)` and sends `Device.DownloadList` the people, timetables and settings to update |
 
-| Event | Description |
-|---|---|
-| `.ConnectChanged` | Controller connected / disconnected |
-| `.InputChanged` | Reader or digital input state changed |
-| `.AccessControlEvent` | Badge swipe — grant / deny / alarm |
-
-### 2. Download command
-
-`AppServerForDriver.Download` fires when AppVision requests a configuration
-push. The driver uploads timetables, access profiles, and badge lists to the
-controller via the AppControl SDK.
-
-### 3. NewModification event
-
-`AppServerForDriver.NewModification` fires when the AppVision configuration
-changes (e.g. a badge was added or a timetable was updated).  
-The driver queues a download at the next polling cycle.
-
-### 4. Command variable naming convention
-
-Command variables follow the pattern `DeviceName.Reader01.Cmd`.  
-Use a targeted filter to subscribe only to command variables:
+The rights of the people on the readers of a controller come from AppControl:
 
 ```csharp
-server.AddFilterNotifications("$V." + deviceName + ".*.Cmd");
+var dl = new Datalayer(Driver.Server);
+PersonMapRight[] rights = dl.GetAllPeopleMapByReaderNames(readerNames).Result;           // everybody
+PersonMapRight right = dl.GetPersonMapByReaderIds2(dl.GetVariableIds(readerNames), id).Result; // one person
 ```
 
-### 5. Thread-based main loop
+`PersonMapRight.TimetableMap` has one entry per reader (timetable id, 0 = no access, and validity dates). The driver
+groups the identical maps into **access profiles**, and re-indexes timetables and users with the ids of the controller
+(`DeviceIndex`, saved in `{controller}_TID.xml`, `{controller}_UID.xml` and `{controller}_P.xml`, in the `Param`
+folder of the configuration: the driver must run on the server machine). A person gets one entry per badge of the
+badge type `BADGETYPE`, or one entry with the PIN code only. Inactive or expired people are not downloaded.
 
-`Driver.Main()` runs on a dedicated background thread, polling device status
-and processing the download queue — the WPF dispatcher is never blocked.
+They replace the synchronous `GetPeopleMapByReaderNames` and `GetPersonMapByReaderNames`, now obsolete. The driver
+thread has no synchronization context, so waiting for the `Task` with `.Result` is safe there (never do it on a UI
+thread).
 
-### 6. Per-device physical limits (`Device.cs`)
+`Driver.Download` can be tested from a client or server script:
 
-| Constant | Value | Description |
+```csharp
+Server.ProtocolManager.SendDownload(new[] { "Access.C001" }, "Holidays,Timetables,Rights");
+```
+
+### From the controller to AppVision
+
+| Event of the controller (`Device`) | Variable written by `Driver` | SDK call |
 |---|---|---|
-| `MAX_READER` | 4 | Readers per controller |
-| `MAX_HOLIDAY` | 24 | Holiday slots |
-| `MAX_TIMETABLE` | 48 | Timetable slots |
-| `MAX_USER` | 10 000 | Cardholder capacity |
-| `MAX_PROFILE` | 256 | Access profile slots |
+| Connection state (`ConnectChanged`) | `<controller>.Comm` | `VariableManager.Set` (0 Unknown, 1 Connected, 2 Disconnected, 3 Fault, 4 Downloading) |
+| Badge read (`AccessControlEvent`) | `<controller>.Reader01` .. `Reader04` | `VariableManager.SetBadge(name, badgeCode, format, ReaderStatus, personId, date)` |
+| Door state / mode (`InputChanged`) | `<controller>.DoorN.Status`, `<controller>.DoorN.Mode` | `VariableManager.Set(name, value, info, null, date)` |
+| Trace / error (`TraceEvent`) | `<controller>.Trace` | `VariableManager.Set` with severity -1 for a trace, 1 for an error (alarm if the variable is an alarm) |
+
+`Device.ReadEvents` is the place where the events of the controller are read (todo in the sample).
+
+### From AppVision to the controller
+
+The driver subscribes to `$V.<controller>.*.Cmd` (the command variables of each controller). A change of
+`Access.C001.Door1.Cmd` is sent to the device `Access.C001` as `CommandAction { Name = "Door1.Cmd", Value = ... }`
+(`Device.ProcessCommandAction`, todo).
+
+### Errors
+
+`SendInfo` raises an alarm (`AlarmManager.AddAlarm2`) or an event (`EventManager.AddEvent`) in the group
+`AppControl`. Download errors of a controller are reported in `<controller>.Trace`. An error of the modification
+download does not stop the driver.
+
+### Stop and restart
+
+`ControllerManager.Closed` (AppVision stops the protocol) ends the main loop: devices stopped, `AppServer.Close()`,
+window closed. `ControllerManager.Restart` (raised by the SDK when the connection to the server is lost) does the
+same, then tries to reconnect once; if the server is still unreachable the driver ends, and AppVision relaunches it
+if the protocol is *Autostart*.
 
 ---
 
-## AppVision SDK Reference
+## Step 1 — Configure AppVision
 
-### `AppServerForDriver` (`appSDK.dll`)
+1. **Protocols › Add**: *Name* e.g. `AccessCtrl`, *Manager* `DriverAppControl.exe`. *Timeout* and *Retries* are
+   passed to each `ChannelService`.
+2. **Variables**, for each controller (the names below are the ones the code builds):
 
-| Member | Description |
+```
+Access.C001               Node     Source: $P.AccessCtrl
+                                   Address: address of the controller
+                                   Parameters: BADGETYPE=1   (badge type downloaded, default 1)
+                                               PASSWORD=...  (read by ChannelService)
+Access.C001.Comm          Enum     0 Unknown, 1 Connected, 2 Disconnected, 3 Fault, 4 Downloading
+Access.C001.Trace         String
+Access.C001.Reader01..04  Reader   the readers: AppControl rights are given on them
+Access.C001.Door1.Status  Integer or Enum
+Access.C001.Door1.Mode    Integer or Enum
+Access.C001.Door1.Cmd     Logical/Integer, Command checked
+```
+
+3. In **AppControl**, give access rights on the readers (access profiles, timetables) to a few people with badges.
+
+---
+
+## Step 2 — Build and run
+
+1. Build the project. The output goes to `bin\Debug\` (or `bin\Release\`) in the project folder. Copy `DriverAppControl.exe` and its `.config` into the
+   AppVision `Bin` folder, or set the *Manager* of the protocol to the absolute path of the built exe.
+2. Start the protocol (Configurator › Protocols › *Start*), or from Visual Studio with the command line argument
+   `AccessCtrl` (`AccessCtrl@hostname`; protocol stopped in AppVision).
+3. The window shows `Connection success.`, then for each controller `Start thread ...` and `OnConnect Connected`;
+   `Access.C001.Comm` becomes 1.
+4. Send a download (script above): the window shows `DownloadHolidays ...`, `DownloadTimetables ...`, the profiles and
+   the users; the index files appear in the `Param` folder of the configuration.
+
+   ![The DriverAppControl window after a download to Access.C001 (AppControl without people yet: 0 user), then the modifications read from AppControl](driver-window.png)
+
+5. Modify a person or a badge in AppControl: after a few seconds, `OnModif: table=Apc_People...` and the download of
+   that person.
+
+> Production drivers go to `Bin\Drivers\<name>\appDriver<name>.exe` with an `AssemblyResolve` handler: see
+> [DriverAdvanced](../DriverAdvanced/README.md).
+
+---
+
+## How to adapt this sample
+
+1. Implement `ChannelService` with the protocol of the controller (TCP, serial, vendor SDK), and set
+   `MAX_READER`, `MAX_HOLIDAY`, `MAX_TIMETABLE`, `MAX_USER`, `MAX_PROFILE` in `Device.cs` to its capacities.
+2. Fill `DeviceTimetable` with the timetable format of the controller (constructor from `Timetable`).
+3. Implement `Device.ReadEvents` (badge reads, door states) and `Device.ProcessCommandAction` (door commands).
+4. Adjust the variable names built in `Driver.OnInputChanged`, `OnAccessControlEvent`, `OnConnectChanged`.
+
+---
+
+## Troubleshooting
+
+| Symptom | Cause |
 |---|---|
-| `.Download` | Event: AppVision requests a configuration push |
-| `.NewModification` | Event: AppVision configuration changed |
-| `.VariableManager.Set(name, v)` | Mirror device state into AppVision |
-| `.VariableManager.StateChanged` | Event: command received from AppVision |
+| "Usage: DriverAppControl.exe protocolName[@hostname]" | No command line argument. |
+| "No variable connected to this protocol" | No controller node has its *Source* set to `$P.<protocol>`. |
+| The download sends no user | The readers are not variables of type **Reader** named `<controller>.Reader01..04`, nobody has rights on them, or the badges are not of the type `BADGETYPE`. |
+| `Download: ...` exception in the trace | The AppControl data service failed (AppControl not licensed, not reachable, or timeout on a large site). |
+| Index files not written | The driver does not run on the server machine (the `Param` path comes from the server). |
+| The window cannot be closed | Intentional: *Ctrl + close*, or stop the protocol from AppVision. |
+
+Log file of the driver: `C:\ProgramData\AppVision 4\LogFiles\<year>\<product>\<protocol>_<yyMM>.log`.
 
 ---
 
-## Configuration in AppVision
+## See also
 
-```
-Configurator › Protocols › Add
-    Name:    DriverAppControl
-    Manager: DriverAppControl.exe
-
-Variables (one set per controller):
-    Device1             Source: $P.DriverAppControl
-                        Address: <controller IP>
-    Device1.Reader01    Type: Logical
-    Device1.Reader02    Type: Logical
-    Device1.Reader01.Cmd  Type: Logical   Flag Command ✓
-```
-
----
-
-## How to Build and Deploy
-
-1. Build in **Release** configuration.  
-2. Copy `DriverAppControl.exe` → `AppVision 4\Bin\`.
-
----
-
-## Debugging
-
-**Command line arguments:** `DriverAppControl[@localhost]`  
-The diagnostic window shows traces from both the Driver and Device layers.
-
----
-
-## See Also
-
-- [DriverAdvanced](../DriverAdvanced/README.md) — driver template with the Device pattern
-- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) — OData access to AppControl people/badges
-- [AppControlSynchro](../AppControlSynchro/README.md) — CSV import of people into AppControl
+- [DriverAdvanced](../DriverAdvanced/README.md) — template of a driver: devices, cache, logging, deployment.
+- [WebServiceODataAppControl](../WebServiceODataAppControl/README.md) — AppControl people and badges over OData.
+- [AppControlSynchro](../AppControlSynchro/README.md) — import of people into AppControl.

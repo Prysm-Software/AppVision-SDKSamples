@@ -28,7 +28,7 @@ namespace DriverAppControl
 			string[] args = Environment.GetCommandLineArgs();
 			if (args == null || args.Length < 2)
 			{
-				Trace("Usage: AppDriverXXX protocol_name");
+				Trace("Usage: DriverAppControl.exe protocolName[@hostname]");
 				return;
 			}
 			// start the driver
@@ -44,7 +44,6 @@ namespace DriverAppControl
 		/// </summary>
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			this.OnActivated(null);
 			if( _driver!=null )
 			if (_driver.IsAlive)			// thread driver alive?
 			{
@@ -72,6 +71,9 @@ namespace DriverAppControl
 			if (Dispatcher.CheckAccess())
 			{
 				Debug.WriteLine(p);
+				while (trace.Items.Count > 1000)		// the driver runs for months: keep the list bounded
+					trace.Items.RemoveAt(0);
+				p = DateTime.Now.ToString("HH:mm:ss.fff ") + p;
 				trace.Items.Add(p);
 				trace.ScrollIntoView(p);
 			}

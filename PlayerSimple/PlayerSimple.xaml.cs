@@ -1,82 +1,78 @@
-﻿using Prysm.AppVideo;
-using Prysm.AppVision.Common;
+using Prysm.AppVideo;
 using Prysm.FFmpeg.Next;
 using Prysm.FFmpeg.Next.Frames;
-using System;
-using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace PlayerSimple
 {
 	/// <summary>
-	/// Minimal live-video player control that decodes an RTSP/HTTP stream with FFmpeg
-	/// using the software rendering pipeline and forwards each decoded frame to AppVision.
-	/// <para>Implements <see cref="IPlayerLive"/> only — no playback, PTZ or export support.</para>
+	/// Minimal live-video player: decodes the camera address (RTSP, HTTP, local file...) with the AppVision
+	/// FFmpeg player (<c>App.FFmpeg.dll</c>) and reports each rendered frame to AppVision.
+	/// <para>Implements <see cref="IPlayerLive"/> only: no playback, PTZ or export.</para>
 	/// </summary>
 	public partial class PlayerSimple : PlayerBaseControl, IPlayerLive
 	{
-		/// <summary>Stream URL provided by AppVision during <see cref="Connect"/>.</summary>
-		private string url;
+		/// <summary>Stream address received in <see cref="Connect"/>.</summary>
+		string url;
 
 		/// <summary>
-		/// Initialises the control and wires the FFmpeg player event callbacks.
+		/// Initialises the control and wires the FFmpeg player events.
 		/// </summary>
 		public PlayerSimple()
 		{
 			InitializeComponent();
 
-			// Forward every decoded frame to the AppVision host via ImageDecoded.
-			player.FrameRendered += ImageDecoded;
-			// Propagate FFmpeg errors to the AppVision error overlay.
-			player.ErrorOccured += (err, ex) => SetError(err);
+			// Tell AppVision that images arrive (see OnFrameRendered).
+			player.FrameRendered += OnFrameRendered;
+			// Display FFmpeg errors (stream unreachable, codec...) in red in the camera tile, for 5 seconds.
+			// The event may be raised on a decoding thread: SetError dispatches to the UI thread itself.
+			player.ErrorOccured += (message, ex) => _ = SetError(message, 5);
 		}
 
 		/// <summary>
-		/// Stores the camera stream address provided by AppVision.
-		/// Called before the first <see cref="Play"/> and whenever the camera assignment changes.
+		/// Stores the stream address of the camera. Called by AppVision before the first <see cref="Play()"/>,
+		/// and again when another camera is shown in the same tile.
 		/// </summary>
-		/// <param name="cameraName">Display name of the camera (used for labelling).</param>
-		/// <param name="address">Stream URL (RTSP, HTTP, local file path, …).</param>
-		/// <param name="parameters">Optional driver-specific parameters (unused in this sample).</param>
-		public override async Task Connect(string cameraName, string address, string parameters)
+		/// <param name="cameraName">Name of the camera variable.</param>
+		/// <param name="address">Address field of the camera variable (or of its parent node):
+		/// RTSP or HTTP URL, file path, or any input accepted by FFmpeg.</param>
+		/// <param name="parameters">Parameters field of the camera variable and of its parents (one <c>key=value</c> per line).
+		/// Not used by this sample.</param>
+		public override Task Connect(string cameraName, string address, string parameters)
 		{
-			// Defer the actual network connection until Play() is called.
-			url = address;
+			// The connection itself is opened by Play(). The address is read like an FFmpeg command line:
+			// keep the quotes around a file path containing spaces ("C:\Videos\cctv 1.mp4"), and options such as
+			// -f gdigrab -i desktop are accepted.
+			url = address?.Trim();
+			return Task.CompletedTask;
 		}
 
 		/// <summary>
-		/// Stops the stream and releases resources.
-		/// AppVision calls this when the tile is closed or the camera is reassigned.
+		/// Stops the stream. AppVision calls it when the tile is closed or shows another camera.
 		/// </summary>
 		public override Task Disconnect() => Stop();
 
 		/// <summary>
-		/// Starts live decoding of the stream stored in <see cref="url"/> using the FFmpeg
-		/// software rendering pipeline.
-		/// AppVision calls this when the tile becomes visible or the user presses Play.
+		/// Starts the live stream. AppVision calls it after <see cref="Connect"/>, when the tile is displayed.
 		/// </summary>
-		/// <remarks>
-		/// Hardware decoding is intentionally disabled: only the software pipeline produces
-		/// a <see cref="SoftwareVideoFrame"/> in the <c>FrameRendered</c> event, which is
-		/// required to obtain a usable <see cref="BitmapSource"/> in <see cref="ImageDecoded"/>.
-		/// </remarks>
-		public override async Task Play()
-		{
-			await player.PlayAsync(
-				new AVPlayerUri { Uri = url },
-				new PlayerOptions
-				{
-					// Software rendering is mandatory: hardware-decoded frames do not
-					// expose a SoftwareVideoFrame bitmap in the FrameRendered callback.
-					UseHardwareDecoding = false,
-					Rendering = RenderingMethod.Software,
-				});
-		}
+		public override Task Play() => player.PlayAsync(
+			new AVPlayerUri { Uri = url },
+			new PlayerOptions
+			{
+				// Pure WPF rendering: AppVision draws its overlays (texts, metadata, digital zoom) over the
+				// control, and FrameRendered provides a SoftwareVideoFrame holding the decoded bitmap.
+				Rendering = RenderingMethod.Software,
+				UseHardwareDecoding = false,
+				// A video file has an end: play it in a loop so that it behaves like a camera.
+				LoopOnEndOfFile = true,
+				// Stream lost or not reachable yet: retry automatically (after 2 s, then up to every 30 s).
+				AutoReconnect = true,
+			});
 
 		/// <summary>
-		/// Stops the FFmpeg decoder immediately.
-		/// AppVision calls this before <see cref="Disconnect"/> or when the tile is hidden.
+		/// Stops the FFmpeg player immediately.
 		/// </summary>
 		public override Task Stop()
 		{
@@ -85,21 +81,30 @@ namespace PlayerSimple
 		}
 
 		/// <summary>
-		/// Called by the FFmpeg player each time a video frame has been decoded and rendered.
-		/// Extracts the <see cref="BitmapSource"/> from the software frame and notifies AppVision
-		/// so it can display the image and trigger recording / motion-detection pipelines.
+		/// Image of the last decoded frame, used by AppVision for the snapshot command of the camera tile.
+		/// Without this override, AppVision takes a screen capture of the tile instead.
 		/// </summary>
-		/// <param name="sender">The FFmpeg player control that raised the event.</param>
-		/// <param name="e">
-		/// Event arguments containing the decoded frame and its presentation timestamp.
-		/// </param>
-		private void ImageDecoded(object sender, Prysm.FFmpeg.Next.FrameEventArgs e)
-		{
-			// e.Frame is null when Rendering != Software — the null-conditional cast handles this safely.
-			var bmp = (e.Frame as SoftwareVideoFrame)?.Image as BitmapSource;
+		public override Task<ImageSource> Snapshot() => player.Snapshot();
 
-			// Notify AppVision: the timestamp drives the recording timeline;
-			// bmp is the image displayed inside the camera tile.
+		/// <summary>
+		/// Fill (stretched) or uniform (aspect ratio kept) display, set by AppVision from the
+		/// <c>App.Client.Video.StretchVideo</c> option before <see cref="Connect"/>.
+		/// </summary>
+		public override bool StretchVideo
+		{
+			get => player.StretchVideo;
+			set => player.StretchVideo = value;
+		}
+
+		/// <summary>
+		/// Raised by the FFmpeg player for each rendered frame.
+		/// <see cref="PlayerBaseControl.FireFrameDecoded(System.DateTime, BitmapSource)"/> tells AppVision that images arrive:
+		/// the tile status goes from Connected to Playing, and in playback the timestamp moves the timeline.
+		/// </summary>
+		private void OnFrameRendered(object sender, Prysm.FFmpeg.Next.FrameEventArgs e)
+		{
+			// SoftwareVideoFrame because Rendering = Software (a Direct3D frame has no WPF bitmap).
+			var bmp = (e.Frame as SoftwareVideoFrame)?.Image as BitmapSource;
 			FireFrameDecoded(e.Timestamp.Date, bmp);
 		}
 	}

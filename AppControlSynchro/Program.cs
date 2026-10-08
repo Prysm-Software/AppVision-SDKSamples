@@ -1,9 +1,9 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////////////////
-//	This tool import a list of people from a CSV file in AppControl.People table
+//	This tool imports a list of people from a CSV file into the AppControl People table
 //
-//	Structure of CSV file:
+//	Structure of the CSV file (no header line, ';' separator):
 //
-//	FirstName;LastName;PersonID;Depratment;ValidDateFrom;ValidDateTo;Dateofbirth
+//	FirstName;LastName;PersonID;Department;ValidDateFrom;ValidDateTo;DateOfBirth
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 using SynchroAppControl.AppControlServiceReference;
@@ -19,6 +19,11 @@ namespace SynchroAppControl
 {
     class Program
     {
+        // AppVision server and account (test bench defaults). Use https and a dedicated account on a real site.
+        const string ServiceUrl = "http://localhost/AppControlDataService.svc/";
+        const string UserName = "ADM";
+        const string Password = "123";
+
         static void Main(string[] args)
         {
             if (args?.Length < 1)
@@ -35,18 +40,25 @@ namespace SynchroAppControl
             try
             {
                 Trace("Start SynchroAppControl");
-                var ctx = new AppControlContext(new Uri("http://localhost/AppControlDataService.svc/"));
-                ctx.Credentials = new NetworkCredential("ADM", "123");
+                var ctx = new AppControlContext(new Uri(ServiceUrl))
+                {
+                    Credentials = new NetworkCredential(UserName, Password),
+                    // The proxy classes were generated from an older server: ignore the properties added since then
+                    // instead of failing with "The property 'X' does not exist on type ...".
+                    IgnoreMissingProperties = true,
+                };
                 int count = 0;
                 foreach (var l in File.ReadAllLines(args[0]))
                     if (ImportLine(ctx, l))
                         count++;
+                // sends the queued additions and updates, one HTTP request per person
                 ctx.SaveChanges();
-                Trace($"{count} people imported.");
+                Trace($"{count} people added or updated.");
             }
             catch (Exception ex)
             {
-                Trace($"Exception {ex.Message}");
+                // the server message (401, duplicate key...) is in the inner exception
+                Trace($"Exception {ex.Message} {ex.InnerException?.Message}");
             }
             finally
             {

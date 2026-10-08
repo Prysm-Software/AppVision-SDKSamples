@@ -1,197 +1,164 @@
-﻿
 /**
- * Thin JavaScript wrapper around the AppVision REST service
- * (<code>AppVisionService.svc</code>).
+ * Minimal client for the AppVision REST service (AppVisionService.svc), without any SDK.
  *
- * Typical usage:
- * <pre>
- *   const srv = new AppServer();
- *   await srv.login('http://localhost', 'ADM', '123');
- *   // server events are now streamed via the keepAlive polling loop
- *   srv.logout();
- * </pre>
+ * Plain JavaScript and the Fetch API: no DOM access in this file, so the same class also runs in
+ * Node.js 18+ (global fetch). The page (index.html) only provides the callbacks.
  *
- * After a successful {@link login} the instance exposes:
- * - {@link user}  – the logged-in user object returned by <code>GetCurrentUser</code>.
- * - {@link desc}  – the project description returned by <code>GetOption</code>.
+ *   const srv = new AppServer('http://localhost');
+ *   srv.onNotification = n => console.log(n);   // VariableState, AlarmInfo, EventRow...
+ *   await srv.login('ADM', '123');               // opens the session and starts polling
+ *   const state = await srv.get('GetVariableStateByName?name=' + encodeURIComponent('Building.Temp'));
+ *   await srv.logout();
+ *
+ * Session: the id returned by Open is sent in the "SessionID" header of every request. No cookie
+ * is needed, which is also what a non-browser client (Python, C#, PowerShell...) has to do.
  */
 class AppServer {
 
     /**
-     * Initialises the default Fetch option objects shared by all HTTP requests.
-     *
-     * - {@link get}  – options for GET requests expecting a JSON response.
-     * - {@link post} – options for POST requests sending and expecting JSON.
-     *
-     * The session cookie set by the server during {@link login} is forwarded
-     * automatically thanks to <code>credentials: 'include'</code>.
+     * @param {string} host Base URL of the AppVision server, e.g. "http://localhost" or "https://server".
      */
-    constructor() {
-        this.get = {
-            // ask server to reply with JSON formated data
-            headers: { 'Accept': 'application/json' },
-            // send session id in cookie
-            credentials: 'include'
-        };
-        this.post = {
+    constructor(host) {
+        this.host = host.replace(/\/+$/, '');
+        this.sessionId = null;
+        this.user = null;           // UserRow of the logged-in user (GetCurrentUser)
+        this.projectName = null;    // option App.Main.ProjectDescription
+        this.serverState = null;    // last ServerState notification
+        this.pollPeriod = 500;      // ms between two KeepAlive calls
+
+        /** Called with each notification payload (object with a __type field). */
+        this.onNotification = () => { };
+        /** Called once when the session is lost or polling fails (Error). */
+        this.onDisconnected = () => { };
+
+        this._timer = null;
+    }
+
+    /** Full URL of a REST operation, e.g. url('KeepAlive'). */
+    url(operation) {
+        return `${this.host}/AppVisionService.svc/${operation}`;
+    }
+
+    /** GET a REST operation and return the parsed JSON (undefined for an empty response). */
+    async get(operation) {
+        return this._send(operation, { method: 'GET' });
+    }
+
+    /** POST a JSON body to a REST operation and return the parsed JSON (undefined if empty). */
+    async post(operation, body, extraHeaders) {
+        return this._send(operation, {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        }
+            headers: { 'Content-Type': 'application/json', ...extraHeaders },
+            body: JSON.stringify(body)
+        });
+    }
+
+    async _send(operation, init) {
+        const headers = { 'Accept': 'application/json', ...init.headers };
+        if (this.sessionId)
+            headers['SessionID'] = this.sessionId;
+
+        const resp = await fetch(this.url(operation), { ...init, headers });
+        const text = await resp.text();
+        if (!resp.ok)
+            throw new Error(`${operation}: HTTP ${resp.status} ${text || resp.statusText}`);
+        return text ? JSON.parse(text) : undefined;
     }
 
     /**
-     * Opens a session on the AppVision server and starts the notification
-     * polling loop.
-     *
-     * Steps performed in order:
-     *  1. <code>/Open</code> – establishes the HTTP session (the server sets a
-     *     session cookie).
-     *  2. <code>/Login</code> – authenticates with username and password.
-     *  3. <code>/GetCurrentUser</code> and <code>/GetOption</code> – fetched in
-     *     the background to populate {@link user} and {@link desc}.
-     *  4. <code>/AddFilterNotifications</code> + <code>/StartNotifications</code>
-     *     – subscribes to all server events.
-     *  5. Schedules the first {@link keepAlive} call after 500 ms.
-     *
-     * @async
-     * @param {string} host - Base URL of the AppVision server,
-     *   e.g. <code>http://localhost</code>.
-     * @param {string} user - AppVision login name.
-     * @param {string} pwd  - Plain-text password sent in the credentials array.
-     * @throws {string} A human-readable error string when any mandatory step
-     *   returns a non-200 HTTP status.
+     * Opens a session, logs in, subscribes to all notifications and starts the polling loop.
+     * @param {string} username AppVision user (or "$P.<protocol>" for a protocol account)
+     * @param {string} password Password, sent once to Login. Use https outside a test bench.
      */
-    async login(host, user, pwd) {
-        this.host = host;
+    async login(username, password) {
+        // 1. session (noCookie=true: the session id travels in the SessionID header)
+        this.sessionId = await this.get('Open?clientProductName=WebServiceREST&clientProductDescription='
+            + encodeURIComponent('AppVision REST sample') + '&noCookie=true');
+        if (!this.sessionId)
+            throw new Error('Open: no session id returned');
 
-        // connect to server
-        let resp = await fetch(host + '/AppVisionService.svc/Open?clientProductDescription=WebService%20demo', this.get);
-        if (resp.status != 200)
-            throw 'Failed to connect to ' + host;
-
-        // compute password hash
-        const sessionId = await resp.json();
-        const credentials = [
-            { Name: "username", Value: user },
-            { Name: "password", Value: pwd }
-        ];
-
-        // Authorization header required when AD/LDAP authentication is enabled on the server
-        //this.post.headers.Authorization = 'Basic ' + btoa(user + ':' + pwd);
-
-        // log in AppVision server
-        resp = await fetch(`${host}/AppVisionService.svc/Login`, { ...this.post, body: JSON.stringify(credentials) });
-        if (resp.status != 200)
-            throw `User ${user} unauthorized`;
-
-        // retrieve user information
-        fetch(host + '/AppVisionService.svc/GetCurrentUser', this.get)
-            .then(r => r.json())
-            .then(u => this.user = u);
-
-        // retrieve configuration information
-        fetch(host + '/AppVisionService.svc/GetOption?name=App.Main.ProjectDescription', this.get)
-            .then(r => r.json())
-            .then(opt => this.desc = opt);
-
-        // register for all server events (filter = All)
-        resp = await fetch(host + '/AppVisionService.svc/AddFilterNotifications', { ...this.post, body: '"All"' });
-        if (resp.status != 200)
-            throw 'AddFilterNotifications failed';
-        resp = await fetch(host + '/AppVisionService.svc/StartNotifications?send=false', this.get);
-        if (resp.status != 200)
-            throw 'StartNotifications failed';
-
-        // poll for server event
-        setTimeout(() => this.keepAlive(), 500);
-    }
-
-
-    // terminate server connection
-    /**
-     * Closes the current AppVision session.
-     *
-     * Fire-and-forget: the server invalidates the session regardless of the
-     * client outcome, so no response handling is required.
-     */
-    logout() {
-        fetch(this.host + '/AppVisionService.svc/Logout', this.get);
-    }
-
-
-    /**
-     * Polls the server for pending notifications every 500 ms.
-     *
-     * <code>/KeepAlive</code> returns the count of buffered notifications.
-     * When the count is positive, <code>/GetNotifications</code> retrieves up
-     * to 100 items at a time; each payload is dispatched to
-     * {@link gotEvent}.  The next poll is always scheduled after a successful
-     * response, even if no notifications were pending.
-     *
-     * @async
-     * @private
-     */
-    async keepAlive() {
+        // 2. authentication. The Basic header is only read when the server delegates authentication
+        //    (Active Directory, LDAP...); it is sent on this single request, as the TypeScript SDK does.
         try {
-            let resp = await fetch(this.host + '/AppVisionService.svc/KeepAlive', this.get);
-            let notifCount = await resp.json();
-            if (notifCount > 0) {
-
-                await fetch(this.host + '/AppVisionService.svc/GetNotifications?count=100', this.get)
-                    .then(res => res.json())
-                    .then(notifs => {
-                        for (let n of notifs) {
-                            // Data is either a single object or an array depending on the notification type
-                            if (!Array.isArray(n.Data))
-                                this.gotEvent(n.Data)
-                            else
-                                for (let it of n.Data)
-                                    this.gotEvent(it);
-                        }
-                    });
-            }
-            // schedule the next poll
-            setTimeout(() => this.keepAlive(), 500);
+            await this.post('Login',
+                [{ Name: 'username', Value: username }, { Name: 'password', Value: password }],
+                { 'Authorization': 'Basic ' + btoa(unescape(encodeURIComponent(username + ':' + password))) });
         } catch (err) {
-            document.writeln(err);
+            await this._close();
+            throw err;
         }
+
+        // 3. context of the session
+        [this.user, this.projectName] = await Promise.all([
+            this.get('GetCurrentUser'),
+            this.get('GetOption?name=App.Main.ProjectDescription')
+        ]);
+
+        // 4. notifications: filter "All" (alternatives: "$V.Building.*", "$A.Area1", "$G.Group1"...)
+        await this.post('AddFilterNotifications', 'All');
+        await this.get('StartNotifications?send=false');
+
+        // 5. polling loop
+        this._timer = setTimeout(() => this._poll(), this.pollPeriod);
+    }
+
+    /** Stops polling and closes the session on the server. */
+    async logout() {
+        clearTimeout(this._timer);
+        this._timer = null;
+        await this._close();
+    }
+
+    async _close() {
+        if (!this.sessionId)
+            return;
+        try {
+            await this.get('Close');
+        } catch {
+            // the session may already be gone on the server side
+        }
+        this.sessionId = null;
     }
 
     /**
-     * Dispatches a single deserialized notification to the appropriate UI
-     * handler based on its WCF <code>__type</code> discriminator.
-     *
-     * | `__type` value | Action |
-     * |---|---|
-     * | `ServerState:#Prysm.AppVision.Data`    | Stores the latest server-state snapshot in {@link serverState}. |
-     * | `AlarmInfo:#Prysm.AppVision.Data`      | Appends an alarm line to `#log`. |
-     * | `EventRow:#Prysm.AppVision.Data`       | Appends an event line to `#log`. |
-     * | `VariableState:#Prysm.AppVision.Data`  | Appends a variable=value line to `#log`. |
-     *
-     * @param {Object} notif          - Deserialized notification payload.
-     * @param {string} notif.__type   - WCF polymorphic type discriminator.
+     * KeepAlive keeps the session open and returns the number of waiting notifications
+     * (-1 when the server no longer knows the session). GetNotifications dequeues them.
      */
-    gotEvent(notif) {
-        const log = document.getElementById('log');
-        if (notif.hasOwnProperty('__type')) {
-            switch (notif.__type) {
-                case 'ServerState:#Prysm.AppVision.Data':
-                    this.serverState = notif;
+    async _poll() {
+        try {
+            let count = await this.get('KeepAlive');
+            if (count < 0)
+                throw new Error('Session closed by the server (timeout, restart or logout)');
+
+            // dequeue by blocks of 100
+            for (; count > 0; count -= 100) {
+                const notifications = await this.get('GetNotifications?count=100');
+                if (!notifications?.length)
                     break;
-                case 'AlarmInfo:#Prysm.AppVision.Data':
-                    log.innerHTML += `Alarm:${notif.Event}: ${notif.Alarm.Description}<br/>`;
-                    break;
-                case 'EventRow:#Prysm.AppVision.Data':
-                    log.innerHTML += notif.StateDesc + ': ' + notif.Description + '<br>';
-                    break;
-                case 'VariableState:#Prysm.AppVision.Data':
-                    log.innerHTML += notif.Name + '=' + notif.Value + '<br>';
-                    break;
+                // each Notification has a Data field: one object or an array of objects
+                for (const n of notifications)
+                    for (const data of [].concat(n.Data ?? []))
+                        this._dispatch(data);
             }
+        } catch (err) {
+            this._timer = null;
+            this.sessionId = null;
+            this.onDisconnected(err);
+            return;
         }
+        if (this.sessionId)
+            this._timer = setTimeout(() => this._poll(), this.pollPeriod);
+    }
+
+    _dispatch(data) {
+        if (data?.__type === 'ServerState:#Prysm.AppVision.Data')
+            this.serverState = data;
+        this.onNotification(data);
     }
 }
+
+/** Values of AlarmInfo.Event (enum AlarmEvent, serialized as a number). */
+AppServer.AlarmEvents = ['Start', 'End', 'Update', 'Acknowledge', 'Report', 'Resume', 'Delete', 'Transfer', 'None', 'Complete'];
+
+if (typeof module !== 'undefined')
+    module.exports = { AppServer };

@@ -65,6 +65,8 @@ namespace WizardSample
 		public ICommand DiscoveryCommand => new RelayCommand(GotoDiscoveryPage, CanGotoDiscoveryPage);
 		/// <summary>Opens <see cref="AddDeviceDialog"/> to manually add a device to the discovered list.</summary>
 		public ICommand AddDeviceCommand => new RelayCommand(AddDevice);
+		/// <summary>Restarts the device discovery.</summary>
+		public ICommand RescanCommand => new RelayCommand(() => _ = DiscoverDevices(), () => !IsBusy);
 		/// <summary>Navigates to the device credential page for the selected device.</summary>
 		public ICommand DeviceLoginCommand => new RelayCommand(GotoDeviceLoginPage, CanGotoDeviceLoginPage);
 		/// <summary>Logs in to the device and navigates to the entity selection page.</summary>
@@ -442,6 +444,7 @@ namespace WizardSample
 		{
 			IsBusy = true;
 			Devices.Clear();
+			SelectedDevices.Clear();
 
 			// <todo> scan network for devices
 
@@ -537,7 +540,11 @@ namespace WizardSample
 		/// </summary>
 		async Task ScanDevice()
 		{
-			// <todo> get entities from selected device 
+			// <todo> get entities from selected device
+
+			// the page can be shown again (Previous button): start from an empty list
+			Entities.Clear();
+			SelectedEntities.Clear();
 
 			// <demo>
 			// for demo purpose, populate device's entities with files from MyDocuments folder

@@ -1,10 +1,11 @@
-﻿<Window x:Class="ClientAdvanced.MainWindow"
+<Window x:Class="ClientAdvanced.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:app="http://prysm.fr/AppVision"
         xmlns:video="http://prysm.fr/AppVideo"
         xmlns:local="clr-namespace:ClientAdvanced.Properties"
-        Title="Client Sample UI" Height="600" Width="800">
+        Title="Client Sample UI" Height="600" Width="800"
+        Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -18,8 +19,8 @@
             <TextBlock>User</TextBlock>
             <TextBox Text="{Binding user}"  Width="100" Margin="6 0" />
             <TextBlock>Password</TextBlock>
-            <TextBox Text="{Binding pwd}"  Width="100" Margin="6 0" />
-            <Button Width="100" Click="BtnConnect_Click">Connect</Button>
+            <PasswordBox Name="txtPwd" Password="123" Width="100" Margin="6 0" />
+            <Button Width="100" Click="BtnConnect_Click" IsDefault="True">Connect</Button>
         </WrapPanel>
 
         <WrapPanel Name="panelLogout" Margin="6" Visibility="Collapsed">
@@ -36,10 +37,10 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
                     <Expander Header="Areas" IsExpanded="True">
-                        <app:AreaControl/>
+                        <app:AreaControl x:Name="areas" />
                     </Expander>
                     <Expander Header="Videos" IsExpanded="True">
-                        <video:CamerasControl/>
+                        <video:CamerasControl x:Name="cameras" />
                     </Expander>
                 </StackPanel>
             </ScrollViewer>
@@ -52,10 +53,10 @@
 
         <TabControl Grid.Row="2">
             <TabItem Header="Alarms">
-                <app:AlarmControl />
+                <app:AlarmControl x:Name="alarms" />
             </TabItem>
             <TabItem Header="Events">
-                <app:EventControl />
+                <app:EventControl x:Name="events" />
             </TabItem>
         </TabControl>
     </Grid>

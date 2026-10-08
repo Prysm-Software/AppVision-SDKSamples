@@ -23,23 +23,34 @@ namespace Prysm.AppVision.SDK
 		Window _window;
 
 		/// <summary>
-		/// Registers an assembly resolution fallback that looks in the parent directory.
+		/// Registers an assembly resolution fallback that looks in the parent directories.
 		/// This allows the driver executable to be placed in a sub-folder of the AppVision
-		/// Bin directory (e.g. Bin\DriverAdvanced\DriverAdvanced.exe) while still resolving
-		/// the shared SDK assemblies (appSDK.dll, appCommon.dll, appData.dll) from Bin\.
+		/// Bin directory (Bin\Drivers\DriverAdvanced\DriverAdvanced.exe, or Bin\DriverAdvanced\...)
+		/// while still resolving the shared AppVision assemblies (appSDK.dll, appCommon.dll,
+		/// appData.dll, App.Logger.dll, App.Utility.dll...) from Bin\, without copying them.
 		/// </summary>
+		/// <remarks>
+		/// The handler must be registered before any AppVision type is used: hence the static constructor
+		/// of the App class, which runs before the WPF startup code.
+		/// </remarks>
 		static App() => AppDomain.CurrentDomain.AssemblyResolve += LookForAssemblyInParentDir;
 
 		/// <summary>
-		/// Attempts to load an assembly from the parent directory of the driver executable.
+		/// Attempts to load an assembly from the parent directory, then the grand-parent directory,
+		/// of the driver executable.
 		/// Called automatically by the CLR when an assembly cannot be found in the normal probing paths.
 		/// </summary>
-		static System.Reflection.Assembly LookForAssemblyInParentDir(object sender, ResolveEventArgs a)
+		static Assembly LookForAssemblyInParentDir(object sender, ResolveEventArgs a)
 		{
-			Console.WriteLine(a.Name);
 			var dir = AppDomain.CurrentDomain.BaseDirectory;
-			var ass = $@"{dir}\..\..\{a.Name.Split(',')[0]}.dll";
-			return File.Exists(ass) ? Assembly.LoadFrom(ass) : null;
+			var name = a.Name.Split(',')[0] + ".dll";
+			foreach (var relativeDir in new[] { "..", @"..\.." })
+			{
+				var path = Path.GetFullPath(Path.Combine(dir, relativeDir, name));
+				if (File.Exists(path))
+					return Assembly.LoadFrom(path);
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -83,15 +94,26 @@ namespace Prysm.AppVision.SDK
 			// launches all device instances.
 			_driver = new Driver();
 
-			// When AppVision closes the connection (e.g. server shutdown, protocol removed),
+			// When AppVision stops the protocol (configurator, server shutdown, protocol restart),
 			// ControllerManager raises the Closed event. We use it to close the driver window.
-			_driver.AppServer.ControllerManager.Closed += Driver_Closing;
+			// SDK events are raised on background threads: Dispatcher.BeginInvoke goes back to the UI thread.
+			_driver.AppServer.ControllerManager.Closed += () => Dispatcher.BeginInvoke((Action)Driver_Closing);
+
+			// ControllerManager.Restart is raised when the SDK loses the connection to the server
+			// (keep-alive failure); the SDK then closes the session. Since AppVision 4.8.5 the server
+			// restarts a protocol itself (close, then new process) and relaunches the "Autostart"
+			// protocols whose driver stopped answering: the driver just exits, it must not relaunch itself.
+			_driver.AppServer.ControllerManager.Restart += () => Dispatcher.BeginInvoke((Action)(() =>
+			{
+				Trace.Error("Connection to the AppVision server lost");
+				Driver_Closing();
+			}));
 			_driver.Start();
 		}
 
 		/// <summary>
-		/// Called when AppVision closes the connection to this driver (server shutdown,
-		/// protocol disabled, etc.). Stops the driver and closes the window.
+		/// Called (on the UI thread) when AppVision stops the protocol or when the connection is lost.
+		/// Stops the driver and closes the window, which ends the process.
 		/// </summary>
 		void Driver_Closing()
 		{
@@ -140,7 +162,7 @@ namespace Prysm.AppVision.SDK
 		{
 			Trace.Error("Closing driver in 5 seconds...");
 			await Task.Delay(5000);
-			Driver_Closing();
+			Dispatcher.Invoke(Driver_Closing);     // the exception may come from a background thread
 		}
 	}
 }

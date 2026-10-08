@@ -1,0 +1,258 @@
+---
+title: AppControl database (access control) - AppVision 4.10
+---
+erDiagram
+    Apc_AccessProfileRights {
+        int AccessProfileId PK,FK
+        int ReaderId PK
+        int AccessProfileRightCrisisLevel PK
+        int TimetableId "null"
+        datetime AccessProfileRightValidityStart "null"
+        datetime AccessProfileRightValidityEnd "null"
+        nvarchar(max) AccessProfileRightValidityInfo "null"
+        nvarchar(max) AccessProfileRightExtension "null"
+        nvarchar(max) AccessProfileRightCustomExtension "null"
+    }
+    Apc_AccessProfiles {
+        int AccessProfileId PK
+        nvarchar(max) AccessProfileName "null"
+        nvarchar(max) AccessProfileDescription "null"
+        nvarchar(max) AccessProfileExtension "null"
+        nvarchar(max) AccessProfileCustomExtension "null"
+        nvarchar(max) AccessProfileParameters "null"
+    }
+    Apc_AccessProfileZoneRights {
+        int AccessProfileId PK,FK
+        int ZoneId PK,FK
+        int AccessProfileZoneRightCrisisLevel PK
+        int TimetableId "null"
+        datetime AccessProfileZoneRightValidityStart "null"
+        datetime AccessProfileZoneRightValidityEnd "null"
+        nvarchar(max) AccessProfileZoneRightValidityInfo "null"
+        nvarchar(max) AccessProfileZoneRightExtension "null"
+        nvarchar(max) AccessProfileZoneRightCustomExtension "null"
+    }
+    Apc_Badges {
+        nvarchar(128) BadgeCode PK
+        nvarchar(128) BadgeFormat PK
+        int BadgeTypeId PK,FK
+        int PersonId FK "null"
+        int BadgeStatus
+        nvarchar(max) BadgeInfo "null"
+        nvarchar(max) BadgeExtension "null"
+        int BadgeExtId "null"
+        nvarchar(max) BadgeCustomExtension "null"
+        nvarchar(max) BadgeParameters "null"
+    }
+    Apc_BadgeTypes {
+        int BadgeTypeId PK
+        nvarchar(max) BadgeTypeDescription "null"
+        int BadgeTypeLength
+        nvarchar(max) BadgeTypeParameters "null"
+    }
+    Apc_Categories {
+        int CategoryId PK
+        nvarchar(max) CategoryName "null"
+        nvarchar(max) CategoryDescription "null"
+        nvarchar(max) CategoryBadgeDesign "null"
+        nvarchar(max) CategoryExtension "null"
+        nvarchar(max) CategoryCustomExtension "null"
+        int AccessProfileId FK "null"
+        bit CategoryIsVisitor
+        nvarchar(max) CategoryDefaultValidityPeriod "null"
+        nvarchar(max) CategoryParameters "null"
+    }
+    Apc_Departments {
+        int DepartmentId PK
+        nvarchar(max) DepartmentName "null"
+        nvarchar(max) DepartmentDescription "null"
+        nvarchar(max) DepartmentBadgeDesign "null"
+        nvarchar(max) DepartmentExtension "null"
+        nvarchar(max) DepartmentCustomExtension "null"
+        int AccessProfileId FK "null"
+        nvarchar(max) DepartmentParameters "null"
+    }
+    Apc_Location {
+        int PersonId PK "identity"
+        int ReaderId
+        datetimeoffset(7) LocationDate
+        int ReaderIdOk
+        datetimeoffset(7) LocationDateOk
+        nvarchar(max) LocationExtension "null"
+        nvarchar(max) LocationCustomExtension "null"
+        int Person_Id FK "null"
+    }
+    Apc_People {
+        int PersonId PK
+        nvarchar(max) PersonFirstName "null"
+        nvarchar(max) PersonLastName "null"
+        int CategoryId FK "null"
+        int DepartmentId FK "null"
+        nvarchar(max) PersonCompanyId "null"
+        nvarchar(max) PersonAddress "null"
+        nvarchar(max) PersonPhone "null"
+        nvarchar(max) PersonEmail "null"
+        nvarchar(max) PersonInfo1 "null"
+        nvarchar(max) PersonInfo2 "null"
+        nvarchar(max) PersonInfo3 "null"
+        nvarchar(max) PersonInfo4 "null"
+        nvarchar(max) PersonInfo5 "null"
+        nvarchar(max) PersonInfo6 "null"
+        nvarchar(max) PersonInfo7 "null"
+        nvarchar(max) PersonInfo8 "null"
+        nvarchar(max) PersonInfo9 "null"
+        nvarchar(max) PersonInfo10 "null"
+        nvarchar(max) PersonPhoto "null"
+        nvarchar(max) PersonNotes "null"
+        int PersonParentId "null"
+        nvarchar(max) PersonLanguage "null"
+        nvarchar(max) PersonCulture "null"
+        datetime PersonValidityStart
+        datetime PersonValidityEnd
+        nvarchar(max) PersonValidityInfo "null"
+        bit PersonActive
+        bit PersonPass
+        bit PersonAlarm
+        bit PersonAntipassback
+        bit PersonEscortRequired
+        int PersonEscortId FK "null"
+        int PersonCrisisLevel "null"
+        nvarchar(max) PersonPinCode "null"
+        int UserIdCreation
+        int UserIdModification
+        datetime PersonDateCreation
+        datetime PersonDateModification
+        nvarchar(max) PersonExtension "null"
+        int PersonExtId1 "null"
+        int PersonExtId2 "null"
+        nvarchar(max) PersonCustomExtension "null"
+        nvarchar(max) PersonInfo11 "null"
+        nvarchar(max) PersonInfo12 "null"
+        nvarchar(max) PersonInfo13 "null"
+        nvarchar(max) PersonInfo14 "null"
+        nvarchar(max) PersonInfo15 "null"
+        nvarchar(max) PersonInfo16 "null"
+        nvarchar(max) PersonInfo17 "null"
+        nvarchar(max) PersonInfo18 "null"
+        nvarchar(max) PersonInfo19 "null"
+        nvarchar(max) PersonInfo20 "null"
+        nvarchar(max) PersonBadgeDesign "null"
+        nvarchar(max) Attachments "null"
+        nvarchar(max) PersonCompany "null"
+        nvarchar(256) PersonIdNumber "null"
+    }
+    Apc_PersonProfiles {
+        int PersonId PK,FK
+        int AccessProfileId PK,FK
+        nvarchar(max) PersonProfileExtension "null"
+        nvarchar(max) PersonProfileCustomExtension "null"
+        datetime2(7) PersonProfileValidityStart "null"
+        datetime2(7) PersonProfileValidityEnd "null"
+    }
+    Apc_PersonRights {
+        int PersonId PK,FK
+        int ReaderId PK
+        int PersonRightCrisisLevel PK
+        int TimetableId "null"
+        datetime PersonRightValidityStart "null"
+        datetime PersonRightValidityEnd "null"
+        nvarchar(max) PersonRightValidityInfo "null"
+        nvarchar(max) PersonRightExtension "null"
+        nvarchar(max) PersonRightCustomExtension "null"
+    }
+    Apc_PersonZones {
+        int ZoneId PK,FK
+        int PersonId PK,FK
+        datetimeoffset(7) PersonZoneDateInput
+    }
+    Apc_Visitors {
+        int VisitorId PK
+        nvarchar(max) VisitorFirstName "null"
+        nvarchar(max) VisitorLastName "null"
+        int CategoryId FK "null"
+        int DepartmentId FK "null"
+        nvarchar(max) VisitorCompany "null"
+        nvarchar(max) VisitorCompanyId "null"
+        nvarchar(max) VisitorReason "null"
+        nvarchar(max) VisitorAddress "null"
+        nvarchar(max) VisitorPhone "null"
+        nvarchar(max) VisitorEmail "null"
+        nvarchar(max) VisitorInfo1 "null"
+        nvarchar(max) VisitorInfo2 "null"
+        nvarchar(max) VisitorInfo3 "null"
+        nvarchar(max) VisitorInfo4 "null"
+        nvarchar(max) VisitorInfo5 "null"
+        nvarchar(max) VisitorInfo6 "null"
+        nvarchar(max) VisitorInfo7 "null"
+        nvarchar(max) VisitorInfo8 "null"
+        nvarchar(max) VisitorInfo9 "null"
+        nvarchar(max) VisitorInfo10 "null"
+        nvarchar(max) VisitorPhoto "null"
+        nvarchar(max) VisitorLanguage "null"
+        nvarchar(max) VisitorCulture "null"
+        int PersonId FK "null"
+        int PersonVisitedId FK "null"
+        nvarchar(max) VisitorVisitedLocation "null"
+        nvarchar(max) VisitorScan1 "null"
+        nvarchar(max) VisitorScan2 "null"
+        datetime VisitorValidityStart
+        datetime VisitorValidityEnd
+        nvarchar(max) VisitorValidityInfo "null"
+        nvarchar(max) VisitorReceptionNotes "null"
+        nvarchar(max) VisitorNotes "null"
+        nvarchar(max) VisitorBadgeReturn "null"
+        bit VisitorEscortRequired
+        int UserIdCreation
+        datetime VisitorDateCreation
+        int UserIdValidation
+        datetime VisitorDateValidation
+        int UserIdModification
+        datetime VisitorDateModification
+        nvarchar(max) VisitorStatus "null"
+        nvarchar(max) VisitorExtension "null"
+        int VisitorExtId1 "null"
+        int VisitorExtId2 "null"
+        nvarchar(max) VisitorCustomExtension "null"
+        nvarchar(max) Attachments "null"
+        nvarchar(max) VisitorIdNumber "null"
+    }
+    Apc_ZoneReaderIns {
+        int ZoneId PK,FK
+        int ReaderId PK
+    }
+    Apc_ZoneReaderOuts {
+        int ZoneId PK,FK
+        int ReaderId PK
+    }
+    Apc_Zones {
+        int ZoneId PK
+        nvarchar(max) ZoneName "null"
+        nvarchar(max) ZoneDescription "null"
+        bit ZoneCheckAntipassbackInput
+        bit ZoneCheckAntipassbackOutput
+        nvarchar(max) ZoneExtension "null"
+        nvarchar(max) ZoneCustomExtension "null"
+        nvarchar(max) ZoneParameters "null"
+    }
+    Apc_AccessProfiles ||--o{ Apc_AccessProfileRights : "AccessProfileId"
+    Apc_AccessProfiles ||--o{ Apc_AccessProfileZoneRights : "AccessProfileId"
+    Apc_Zones ||--o{ Apc_AccessProfileZoneRights : "ZoneId"
+    Apc_BadgeTypes ||--o{ Apc_Badges : "BadgeTypeId"
+    Apc_People |o--o{ Apc_Badges : "PersonId"
+    Apc_AccessProfiles |o--o{ Apc_Categories : "AccessProfileId"
+    Apc_AccessProfiles |o--o{ Apc_Departments : "AccessProfileId"
+    Apc_People |o--o{ Apc_Location : "Person_Id"
+    Apc_Categories |o--o{ Apc_People : "CategoryId"
+    Apc_Departments |o--o{ Apc_People : "DepartmentId"
+    Apc_People |o--o{ Apc_People : "PersonEscortId"
+    Apc_AccessProfiles ||--o{ Apc_PersonProfiles : "AccessProfileId"
+    Apc_People ||--o{ Apc_PersonProfiles : "PersonId"
+    Apc_People ||--o{ Apc_PersonRights : "PersonId"
+    Apc_People ||--o{ Apc_PersonZones : "PersonId"
+    Apc_Zones ||--o{ Apc_PersonZones : "ZoneId"
+    Apc_Categories |o--o{ Apc_Visitors : "CategoryId"
+    Apc_Departments |o--o{ Apc_Visitors : "DepartmentId"
+    Apc_People |o--o{ Apc_Visitors : "PersonId"
+    Apc_People |o--o{ Apc_Visitors : "PersonVisitedId"
+    Apc_Zones ||--o{ Apc_ZoneReaderIns : "ZoneId"
+    Apc_Zones ||--o{ Apc_ZoneReaderOuts : "ZoneId"

@@ -1,0 +1,9 @@
+<app:Synoptic x:Class="appClient_gen.MapProvider_TileServer"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:app="http://prysm.fr/AppVision"
+xmlns:video="http://prysm.fr/AppVideo"
+xmlns:gen="clr-namespace:appClient_gen" InitialWidth="NaN" InitialHeight="NaN" Format="2.0" Fill="Geo:Custom:MapProvider.dll" ZoomMode="None" InitialZoom="13" GeoViewport="2.25,48.82,0.17,0.08">
+  <app:Synoptic.MapParameters><![CDATA[Url=https://tile.openstreetmap.org/{z}/{x}/{y}.png;MaxZoom=19;Cache=%LOCALAPPDATA%\AppVision SDK Samples\Tiles]]></app:Synoptic.MapParameters>
+</app:Synoptic>

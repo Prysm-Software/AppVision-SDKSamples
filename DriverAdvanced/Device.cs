@@ -115,7 +115,7 @@ namespace DriverAdvanced
 			// todo: close the connection to the external device and release resources.
 
 			// Inform AppVision that this device is intentionally disconnected.
-			Trace.Info($"[{_rootVar}] Disconnected");
+			Trace.Info($"[{_rootVar.Name}] Disconnected");
 			_driver.SetVariable(_rootVar.Name + ".Comm", (int)CommStatus.Disconnected);
 		}
 
@@ -143,6 +143,12 @@ namespace DriverAdvanced
 				// Example:
 				//   if (state.Name == _rootVar.Name + ".Output1")
 				//       _myDevice.SetOutput(1, (bool)state.Value);
+
+				// Sample simulation (remove it): the device "executes" a command <x>.Cmd and reports
+				// the result in <x>.Status, e.g. DriverAdvanced.DeviceA.Sensor01.Cmd -> .Sensor01.Status
+				// in the configuration provided with the sample.
+				if (state.Name.EndsWith(".Cmd"))
+					_driver.SetVariable(state.Name.Substring(0, state.Name.Length - ".Cmd".Length) + ".Status", state.Value.ToBool() ? 1 : 0);
 			}
 			catch (Exception ex)
 			{

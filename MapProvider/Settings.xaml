@@ -1,16 +1,18 @@
-﻿<UserControl x:Class="MapProvider.Settings"
+<UserControl x:Class="MapProvider.Settings"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:t="http://schemas.telerik.com/2008/xaml/presentation">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Settings of TileServerProvider, shown in the map window of the configurator (IConfigurable.GetUI).
+         DataContext = the provider; the configurator calls GetConfig() when the window is validated. -->
     <StackPanel Margin="4">
-        <TextBlock>Application ID</TextBlock>
-        <TextBox Text="{Binding ApplicationId}" Margin="0 0 0 8" />
-        <TextBlock>Mode</TextBlock>
-        <t:RadComboBox SelectedItem="{Binding Mode}" Margin="0 0 0 8">
-            <t:MapMode>Road</t:MapMode>
-            <t:MapMode>Aerial</t:MapMode>
-            <t:MapMode>Birdseye</t:MapMode>
-        </t:RadComboBox>
-        <CheckBox IsChecked="{Binding IsLabelVisible}">Display labels</CheckBox>
+        <TextBlock Text="Tile URL ({z} zoom, {x} column, {y} row, {s} a/b/c)" />
+        <TextBox Text="{Binding UrlTemplate}" Margin="0 2 0 4" />
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 8">
+            <Button Content="OpenStreetMap" Padding="6 1" Margin="0 0 4 0" Click="OpenStreetMap_Click" />
+            <Button Content="OpenTopoMap" Padding="6 1" Click="OpenTopoMap_Click" />
+        </StackPanel>
+        <TextBlock Text="Maximum zoom level" />
+        <TextBox Text="{Binding MaxZoom}" Width="60" HorizontalAlignment="Left" Margin="0 2 0 8" />
+        <TextBlock Text="Cache folder (optional, keeps the tiles for offline use)" />
+        <TextBox Text="{Binding CacheFolder}" Margin="0 2 0 0" />
     </StackPanel>
 </UserControl>

@@ -1,140 +1,183 @@
-﻿# PlayerAdvanced — Full AppVision Video Player
+# PlayerAdvanced — A complete video player: live, playback, PTZ, export
 
-## Overview
+**Used for:** integrating a video system (VMS, NVR, camera SDK) in the AppVision client with all the player features:
+live, recorded video with speed and step-by-step, PTZ and presets, focus, video export.
 
-A full-featured WPF video player control demonstrating all four player
-interfaces a production player may implement:
+The player of this sample renders a **clock** instead of decoding video, so that it runs without any camera: the
+clock shows the time of the "frame", the PTZ commands move and zoom it, the focus blurs it. Replace the clock with
+your SDK's video control and the simulated delays with real calls.
 
-| Interface | Capability |
+**Audience:** partner developers who know C# and WPF, and have read [PlayerSimple](../PlayerSimple/README.md).
+
+![PlayerClock.dll in the AppVision client, playing back the last minutes of Camera #1: the clock gives the time of the "frame", the timeline below shows the recorded sequences](preview.png)
+
+---
+
+## How it works
+
+A player is a WPF control that derives from `PlayerBaseControl` (`appVideo.dll`). The interfaces it implements tell
+AppVision what it can do, and the tile shows the matching buttons:
+
+| Interface | Feature | Main members |
+|---|---|---|
+| `IPlayerLive` | Live | `Play()`, `Play(stream)`, `GetStreams()`, `Pause()`, `Resume()`, `Snapshot()`, `StretchVideo` |
+| `IPlayerPlayback` | Recorded video | `Play(start, duration, speed)`, `Stop()`, `Pause()`, `Resume()`, `StepForward()`, `StepBackward()`, `PlaybackSpeed`, `PlaybackPosition`, `CanBackward`, `CanGoByStep`, `GetVideoSequences()`, `AddBookmark()` |
+| `IPlayerPtz` | Pan, tilt, zoom | `ContinuousMove(pan, tilt)`, `ContinuousZoom(zoom)`, `AbsoluteMove()`, presets, patterns, `Focus()`, `Iris()`, `CanXxx` properties |
+| `IPlayerExport` | Video export | `Export(start, end, folder, fileName)`, `CancelExport()`, `ExportProgress` event, `ExportConfig` |
+
+All interfaces derive from `IPlayerVideoDevice`: `Connect(cameraName, address, parameters)`, `Disconnect()`, `Status`.
+`PlayerBaseControl` implements every member with a default behaviour ("not available", `false`, empty list):
+override only what your video system supports, and the `CanXxx` properties that enable the buttons.
+
+| Project file | Role |
 |---|---|
-| `IPlayerLive` | Live streaming |
-| `IPlayerPlayback` | Seek, speed control, progress events |
-| `IPlayerPtz` | Pan / tilt / zoom commands |
-| `IPlayerExport` | Export a clip to a local file |
+| `PlayerClockControl.xaml(.cs)` | The player: the four interfaces |
+| `Clock.xaml(.cs)` | Analog clock used as a fake video image |
+| `Configuration/` | Ready-made AppVision configuration (see [PlayerSimple](../PlayerSimple/README.md#try-it-with-the-sample-configuration)) |
 
-The player renders a **clock face** (no real video decoding) so the framework
-mechanics can be demonstrated without a camera dependency.
-Every tick emits a new frame via `FireFrameDecoded` so the AppVision pipeline
-(recording, overlays, motion detection) receives the simulated stream.
-
-**References:** `appSDK.dll`, `appVideo.dll`, `appCommon.dll`  
-**Output:** `PlayerClock.dll` → `AppVision 4\Bin\`
+**References:** `appVideo.dll`, `appSDK.dll`, `appCommon.dll` (AppVision `Bin` folder).
+**Output:** `PlayerClock.dll` (assembly name, namespace `PlayerClock`, class `PlayerClockControl`).
 
 ---
 
-## Project Structure
+## Lifecycle
 
-| File | Role |
+```
+Connect(cameraName, address, parameters)     camera shown in the tile
+  Play()                                      live
+  Play(start, duration, speed)                playback (returns false if nothing is recorded)
+  Pause() / Resume() / StepForward() ...      operator commands
+  Stop()                                      end of the live or of the playback
+Disconnect()                                  tile closed or other camera
+```
+
+- `Connect` can be called again on the same instance for another camera: reinitialise everything there.
+- The **player knows its mode**: `Play()` starts the live, `Play(start, ...)` a playback. The sample keeps it in a
+  `PlayerMode _mode` field. (`PlayerBaseControl.Mode` is obsolete: it reads the host control.)
+- `Status` (*Connecting*, *Connected*, *Playing*...) is set by AppVision; the player raises its progress with
+  `FireFrameDecoded(timestamp)` for each frame: the tile switches to *Playing* and, in playback, the timeline follows
+  the timestamp (local time).
+- `SetError(message, seconds)` displays an error in the tile, `SetText(message, seconds)` an information.
+
+---
+
+## Playback
+
+```csharp
+public override async Task<bool> Play(DateTime start, TimeSpan duration, double speed)
+{
+	await Stop();
+	PlaybackSpeed = speed;                // negative = backward
+	_date = start;
+	_playbackEnd = duration == TimeSpan.Zero ? (DateTime?)null : start + (speed > 0 ? duration : -duration);
+	_mode = PlayerMode.Playback;
+	_fakeVideo.Start();
+	return true;                          // false = no recording at this date
+}
+
+public override bool CanBackward => true;     // enables backward playback
+public override bool CanGoByStep => true;     // enables the step buttons
+```
+
+`GetVideoSequences(from, to)` (not implemented here) returns the recorded ranges, bookmarks and locked sequences, so
+that the timeline can show them. `AddBookmark` and `VideoLock` forward the operator's bookmarks and locks to the
+video system.
+
+---
+
+## PTZ
+
+Speeds go from -1000 to 1000, 0 = stop. Positive pan = right, positive tilt = **up** (the *up* button of the
+AppVision PTZ control sends `ContinuousMove(0, 500)`), positive zoom = zoom in.
+
+```csharp
+public override bool CanContinuousMove => true;
+public override bool CanPresets => true;
+public override bool CanFocus => true;
+
+public override Task ContinuousMove(double panSpeed, double tiltSpeed) { ... }
+public override Task<string[]> GetPresets() => Task.FromResult(_presets.Keys.ToArray());
+public override Task GotoPreset(string preset) { ... }
+```
+
+A capability you cannot provide can still be overridden to explain why, as `SetHomePosition()` does here with
+`SetError(...)`.
+
+---
+
+## Export
+
+AppVision runs an export on a **separate instance** of the player, in a hidden window: it calls `Connect`, then
+`Export(start, end, folder, fileName)`, without `Play`. Report the progress from 0 to 100 with `FireExportProgress`;
+the export job is shown as completed when the progress reaches 100.
+
+```csharp
+public override async Task Export(DateTime start, DateTime end, string filePath, string fileName)
+{
+	for (double i = 0; i < 100; i++)
+	{
+		await Task.Delay(50);               // a real player writes the file here
+		FireExportProgress(i, "");
+		if (_cancelExport) throw new OperationCanceledException();
+	}
+	File.WriteAllText(Path.Combine(filePath, Path.ChangeExtension(fileName, ".txt")), "...");
+	FireExportProgress(100, "");            // done
+}
+public override void CancelExport() => _cancelExport = true;
+```
+
+`ExportConfig` can return an `IConfigurable` whose `GetUI()` adds your own options (format, password...) to the export
+window; `SetConfig` receives them before `Export`.
+
+---
+
+## Build, deploy and declare
+
+1. Build in **Release** and copy `PlayerClock.dll` into the AppVision `Bin` folder of every client machine
+   (`C:\Program Files\AppVision 4\Bin`). Close the clients before replacing it.
+2. In the configurator, on the camera variable (type *Camera*) or on its video system node, set the parameter:
+
+   ```
+   CreateControlPlayer=PlayerClock.dll
+   ```
+
+   The sample configuration declares the camera `PlayerAdvanced.VMS` this way, with the address
+   `user:pwd@10.11.12.13` (parsed by `Connect` with `Helper.ParseUri`, never contacted).
+
+A video system can split its features over several DLLs. All these parameters are read on the camera variable and its
+parents:
+
+| Parameter | Use |
 |---|---|
-| `PlayerClockControl.xaml.cs` | All player logic: live, playback, PTZ, export |
+| `CreateControlPlayer` | **Required.** Player used for the live (and for playback, PTZ and export unless declared below). `file.dll` or `file.dll#Namespace.Class`. |
+| `CreatePlaybackPlayer` | Separate player for playback and export. |
+| `CreatePtzPlayer` | Separate PTZ controller (`IPlayerPtz`). |
+| `CreateOverlayPlayer` | Metadata provider drawn over the video (`IPlayerOverlay`, see [PlayerMetadata](../PlayerMetadata/README.md)). |
+| `Live.Address`, `Playback.Address` | Address given to the live / playback player instead of the *Address* field. |
+| `Ptz.Address`, `Overlay.Address` | Address given to a separate PTZ / overlay player (they do not receive the *Address* field). |
+| `Live.xxx`, `Playback.xxx`, `Ptz.xxx`, `Overlay.xxx` | Parameters given to one player only, without the prefix. As soon as one `Live.` (or `Playback.`) parameter exists, that player receives only the prefixed parameters. |
 
 ---
 
-## Key Concepts
+## Troubleshooting
 
-### 1. Implementing multiple interfaces
-
-Implement only the interfaces that the real device supports.
-AppVision automatically enables or disables the corresponding UI elements:
-
-```csharp
-public class PlayerClockControl : PlayerBaseControl,
-    IPlayerLive, IPlayerPlayback, IPlayerPtz, IPlayerExport
-```
-
-### 2. `IPlayerPlayback`
-
-```csharp
-Task Play(DateTime start, TimeSpan duration, float speed);
-Task Pause();
-Task Resume();
-Task Stop();
-Task SeekTo(DateTime position);
-float PlaybackSpeed { get; set; }  // set by AppVision
-DateTime PlaybackPosition { get; } // current position
-event EventHandler PlaybackEnded;  // raise when clip is finished
-```
-
-### 3. `IPlayerPtz`
-
-```csharp
-Task PtzMove(float pan, float tilt, float zoom);  // -1..+1 per axis
-Task PtzStop();
-Task PtzPreset(int presetId);
-Task PtzHome();
-```
-
-### 4. `IPlayerExport`
-
-```csharp
-Task Export(string outputPath, DateTime start, TimeSpan duration);
-event EventHandler<int> ExportProgress;  // 0..100 percent
-```
-
-### 5. `PlaybackSpeed`
-
-AppVision sets `PlaybackSpeed` before calling `Play()`.
-Use a `DispatcherTimer` interval inversely proportional to the speed to
-simulate correct timing:
-
-```csharp
-_timer.Interval = TimeSpan.FromMilliseconds(40 / PlaybackSpeed);
-```
-
-### 6. `DebugWriteLine()`
-
-Extension method (`Prysm.AppVision.Common`) that writes the caller's method
-name to the debug output — useful for tracing lifecycle calls:
-
-```csharp
-this.DebugWriteLine("connecting to " + address);
-```
-
----
-
-## AppVision SDK Reference
-
-### `PlayerBaseControl` (`appVideo.dll`)
-
-| Member | Description |
+| Symptom | Cause |
 |---|---|
-| `.FireFrameDecoded(date, bmp)` | Forward frame to AppVision pipeline |
-| `.SetError(message)` | Report an error |
-| `.Mode` | Current mode: Live / Playback / Idle |
-| `.Status` | Current status string |
+| A button is missing in the tile (step, backward, presets, focus...) | The matching `CanXxx` property returns `false`. |
+| *Not available* when clicking a button | The method is not overridden: the `PlayerBaseControl` default is used. |
+| The export never ends in the export jobs list | `FireExportProgress(100, ...)` is not called at the end of `Export`. |
+| The timeline does not move in playback | `FireFrameDecoded(timestamp)` is not called, or the timestamp is not in local time. |
+| *Unknown file PlayerClock.dll* | The DLL is not in the `Bin` folder of this client machine. |
 
-### `IPlayerLive` / `IPlayerPlayback` / `IPlayerPtz` / `IPlayerExport`
-
-See [AppVision video SDK documentation] for the full interface contracts.
+**Debugging:** attach Visual Studio to `appClient.exe` and set breakpoints in the overrides. Each override calls
+`this.DebugWriteLine()` (`Prysm.AppVision.Common`), which traces the method name; the bottom of the image shows the
+mode and the status of the player.
 
 ---
 
-## Configuration in AppVision
+## Learning path
 
 ```
-Configurator › Variables › Add node
-    Parameters: CreateControlPlayer=PlayerClock.dll
-```
-
----
-
-## How to Build and Deploy
-
-1. Build in **Release** configuration.  
-2. Copy `PlayerClock.dll` → `AppVision 4\Bin\`.
-
----
-
-## Debugging
-
-Use `DebugWriteLine()` in each override to trace lifecycle calls.  
-`tbBottom` in the XAML displays **Mode + Status** at runtime.
-
----
-
-## Learning Path
-
-```
-PlayerSimple  →  PlayerAdvanced  →  PlayerMetadata
-Live only         Full interface set   Metadata overlay (YOLO)
+PlayerSimple   ->  PlayerAdvanced                    ->  PlayerMetadata
+live only          live, playback, PTZ, export           overlay drawn over the video (object detection)
 ```

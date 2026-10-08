@@ -198,9 +198,9 @@ namespace DriverAppControl
 			//
 			// then send notifications to driver level:
 			//
-			// InputChanged(this, new InputChangedEventArgs(Name, type, inputId, inputValue, inputDate));
-			// or
-			// AccessControlEvent(this, new AccessControlEventArgs(Name, rStatus, userId, "", rDate));
+			// InputChanged?.Invoke(this, new InputChangedEventArgs(Name, type, inputId, inputValue, inputDate));
+			// or (readerId = 1..MAX_READER, userId = AppControl person id, 0 if unknown)
+			// AccessControlEvent?.Invoke(this, new AccessControlEventArgs(Name, readerId, rStatus, userId, badgeCode, rDate));
 		}
 		#endregion
 		#region OnConnect()
@@ -270,7 +270,9 @@ namespace DriverAppControl
 				List<DeviceIndex> timetableIndexes=null;
 				if (downloadTimetables || downloadRights)
 				{
-					mapRights = dl.GetPeopleMapByReaderNames(_readerNames);
+					// Access rights of every person on the readers of this controller (one TimetableMap entry per reader).
+					// Called on the device thread (no synchronization context): waiting for the Task is safe here.
+					mapRights = dl.GetAllPeopleMapByReaderNames(_readerNames).Result;
 					timetableIndexes = BuildTimetableIndexes(mapRights);
 					SaveTimetableIndexes(timetableIndexes.ToArray());
 					DownloadTimetables(timetableIndexes.ToArray());
@@ -322,10 +324,9 @@ namespace DriverAppControl
 				}
 				if (downloadUsers.Count > 0)
 				{
-					var userIndexes = LoadUserIndexes();
 					var profiles = LoadProfiles().ToList();
 					foreach (int personId in downloadUsers)
-						DownloadUser(userIndexes,timetableIndexes, profiles, personId);
+						DownloadUser(LoadUserIndexes(), timetableIndexes, profiles, personId);	// reload: each call may update the index file
 				}
 				if (downloadParameters)
 				{
@@ -377,11 +378,11 @@ namespace DriverAppControl
 
 			_channel.Holiday_Reset();
 			int count = 0;
-			for (; count < holidays.Length && count < MAX_HOLIDAY; )
-				if (_channel.Holiday_Update(count, holidays[count].Date))
-					count++;
+			foreach (var holiday in holidays.Take(MAX_HOLIDAY))
+				if (_channel.Holiday_Update(count, holiday.Date))
+					count++;		// next device slot
 				else
-					Error("Holiday_Update: " + holidays[count].Date);
+					Error("Holiday_Update: " + holiday.Date);
 			_channel.Holiday_Complete();
 			Trace(" " + count + " day(s).", true);
 		}
@@ -422,7 +423,7 @@ namespace DriverAppControl
 					Error("Too timetables");
 					return false;
 				}
-				AddDeviceIndex(ref timetableIndexes, appId);
+				deviceId = AddDeviceIndex(ref timetableIndexes, appId);
 				SaveTimetableIndexes(timetableIndexes);
 			}
 			if (!_channel.Timetable_Update(new DeviceTimetable(deviceId, timetable)))
@@ -470,6 +471,8 @@ namespace DriverAppControl
 					Error("Too users");
 					break;
 				}
+				if (!CheckUser(right))		// inactive, expired, no badge nor PIN code: not downloaded (see BuildUserIndexes)
+					continue;
 				int profileId = (int)right.Tag;
 				count += DownloadUser(userIndexes, right.Person,profileId);
 			}
@@ -488,7 +491,7 @@ namespace DriverAppControl
 		{
 			Trace("DownloadUser " + person.FirstName + " " + person.LastName, true);
 			var dids = GetDeviceIds(userIndexes, person.Id);
-			int deviceIdCount = Math.Min(1, FilterBadges(person.Badges).Count());
+			int deviceIdCount = Math.Max(1, FilterBadges(person.Badges).Count());	// one device entry per badge, one for a PIN-only person
 			if (dids.Count() != deviceIdCount)		// new badge or badge removed?
 			{
 				DownloadDeleteUser(userIndexes, person.Id);
@@ -554,7 +557,8 @@ namespace DriverAppControl
 		void DownloadUser(IEnumerable<DeviceIndex> userIndexes, IEnumerable<DeviceIndex> timetableIndexes, List<DeviceProfile> profiles, int personId)
 		{
 			Datalayer dl = new Datalayer(Driver.Server);
-			var right = dl.GetPersonMapByReaderNames(_readerNames, personId);
+			// Access rights of one person on the readers of this controller, or null if the person does not exist.
+			var right = dl.GetPersonMapByReaderIds2(dl.GetVariableIds(_readerNames), personId).Result;
 			if (right == null)
 			{
 				Trace("DownloadUser unknown " + personId);
@@ -589,11 +593,10 @@ namespace DriverAppControl
 		{
 			var profile2 = new DeviceProfile { Id = profile.Id, TimetableMap = new TimetableAndValidity[profile.TimetableMap.Length] };
 			for (int i = 0; i < profile.TimetableMap.Length; i++)
-			{
-				profile2.TimetableMap[i].TimetableId = GetDeviceId(timetableIndexes, profile.TimetableMap[i].TimetableId);
-				profile2.TimetableMap[i].ValidityStart = profile.TimetableMap[i].ValidityStart;
-				profile2.TimetableMap[i].ValidityEnd = profile.TimetableMap[i].ValidityEnd;
-			}
+				profile2.TimetableMap[i] = new TimetableAndValidity(
+					GetDeviceId(timetableIndexes, profile.TimetableMap[i].TimetableId),
+					profile.TimetableMap[i].ValidityStart,
+					profile.TimetableMap[i].ValidityEnd);
 			return profile2;
 		}
 		#endregion
@@ -623,6 +626,8 @@ namespace DriverAppControl
 		/// <returns></returns>
 		bool CheckUser(PersonMapRight pm)
 		{
+			if (pm?.Person == null)		// person not found (can happen, see Datalayer documentation)
+				return false;
 			if (!pm.Person.IsActive)
 				return false;
 			if (pm.Person.ValidityEnd.Date < DateTime.Now)
@@ -782,7 +787,7 @@ namespace DriverAppControl
 			{
 				Error("LoadProfiles(): " + ex.Message);
 			}
-			return null;
+			return new DeviceProfile[] { };		// no file yet: no full download done
 		}
 		/// <summary>Serialises the access-profile cache to <c>{name}_P.xml</c>.</summary>
 		void SaveProfiles(DeviceProfile[] profiles)
@@ -909,7 +914,7 @@ namespace DriverAppControl
 		#endregion
 
 		string _address;
-		bool _stopThread;
+		volatile bool _stopThread;
 		Thread _thread;
 		ChannelService _channel;
 
@@ -1126,15 +1131,18 @@ namespace DriverAppControl
 	/// <summary>Data for a badge-read event from an access-control reader.</summary>
 	public class AccessControlEventArgs : EventArgs
 	{
-		public AccessControlEventArgs(string deviceName, ReaderStatus status, int userId, string badgeId, DateTimeOffset dateUtc)
+		public AccessControlEventArgs(string deviceName, int readerId, ReaderStatus status, int userId, string badgeId, DateTimeOffset dateUtc)
 		{
 			DeviceName = deviceName;
+			ReaderId = readerId;
 			Status = status;
 			UserId = userId;
 			BadgeId = badgeId;
 			DateUtc = dateUtc;
 		}
 		public string DeviceName;
+		/// <summary>Reader number on the controller, 1..<see cref="Device.MAX_READER"/> (variable <c>&lt;device&gt;.ReaderNN</c>).</summary>
+		public int ReaderId;
 		public ReaderStatus Status;
 		public int UserId;
 		public string BadgeId;

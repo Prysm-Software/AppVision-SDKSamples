@@ -13,6 +13,10 @@ namespace DriverAppControl
 	/// Provides a Reset/Update/Complete protocol for transferring holidays, timetables,
 	/// access profiles and users, plus device parameter download.
 	/// </summary>
+	/// <remarks>
+	/// In this sample every method is a stub that simulates a success: replace them with the
+	/// protocol of your controller (TCP, serial, vendor SDK...).
+	/// </remarks>
 	class ChannelService
 	{
 		/// <summary>
@@ -56,7 +60,7 @@ namespace DriverAppControl
 		/// <returns><see langword="true"/> on success.</returns>
 		internal bool Holiday_Update(int id, DateTime date)
 		{
-			return false;
+			return true;		// todo: send to the device. The sample simulates a success.
 		}
 		/// <summary>Commits the holiday list transfer.</summary>
 		internal void Holiday_Complete()
@@ -69,7 +73,7 @@ namespace DriverAppControl
 		/// <returns><see langword="true"/> on success.</returns>
 		internal bool Timetable_Update(DeviceTimetable t)
 		{
-			return false;
+			return true;		// todo: send to the device. The sample simulates a success.
 		}
 		/// <summary>Commits the timetable transfer.</summary>
 		internal void Timetable_Complete()
@@ -82,7 +86,7 @@ namespace DriverAppControl
 		/// <returns><see langword="true"/> on success.</returns>
 		internal bool Profile_Update(DeviceProfile p)
 		{
-			return false;
+			return true;		// todo: send to the device. The sample simulates a success.
 		}
 		/// <summary>Commits the access-profile transfer.</summary>
 		internal void Profile_Complete()
@@ -95,13 +99,13 @@ namespace DriverAppControl
 		/// <returns><see langword="true"/> on success.</returns>
 		internal bool User_Update(DeviceUser u)
 		{
-			return false;
+			return true;		// todo: send to the device. The sample simulates a success.
 		}
 		/// <summary>Deletes a user entry from the device by its device-side ID.</summary>
 		/// <returns><see langword="true"/> on success.</returns>
 		internal bool User_Delete(int deviceUserId)
 		{
-			return false;
+			return true;		// todo: send to the device. The sample simulates a success.
 		}
 		/// <summary>Commits the user table transfer.</summary>
 		internal void User_Complete()

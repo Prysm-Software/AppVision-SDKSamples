@@ -15,7 +15,7 @@
     "react-scripts": "5.0.1",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0",
-    "@prysm/appsdk": "./AppSdk-TS/"
+    "@prysm/appsdk": "file:sdk/prysm-appsdk-4.9.76.tgz"
   },
   "scripts": {
     "start": "react-scripts start",

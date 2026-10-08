@@ -1,135 +1,148 @@
-﻿# DriverOverlay — GIS Overlay Driver
+# DriverOverlay — Move icons on a map from a driver
 
-## Overview
+**Used for:** showing live positions (vehicles, people, assets, alarms located by a sensor) on the geographical
+synoptics of AppVision. The driver creates **overlays**: graphical items placed by the server on top of synoptics,
+without modifying the synoptics. This sample moves a target along a Lissajous figure and leaves a 20-dot trail.
 
-A WPF driver that creates and animates **geo-referenced overlays** on AppVision
-geographical synoptics (maps).
+**Audience:** C# developers who know the connection sequence of [DriverMinimal](../DriverMinimal/README.md).
 
-Every 500 ms the driver moves a target icon along a **Lissajous figure** centred
-on a fixed GPS coordinate and draws a 20-dot trail of its previous positions.
+**Available with:** the *synoptic overlay* license option of the AppVision server (otherwise overlays are silently
+ignored).
 
-Use this as a starting point for any driver that needs to push **live position
-data** (vehicles, people, assets) onto a map in the AppVision client.
+**References:** `appSDK.dll` (`AppServerForDriver`, `ClientManager`), `appCommon.dll` (`Helper`), `appData.dll`
+(`OverlayItem`). **Output:** `DriverOverlay.exe`.
 
-**References:** `appCommon.dll` (`Helper`), `appSDK.dll` (`AppServerForDriver`, `ClientManager`)  
-**Output:** `DriverOverlay.exe` + `target.xaml` + `map.xaml` → `AppVision 4\Bin\`
+![The geographical synoptic of the sample configuration: the target and its trail, moved by the driver](map.png)
 
----
-
-## Project Structure
-
-| File | Role |
-|---|---|
-| `MainWindow.xaml.cs` | Connection, timer, overlay push |
-| `target.xaml` | WPF symbol displayed as the moving target |
-| `map.xaml` | WPF symbol used for trail dots |
+![The driver window](driver-window.png)
 
 ---
 
-## Key Concepts
+## How it works
 
-### 1. Overlay lifecycle
+1. The driver connects as the protocol given on its command line, calls `StartNotifications` (needed to receive the
+   *Close* command of AppVision, even without variable subscription) and `ProtocolSynchronized`.
+2. It removes the trail left by a previous run, then a `DispatcherTimer` ticks every 500 ms.
+3. At each tick it computes a position in metres around an origin (Aix-en-Provence, France), converts it to longitude
+   and latitude, and calls `ClientManager.UpdateOverlay`:
 
 ```csharp
-// Create or move
-ClientManager.UpdateOverlay(id, symbolPath, synopticTarget, location);
+// create or move the target: same id at each call
+_appServer.ClientManager.UpdateOverlay("target", "DriverOverlay\\target.xaml", "@geo", location);
 
-// Delete by exact id
-ClientManager.RemoveOverlay("item_0");
-
-// Delete by wildcard
-ClientManager.RemoveOverlay("tail_*");
+// trail: a new id at each step, shown on one synoptic only, the oldest dot is removed
+_appServer.ClientManager.UpdateOverlay("tail_" + step, tailSymbol, "DriverOverlay\\map.xaml", location);
+_appServer.ClientManager.RemoveOverlay("tail_" + (step - 20));
 ```
 
-### 2. `@geo` synoptic target
+4. When the window closes, the driver removes its overlays, then closes the connection.
 
-Passing `"@geo"` displays the overlay on **all** geographical synoptics
-currently open in any connected client, regardless of synoptic name.  
-Use a specific path (e.g. `"DriverOverlay\map.xaml"`) to restrict to one synoptic.
+### UpdateOverlay parameters
 
-### 3. Coordinate helpers (`Prysm.AppVision.Common.Helper`)
+| Parameter | Meaning |
+|---|---|
+| `name` | Id of the overlay, unique on the server. Same id = the overlay is updated (moved, symbol changed). |
+| `symbol` | What to draw: a symbol of the configuration (path relative to `Param\Client`, here `DriverOverlay\target.xaml`), or a XAML string (the green dots of the trail). |
+| `synoptic` | Where: a synoptic of the configuration (`DriverOverlay\map.xaml`), or `@geo` for every geographical synoptic. |
+| `position` | `System.Windows.Point`: X = longitude, Y = latitude (WGS-84 decimal degrees) on a geographical synoptic; pixels on a plain synoptic. |
+| optional | `symbolParameters` (parameters `%1`... of the symbol), `parameters`, `layers`, `symbolZoomLevel`. |
 
-WGS-84 coordinates are expressed in decimal degrees.  
-`Helper` converts metric offsets to degree deltas:
+`UpdateOverlay`, `RemoveOverlay` and `GetOverlays` return a `Task`: the sample sends the moves without waiting.
+
+### Overlay lifetime
+
+Overlays are kept by the **server**, not by the driver: they stay on the maps after the driver stops, and every client
+that opens the synoptic sees them. Remove them when they are no longer valid. Remove them **by id**: the sample lists
+its own overlays with `GetOverlays("Name=tail_*")` and removes each one with `RemoveOverlay(id)` (a mask passed to
+`RemoveOverlay` is not expanded by the 4.10 server).
+
+### Coordinates
+
+`Helper` converts metric offsets to degrees:
 
 ```csharp
-double dLon = Helper.GetOffsetLongitude(xMeters, latitudeDegrees);
-double dLat = Helper.GetOffsetLatitude(yMeters);
-
-// Location is System.Windows.Point: X = longitude, Y = latitude
-var loc = new Point(baseLon + dLon, baseLat + dLat);
+double dLon = Helper.GetOffsetLongitude(xMeters, latitudeDegrees);   // east-west
+double dLat = Helper.GetOffsetLatitude(yMeters);                      // north-south
+var location = new Point(originLon + dLon, originLat + dLat);         // X = longitude, Y = latitude
 ```
 
-### 4. Overlay id naming
+### Threads
 
-| Pattern | Purpose |
+The timer is a `DispatcherTimer` (UI thread): no locking needed. `ControllerManager.Closed` and `.Restart` are raised
+on SDK threads and go back to the UI thread with `Dispatcher.BeginInvoke` before closing the window.
+
+---
+
+## Step 1 — Configure AppVision
+
+### Option A — The configuration provided with the sample
+
+The `Configuration` folder is a complete AppVision configuration (`Param` and `Histo` databases, synoptics):
+
+| Object | Content |
 |---|---|
-| `"item_0"` | Single target — same id every tick, just moves |
-| `"tail_" + t` | Trail dot — predictable id allows selective deletion |
+| Protocol | `DriverOverlay`, *Manager* `DriverOverlay.exe` |
+| Synoptic `DriverOverlay\map.xaml` | geographical synoptic (OpenStreetMap tiles) centred on the origin of the trajectory |
+| Symbol `DriverOverlay\target.xaml` | pin image, tooltip = position |
+| Home page | link to the map, *Start* / *Stop* buttons of the protocol, warning if `DriverOverlay.exe` is missing |
 
-### 5. Timer-driven update loop
+It also holds objects of other samples (other protocols and variables): ignore them.
 
-A `DispatcherTimer` fires every 500 ms on the WPF UI thread — overlay
-updates are serialised with no locking required.
+1. **Copy** the `Configuration` folder out of the repository, for example to
+   `AppVision 4\Configurations\DriverOverlay` (the server upgrades and writes the databases).
+2. In the **server window** (appServer), click **...** next to *Configuration*, then **Browse**, and select the copied
+   folder (it must contain `Param` and `Histo`). The server restarts on it. Holding **Shift** while the server
+   starts also opens this choice.
+3. If a synoptic reports a compilation error, **generate** the client configuration from the configurator.
+
+The map needs Internet access from the client to load the OpenStreetMap tiles.
+
+### Option B — In your own configuration
+
+1. **Protocols › Add**: *Name* `DriverOverlay`, *Manager* `DriverOverlay.exe`. No variable is needed.
+2. Create a geographical synoptic `DriverOverlay\map.xaml` around longitude 5.3701, latitude 43.4935 (or change
+   `_originLocation` in the code), and a symbol `DriverOverlay\target.xaml`; or change the names in the code.
 
 ---
 
-## AppVision SDK Reference
+## Step 2 — Build and deploy
 
-### `AppServerForDriver` (`appSDK.dll`)
+1. Build the project. The output goes to `bin\Debug\` (or `bin\Release\`) in the project folder, with copies of
+   the AppVision DLLs: it can run from there.
+2. Copy `DriverOverlay.exe` (and `DriverOverlay.exe.config`) into the AppVision `Bin` folder, or set the *Manager* of
+   the protocol to the absolute path of the built exe. The symbols and synoptics belong to the configuration, not to
+   `Bin`.
 
-| Member | Description |
+> Production drivers go to `Bin\Drivers\<name>\appDriver<name>.exe` with an `AssemblyResolve` handler: see
+> [DriverAdvanced](../DriverAdvanced/README.md).
+
+---
+
+## Step 3 — Run
+
+1. Start the protocol: *Start* button of the home page (option A), or Configurator › Protocols › *Start*.
+   From Visual Studio: stop the protocol in AppVision, then set the command line arguments to `DriverOverlay`
+   (or `DriverOverlay@hostname`).
+2. In a client, open `DriverOverlay\map.xaml` (link of the home page): the pin moves along a figure-eight, followed
+   by green dots. The driver window lists the positions sent.
+3. Stop the protocol: the pin and the dots disappear.
+
+---
+
+## Troubleshooting
+
+| Symptom | Cause |
 |---|---|
-| `.Open(host)` | Connect to AppVision |
-| `.Login(protocolName)` | Register as driver |
-| `.StartNotifications(false)` | Start event loop |
-| `.ProtocolSynchronized()` | Signal readiness |
-| `.ControllerManager.Closed` | Event: server requests shutdown |
-
-### `ClientManager` (via `AppServerForDriver.ClientManager`)
-
-| Member | Description |
-|---|---|
-| `.UpdateOverlay(id, symbol, target, loc)` | Upsert an overlay |
-| `.RemoveOverlay(id)` | Delete by exact id or wildcard mask |
-
-### `Helper` (`appCommon.dll`)
-
-| Member | Description |
-|---|---|
-| `.GetOffsetLongitude(xMeters, latDeg)` | East/West metres → longitude delta |
-| `.GetOffsetLatitude(yMeters)` | North/South metres → latitude delta |
+| Nothing on the map, no error | The license has no synoptic overlay option; or the synoptic shown is not `DriverOverlay\map.xaml` / not geographical. |
+| The pin is shown but no dots | The trail is only drawn on `DriverOverlay\map.xaml`; the pin (`@geo`) is drawn on every geographical synoptic. |
+| The map is grey | No Internet access for the tiles, or zoomed far from the origin (Aix-en-Provence). |
+| No pin but the dots are shown | The symbol `DriverOverlay\target.xaml` does not exist in the configuration (`Param\Client`). |
+| The window closes at once | Connection or login failed (server not reachable, unknown protocol). |
+| Dots of a previous run stay on the map | The driver was killed: they are removed at the next start of the driver. |
 
 ---
 
-## Configuration in AppVision
+## See also
 
-```
-Configurator › Protocols › Add
-    Name:    DriverOverlay
-    Manager: DriverOverlay.exe
-```
-
-> No variables are needed — the protocol node is for lifecycle only.  
-> A geographical synoptic must be open in a client to see the overlays.
-
----
-
-## How to Build and Deploy
-
-1. Build in **Release** configuration.  
-2. Copy `DriverOverlay.exe`, `target.xaml`, `map.xaml` → `AppVision 4\Bin\`.
-
----
-
-## Debugging
-
-**Command line arguments:** `DriverOverlay[@localhost]`  
-Open a geographical synoptic in an AppVision client to see the moving target.
-
----
-
-## See Also
-
-- [DriverSimple](../DriverSimple/README.md) — variable I/O without overlays
-- [OverlaySample](../OverlaySample/README.md) — standalone overlay CRUD tool (client mode)
+- [OverlaySample](../OverlaySample/README.md) — create, list and remove overlays from a client application.
+- [DriverSimple](../DriverSimple/README.md) — variables, alarms and events from a driver.

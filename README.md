@@ -1,22 +1,22 @@
-﻿# AppVision SDK Samples
+# AppVision SDK Samples
 
-A collection of C# samples that demonstrate how to integrate third-party systems,
-build custom client applications, embed WPF controls, stream video, and automate
-configuration using the **AppVision 4 SDK**.
+Samples that show partners how to integrate third-party systems with **AppVision 4**, build custom client
+applications, embed WPF controls and video players, drive the operator screens, and reach AppVision from other
+platforms over HTTP or with the JavaScript SDK.
 
 ---
 
 ## Audience
 
-These samples target **C# developers** who want to build extensions for AppVision.
-A basic AppVision experience is required; the following background is also assumed:
+Partner developers who already configure AppVision sites (protocols, variables, synoptics) and want to extend them.
 
 | Topic | Level required |
 |---|---|
-| C# | Intermediate |
-| WPF | Basic (for UI samples) |
+| C# | Intermediate (for the .NET samples) |
+| WPF | Basic (for the UI samples) |
 | .NET Framework 4.8 | Basic |
-| TCP/IP networking | Basic (for driver and web-service samples) |
+| JavaScript / npm | Basic (for NodeClient, WebCustomClient, WebServiceREST) |
+| HTTP, REST, OData | Basic (for the web service samples) |
 
 ---
 
@@ -24,183 +24,162 @@ A basic AppVision experience is required; the following background is also assum
 
 | Requirement | Details |
 |---|---|
-| **AppVision** | 4.x running on localhost (or a reachable host) |
-| **Visual Studio** | 2019 or 2022 with .NET desktop workload |
+| **AppVision** | 4.10 or later, installed on the development machine (the .NET samples reference its DLLs) and running on `localhost` or a reachable host. [WidgetLibrary](WidgetLibrary/README.md) requires 4.11. |
+| **Visual Studio** | 2019 or later with the *.NET desktop development* workload |
 | **.NET Framework** | 4.8 |
+| **Node.js** | 18 or later, for the JavaScript samples |
 
-### Folder layout expected by the build
+### Build
 
-```
-C:\Program Files\AppVision 4\Bin\
-\AppVision 4\Public\AppVision-SDKSamples\   <- this repository
-```
+Open `SDK Samples.sln` and build. The AppVision assemblies (`appSDK.dll`, `appData.dll`...) are found in the AppVision
+`Bin` folder through the `ReferencePath` of [`Directory.Build.props`](Directory.Build.props):
+`C:\Program Files\AppVision 4\Bin\`. **Edit this file** if AppVision is installed elsewhere.
 
-The SDK and application DLLs in `AppVision 4\Bin\` are referenced as
-`<Private>False</Private>` in every project, so AppVision must be
-installed before building.
+Each project builds into its own `bin\Debug\` or `bin\Release\` folder:
 
----
+- **programs** (drivers, client applications, tools) get the AppVision DLLs copied next to them and run from there;
+- **DLLs loaded by AppVision** (video players, WPF controls, map provider, authentication plugin) are built alone
+  (*Copy Local = False*): copy the DLL into the AppVision `Bin` folder, as each README explains;
+- [DriverAdvanced](DriverAdvanced/README.md) builds into `Bin\Drivers\DriverAdvanced\` of the AppVision installation
+  three levels above the project, the layout of a delivered driver.
 
-## Repository Structure
+### Sample configurations
 
-```
-AppVision-SDKSamples/
-|
-+-- DriverMinimal/              Console driver -- minimal connection sequence
-+-- DriverSimple/               WPF driver    -- 8 I/O, alarms, custom events
-+-- DriverAdvanced/             WPF driver    -- Device pattern, caching, logging
-+-- DriverAppControl/           WPF driver    -- AppControl hardware bridge
-+-- DriverOverlay/              WPF driver    -- animated geo-referenced overlays
-|
-+-- ClientSimple/               WPF client -- subscribe to variables / alarms / events
-+-- ClientAdvanced/             WPF client -- Sdk.Server singleton, theme, options
-|
-+-- WpfControlSimple/           Embeddable control -- OperandManager read/write
-+-- WpfControlAdvanced/         Embeddable control -- IPersistable, ICommandable
-+-- WidgetLibrary/              Widget DLL -- synoptic toolbox entries, live variables
-|
-+-- PlayerSimple/               Video player -- IPlayerLive, FFmpeg software decode
-+-- PlayerAdvanced/             Video player -- IPlayerPlayback, PTZ, Export
-+-- PlayerMetadata/             Metadata overlay -- YOLO object detection on live video
-|
-+-- MapProvider/                GIS map provider -- Bing Maps tile background
-+-- OverlaySample/              Standalone tool  -- overlay CRUD on a GIS synoptic
-|
-+-- WizardSample/               Setup wizard -- multi-page device onboarding
-+-- TwoFactorAuthentication/    Server plugin -- custom 2-factor login provider
-|
-+-- AppControlSynchro/          CLI tool -- CSV bulk import of people into AppControl
-+-- WebServiceOData/            CLI tool -- AppVision config OData CRUD (no SDK needed)
-\-- WebServiceODataAppControl/  CLI tool -- AppControl people/badges OData CRUD
-```
+Several samples ship a `Configuration\` folder: a ready-made AppVision configuration (`Param`, `Histo` databases,
+synoptics, scripts) that declares the protocol, variables and synoptics the sample expects.
+
+1. Copy the folder **out of the repository**, e.g. to `AppVision 4\Configurations\SDK_DriverSimple` (the server
+   upgrades and writes the databases: keep the repository copy intact).
+2. In the server window, click `...` next to *Configuration* and select that folder (or hold **Shift** while the
+   server starts). The server restarts on it.
+3. In the configurator, **generate** the client configuration.
+
+Use a test server: switching the configuration disconnects every client.
 
 ---
 
-## Samples by Category
+## Samples
 
 ### Driver development
 
-Write a **driver** when you need to push values from an external device into
-AppVision, or when AppVision needs to send commands to the device.
-Drivers are standalone processes started and supervised by AppVision.
+Write a **driver** to push the values of an external device into AppVision and to send it the commands of AppVision.
+Drivers are standalone processes started and supervised by the AppVision server (one per protocol).
 
 | Project | Description | Level |
 |---|---|---|
-| [DriverMinimal](DriverMinimal/README.md) | Bare-minimum console driver | Beginner |
-| [DriverSimple](DriverSimple/README.md) | WPF driver with 8 digital I/Os, alarm, event | Intermediate |
-| [DriverAdvanced](DriverAdvanced/README.md) | Full driver: Device pattern, caching, logging | Advanced |
-| [DriverAppControl](DriverAppControl/README.md) | Bridge to AppControl access controller hardware | Advanced |
-| [DriverOverlay](DriverOverlay/README.md) | Animate geo-referenced icons on a GIS synoptic | Intermediate |
+| [DriverMinimal](DriverMinimal/README.md) | Bare-minimum console driver: connection sequence, subscriptions, clean stop | Beginner |
+| [DriverSimple](DriverSimple/README.md) | WPF driver with 8 digital inputs/outputs, a buffer, a custom alarm and event | Beginner |
+| [DriverAdvanced](DriverAdvanced/README.md) | Production structure: Driver/Device classes, cache, logging, `Bin\Drivers\<name>` layout | Advanced |
+| [DriverAppControl](DriverAppControl/README.md) | Access control: download of people, badges, profiles and timetables to controllers | Advanced |
+| [DriverOverlay](DriverOverlay/README.md) | Animate geo-referenced icons (overlays) on a GIS synoptic | Intermediate |
 
 ### Client applications
 
-Build a **standalone application** that reads or controls AppVision data.
+Build a **standalone application** that reads AppVision data, acts on it or drives the operators.
 
 | Project | Description | Level |
 |---|---|---|
-| [ClientSimple](ClientSimple/README.md) | Subscribe to variables, alarms, events; set values | Beginner |
-| [ClientAdvanced](ClientAdvanced/README.md) | `Sdk.Server`, colour theme, `GetOption`, clean disconnect | Intermediate |
+| [ClientSimple](ClientSimple/README.md) | Subscribe to variables, alarms and events; write a value | Beginner |
+| [ClientAlarms](ClientAlarms/README.md) | Alarm life cycle (acknowledge, report, close, raise) and history queries, console | Intermediate |
+| [RemoteControl](RemoteControl/README.md) | Drive the operator screens: load a synoptic, a camera or a view on a workstation; show each new alarm | Intermediate |
+| [ClientAdvanced](ClientAdvanced/README.md) | `Sdk.Server`, AppVision controls (areas, alarms, video container), theme, options | Intermediate |
 
 ### Embeddable WPF controls
 
-Create a custom **UserControl** that operators can place directly on an
-AppVision synoptic, alongside the built-in widgets.
+Create a **WPF control** that operators place on a synoptic or load in a container, next to the built-in objects.
 
 | Project | Description | Level |
 |---|---|---|
-| [WpfControlSimple](WpfControlSimple/README.md) | Read/write variables from inside a synoptic | Intermediate |
-| [WpfControlAdvanced](WpfControlAdvanced/README.md) | `IPersistable`, `ICommandable`, `IContainer`, async data | Advanced |
-| [WidgetLibrary](WidgetLibrary/README.md) | Widget DLL listed in the synoptic toolbox (`[AppWidget]`), live variables | Intermediate |
+| [WpfControlSimple](WpfControlSimple/README.md) | Read and write variables from a control placed in a synoptic | Intermediate |
+| [WidgetLibrary](WidgetLibrary/README.md) | Widget DLL listed in the synoptic toolbox (`[AppWidget]`), live variables (AppVision 4.11) | Intermediate |
+| [WpfControlAdvanced](WpfControlAdvanced/README.md) | `IPersistable`, `ICommandable` (container menu), alarms, async data | Advanced |
 
 ### Video players
 
-Build a custom **video player control** that AppVision manages (camera assignment,
-recording, motion detection, metadata overlay).
+Build a **video player** that AppVision uses for the cameras of a video system (live, playback, PTZ, export).
 
 | Project | Description | Level |
 |---|---|---|
-| [PlayerSimple](PlayerSimple/README.md) | Live stream with FFmpeg software decoder | Intermediate |
-| [PlayerAdvanced](PlayerAdvanced/README.md) | Full player: live, playback, PTZ, export | Advanced |
-| [PlayerMetadata](PlayerMetadata/README.md) | Draw YOLO bounding-box overlays on live video | Advanced |
+| [PlayerSimple](PlayerSimple/README.md) | Live stream (file, RTSP, desktop) with the FFmpeg decoder | Intermediate |
+| [PlayerAdvanced](PlayerAdvanced/README.md) | Complete player: live, playback, PTZ, export (simulated) | Advanced |
+| [PlayerMetadata](PlayerMetadata/README.md) | Metadata overlay: object detection boxes drawn over the video | Advanced |
 
 ### GIS and overlays
 
 | Project | Description | Level |
 |---|---|---|
-| [MapProvider](MapProvider/README.md) | Custom Bing Maps tile background for GIS synoptics | Intermediate |
-| [OverlaySample](OverlaySample/README.md) | Standalone CRUD tool for geo-referenced overlay icons | Intermediate |
+| [MapProvider](MapProvider/README.md) | Custom map background for GIS synoptics: any XYZ tile server, offline cache | Intermediate |
+| [OverlaySample](OverlaySample/README.md) | Create, edit and delete overlays (icons placed by programs on synoptics) | Intermediate |
 
 ### Configuration and server plugins
 
 | Project | Description | Level |
 |---|---|---|
-| [WizardSample](WizardSample/README.md) | Multi-page WPF wizard for device onboarding | Advanced |
-| [TwoFactorAuthentication](TwoFactorAuthentication/README.md) | Server-side 2FA login plugin | Advanced |
+| [WizardSample](WizardSample/README.md) | Multi-page wizard that discovers devices and creates protocol and variables | Advanced |
+| [ExternalAuthentication](ExternalAuthentication/README.md) | Server authentication plugin: sign in with the accounts of an external directory, groups mapped to profiles | Advanced |
 
-### Web services / OData
+### JavaScript, web services and databases
 
-Access AppVision and AppControl data via **HTTP without the AppVision SDK**.
-Useful for integrations from non-.NET platforms (Python, Java, PowerShell, etc.).
+Reach AppVision **without the .NET SDK**: JavaScript SDK, REST, OData, SQL.
 
 | Project | Description | Level |
 |---|---|---|
-| [WebServiceOData](WebServiceOData/README.md) | CRUD on AppVision options and timetables | Beginner |
-| [WebServiceODataAppControl](WebServiceODataAppControl/README.md) | CRUD on AppControl people and badges | Beginner |
-| [AppControlSynchro](AppControlSynchro/README.md) | Bulk import of cardholders from a CSV file | Intermediate |
+| [NodeClient](NodeClient/README.md) | JavaScript SDK (`@prysm/appsdk`) from Node.js: live values, alarms, commands, history | Beginner |
+| [WebCustomClient](WebCustomClient/README.md) | React page using the JavaScript SDK, hosted by the AppVision web client | Intermediate |
+| [WebServiceREST](WebServiceREST/README.md) | Plain HTML/JavaScript page calling the REST web service (login, notifications, read/write) | Beginner |
+| [WebServiceOData](WebServiceOData/README.md) | OData CRUD on the configuration: options, timetable variables | Beginner |
+| [WebServiceODataAppControl](WebServiceODataAppControl/README.md) | OData CRUD on AppControl people and badges | Beginner |
+| [AppControlSynchro](AppControlSynchro/README.md) | Import of cardholders from a CSV file into AppControl | Intermediate |
+| [DatabaseSchema](DatabaseSchema/README.md) | Database schemas (SQL scripts, diagrams) and a history query in PowerShell | Reference |
 
 ---
 
-## Key SDK Assemblies
+## Key SDK assemblies
 
 | Assembly | Namespace | Key types |
 |---|---|---|
-| `appSDK.dll` | `Prysm.AppVision.SDK` | `AppServerForDriver`, `AppServer`, `Sdk.Server`, `Sdk.Client`, `AppWidget` (`.Widgets`) |
-| `appData.dll` | `Prysm.AppVision.Data` | `VariableRow`, `VariableState`, `AlarmInfo`, `EventRow`, `OverlayItem` |
-| `appCommon.dll` | `Prysm.AppVision.Common` | `Helper`, `RColor`, `RT`, `CommStatus` |
+| `appSDK.dll` | `Prysm.AppVision.SDK` | `AppServer`, `AppServerForDriver`, `Sdk.Server`, `Sdk.Client`, managers (`VariableManager`, `AlarmManager`, `EventManager`, `ClientManager`...), `IPersistable`, `ICommandable` |
+| `appData.dll` | `Prysm.AppVision.Data` | `VariableRow`, `VariableState`, `AlarmRow`, `AlarmInfo`, `EventRow`, `OverlayItem`, `CommStatus` |
+| `appCommon.dll` | `Prysm.AppVision.Common` | `Helper`, `RT` (translations), extension methods |
+| `appUI.dll` | `Prysm.AppVision.UI` | AppVision WPF controls, `RColor` (theme) |
 | `appVideo.dll` | `Prysm.AppVision.Video` | `PlayerBaseControl`, `IPlayerLive`, `IPlayerPlayback`, `IPlayerPtz`, `IPlayerExport` |
-| `appUI.dll` | `Prysm.AppVision.UI` | `IPersistable`, `ICommandable`, `IContainer` |
-| `App.Logger.dll` | `Prysm.Logger` | `Trace`, `LogLevel`, `LogBox` |
-| `App.Utility.dll` | `Prysm.Utility.Logger` | `AppServerLogAppender` |
+| `App.Logger.dll`, `App.Utility.dll` | `Prysm.Logger`, `Prysm.Utility` | logging (`Trace`, `LoggerBox`, `AppServerLogAppender`) |
+
+JavaScript: `@prysm/appsdk`, served by the AppVision server itself (`http://<server>/mcp/sdk`), see
+[NodeClient](NodeClient/README.md).
 
 ---
 
-## Learning Path
+## Learning path
 
 ```
 Beginner
-  +- DriverMinimal          ->  understand the driver connection sequence
-  \- ClientSimple           ->  understand variable subscriptions
+  +- DriverMinimal          ->  the driver connection sequence
+  +- ClientSimple           ->  variable, alarm and event subscriptions
+  \- NodeClient             ->  the same from JavaScript
 
 Intermediate
-  +- DriverSimple           ->  add I/O, alarms, events to a driver
-  +- DriverAdvanced         ->  Device pattern + caching + structured logging
-  +- ClientAdvanced         ->  Sdk.Server singleton + theme integration
-  +- WpfControlSimple       ->  embed a read/write control in a synoptic
-  \- WidgetLibrary          ->  deliver controls through the synoptic toolbox
+  +- DriverSimple           ->  inputs, outputs, alarms, events in a driver
+  +- ClientAlarms           ->  alarm life cycle, history
+  +- RemoteControl          ->  drive the operators' screens
+  +- WpfControlSimple       ->  a control in a synoptic
+  \- WidgetLibrary          ->  controls in the synoptic toolbox
 
 Advanced
-  +- WpfControlAdvanced     ->  IPersistable, ICommandable, async data loading
-  +- PlayerSimple           ->  FFmpeg live video in AppVision
-  \- PlayerAdvanced         ->  full player (playback + PTZ + export)
+  +- DriverAdvanced         ->  structure and delivery of a real driver
+  +- WpfControlAdvanced     ->  IPersistable, ICommandable
+  +- PlayerSimple           ->  live video in AppVision
+  \- PlayerAdvanced         ->  playback, PTZ, export
 
 Specialised
-  +- PlayerMetadata         ->  AI object-detection overlay on live video
-  +- DriverAppControl       ->  access controller hardware bridge
-  +- DriverOverlay          ->  GIS overlay animation
-  +- MapProvider            ->  custom tile-map background
-  +- TwoFactorAuthentication ->  custom server authentication plugin
-  +- WizardSample           ->  multi-page setup wizard template
-  \- WebServiceOData        ->  HTTP/OData access without the SDK
+  +- PlayerMetadata         ->  metadata overlay on live video
+  +- DriverAppControl       ->  access control download
+  +- DriverOverlay, OverlaySample  ->  overlays on synoptics
+  +- MapProvider            ->  GIS map background
+  +- ExternalAuthentication ->  authentication plugin (external user directory)
+  +- WizardSample           ->  device discovery and configuration import
+  \- WebServiceREST, WebServiceOData, WebCustomClient  ->  HTTP access without the .NET SDK
 ```
-
----
-
-## Getting Started
-
-1. Open `AppVision-SDKSamples.sln` in Visual Studio 2019 or 2022.
-2. Build once (**Ctrl+Shift+B**) to restore NuGet packages.
-3. Open the `README.md` of the project you want to explore.
-4. Make sure **AppVision 4.x is running** on `http://localhost`.
 
 ---
 
@@ -211,3 +190,5 @@ Specialised
 | Host | `http://localhost` |
 | User | `ADM` |
 | Password | `123` |
+
+Use them on a test server only: change the password of `ADM` on a real site.

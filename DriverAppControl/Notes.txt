@@ -1,32 +1,32 @@
 ---------------------------------------------------
-Notes sur le téléchargement
+Notes on the download
 ---------------------------------------------------
-Les méthodes qui traitent le téléchargement sont dans la classe Device:
+The methods that download data to a controller are in the Device class:
 	. Download
 	. DownloadHolidays
 	. DownloadTimetables
 	. DownloadProfiles
 	. DownloadUsers
 
-Les classes qui modélisent les données à télécharger dans un équipement sont:
-	. DeviceTimetable:		programme horaire
-	. DeviceProfile:		profil d'accès
-	. DeviceUser:			personne
+The classes that model the data downloaded to a controller are:
+	. DeviceTimetable:	timetable
+	. DeviceProfile:	access profile
+	. DeviceUser:		person (one entry per badge)
 
-Les données à télécharger sont réindexées (ce n'est pas le même id de la base Param ou AppControl)
-pour ceci la classe DeviceIndex permet de conserver la liaison entre les index:
-	. pour les programmes horaires l'indexation est mémorisée dans le fichier {name}_TID.xml
-	. pour les utilisateurs l'indexation est mémorisée dans le fichier {name}_UID.xml
-	. pour les profils d'accès, il n'y a pas de réindexation car le profil d'accès est construit dynamiquement
-	  le contenu des profils d'accès est mémorisée dans le fichier {name}_P.xml
+The downloaded data is re-indexed (a controller does not use the ids of the Param or AppControl
+databases). The DeviceIndex class keeps the link between both ids:
+	. timetables: the indexes are saved in the file {name}_TID.xml
+	. users: the indexes are saved in the file {name}_UID.xml
+	. access profiles are not re-indexed, they are built dynamically;
+	  their content is saved in the file {name}_P.xml
+The files are written in the Param folder of the configuration (current directory of the driver).
 
-Attention: une personne ayant plusieurs badges correspond à plusieurs DeviceIndex avec le même appId
+Warning: a person with several badges has several DeviceIndex entries with the same AppId.
 
 ---------------------------------------------------
-Notes sur le transfert des modifications
+Notes on the transfer of modifications
 ---------------------------------------------------
-Les méthodes intervenant pour le transfert des modifications sont:
+The methods involved in the transfer of the modifications are:
 	. Driver.DownloadModifications()
 	. Driver.OnModification()
 	. Device.DownloadList()
-

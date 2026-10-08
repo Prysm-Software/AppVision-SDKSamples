@@ -68,7 +68,7 @@
 
         <WrapPanel Grid.Row="4" HorizontalAlignment="Left">
             <!--<todo> add more action as needed-->
-            <Button Width="75" Margin="10" Content="Rescan" />
+            <Button Width="75" Margin="10" Content="Rescan" Command="{Binding RescanCommand}" />
             <Button Width="75" Margin="10" Content="Add" Command="{Binding AddDeviceCommand}" />
         </WrapPanel>
     </Grid>

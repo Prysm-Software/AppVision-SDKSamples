@@ -1,0 +1,18 @@
+{
+  "name": "appvision-nodeclient",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AppVision SDK sample: JavaScript SDK (@prysm/appsdk) from Node.js - live values, alarms, commands, history",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "history": "node index.js history"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@prysm/appsdk": "http://localhost/mcp/sdk/prysm-appsdk-4.9.76.tgz"
+  }
+}

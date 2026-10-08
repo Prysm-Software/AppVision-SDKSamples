@@ -13,13 +13,13 @@ xmlns:gen="clr-namespace:appClient_gen" InitialWidth="800" InitialHeight="600" F
         <app:ColorEntry Condition="IsPressed" Color="#FF17365D" />
       </app:ColorAnim>
       <app:ActionAnim x:Key="MouseLeftButtonUp">
-        <app:CData xml:space="preserve"><![CDATA[//<wizard><load_doc document='MapProvider\BingMaps.xaml' parameters='' window='1' container='main'/></wizard>
-Client.Load(1, "main", @"MapProvider\BingMaps.xaml");
+        <app:CData xml:space="preserve"><![CDATA[//<wizard><load_doc document='MapProvider\TileServer.xaml' parameters='' window='1' container='main'/></wizard>
+Client.Load(1, "main", @"MapProvider\TileServer.xaml");
 ]]></app:CData>
       </app:ActionAnim>
     </app:SynoItem.AnimationItems>
   </app:RectangleItem>
-  <app:RectangleItem Text="How to build a custom map provider for AppVision.&#xD;&#xA;&#xD;&#xA;This sample project demonstrates how to build a custom GIS map provider for AppVision.&#xD;&#xA;It uses Microsoft® Bing Maps as its data source.&#xD;&#xA;&#xD;&#xA;Note: Bing Maps APIs require a key. To get your Bing Maps Key, go to&#xD;&#xA;https://docs.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key&#xD;&#xA;" Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" FontSize="12" x:Name="RectangleItem20" Width="476" Height="144" Canvas.Left="228" Canvas.Top="140" />
+  <app:RectangleItem Text="How to build a custom map provider for AppVision.&#xD;&#xA;&#xD;&#xA;The provider reads the map tiles of any XYZ tile server (OpenStreetMap here, or a tile server of the site), without any key, and keeps them in a cache folder for offline use.&#xD;&#xA;&#xD;&#xA;Settings: synoptic background, map tab, provider Other, MapProvider.dll." Fill="{x:Null}" BorderThickness="0,0,0,0" Foreground="#FF000000" FontSize="12" x:Name="RectangleItem20" Width="476" Height="144" Canvas.Left="228" Canvas.Top="140" />
   <app:RectangleItem Fill="Image:Images/warning.png" BorderThickness="0,0,0,0" Foreground="#FF000000" x:Name="RectangleItem21" Width="24" Height="24" ToolTip="MapProvider.dll not found. Did you build SDK samples?" Canvas.Left="164" Canvas.Top="136">
     <app:SynoItem.AnimationItems>
       <app:PropertyAnim x:Key="SynoItem.IsAnimVisible" Expression="!File.Exists(Helper.PathBin + &quot;\\MapProvider.dll&quot;) " />
