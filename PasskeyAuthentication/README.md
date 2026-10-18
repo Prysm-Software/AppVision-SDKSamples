@@ -11,6 +11,8 @@ multi-step login through a single session, second factor exemption, configurator
 
 **Available in:** AppVision 4.11 and later (`IServer.CheckUserPassword`, method naming by file, `TwoFactor.ExemptMethods`).
 
+![The Passkey tile of appClient and the Windows Security prompt it opens: the passkey of ADM on pc-thomas, confirmed with a fingerprint](sign-in.png)
+
 ---
 
 ## How it works
