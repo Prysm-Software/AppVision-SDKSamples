@@ -4,11 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C4E2A7B9-5D13-4F6E-8A20-9B7C1D3E5F62}</ProjectGuid>
+    <ProjectGuid>{7D4B2E91-6A3F-4C58-B1E7-2F9C8D5A3B64}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExternalAuthentication</RootNamespace>
-    <AssemblyName>ExternalAuthentication</AssemblyName>
+    <RootNamespace>PasskeyAuthentication</RootNamespace>
+    <!-- appPlugin<Name>.dll: the authentication method is named after the file (Passkey), AppVision 4.11 -->
+    <AssemblyName>appPluginPasskey</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <WarningLevel>4</WarningLevel>
@@ -28,16 +29,18 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- AppVision assemblies, found through the ReferencePath of Directory.Build.props (AppVision 4\Bin).
-         Not copied: the plugin is loaded by appServer (and appClient / appConfig) from the AppVision Bin folder.
-         appScript: ScriptServerBase.Server, the server API in the server process. appUI: the standard sign-in form. -->
+         Not copied: the plugin is loaded by appServer, appClient and appConfig from the AppVision Bin folder.
+         appScript: ScriptServerBase.Server, the server API in the server process. -->
     <Reference Include="appCommon"><Private>False</Private></Reference>
     <Reference Include="appData"><Private>False</Private></Reference>
     <Reference Include="appSDK"><Private>False</Private></Reference>
     <Reference Include="appScript"><Private>False</Private></Reference>
-    <Reference Include="appUI"><Private>False</Private></Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
@@ -45,14 +48,18 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExternalDirectoryAuth.cs" />
-    <Compile Include="ExternalSignIn.cs" />
-    <Compile Include="UserDirectory.cs" />
+    <Compile Include="PasskeyAuth.cs" />
+    <Compile Include="PasskeyProtocol.cs" />
+    <Compile Include="PasskeySignIn.cs" />
+    <Compile Include="PasskeyStore.cs" />
+    <Compile Include="WindowsWebAuthn.cs" />
+    <Compile Include="WebAuthn\AuthenticatorData.cs" />
+    <Compile Include="WebAuthn\Cbor.cs" />
+    <Compile Include="WebAuthn\CoseKey.cs" />
+    <Compile Include="WebAuthn\WebAuthnVerifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExternalUsers.json" />
-    <None Include="New-PasswordHash.ps1" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

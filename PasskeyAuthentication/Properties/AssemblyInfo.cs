@@ -1,8 +1,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("ExternalAuthentication")]
-[assembly: AssemblyDescription("AppVision SDK sample: authentication plugin using an external user directory")]
+[assembly: AssemblyTitle("appPluginPasskey")]
+[assembly: AssemblyDescription("AppVision SDK sample: sign in with a passkey (WebAuthn), server and client authentication plugin")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AppVision SDK Samples")]
 [assembly: AssemblyCopyright("")]

@@ -116,7 +116,7 @@ Build a **video player** that AppVision uses for the cameras of a video system (
 | Project | Description | Level |
 |---|---|---|
 | [WizardSample](WizardSample/README.md) | Multi-page wizard that discovers devices and creates protocol and variables | Advanced |
-| [ExternalAuthentication](ExternalAuthentication/README.md) | Server authentication plugin: sign in with the accounts of an external directory, groups mapped to profiles | Advanced |
+| [PasskeyAuthentication](PasskeyAuthentication/README.md) | Authentication plugin, server and client: sign in with a passkey (WebAuthn, Windows Hello, security key) instead of a password | Advanced |
 
 ### JavaScript, web services and databases
 
@@ -176,7 +176,7 @@ Specialised
   +- DriverAppControl       ->  access control download
   +- DriverOverlay, OverlaySample  ->  overlays on synoptics
   +- MapProvider            ->  GIS map background
-  +- ExternalAuthentication ->  authentication plugin (external user directory)
+  +- PasskeyAuthentication  ->  authentication plugin (passkeys, server + sign-in screen)
   +- WizardSample           ->  device discovery and configuration import
   \- WebServiceREST, WebServiceOData, WebCustomClient  ->  HTTP access without the .NET SDK
 ```
