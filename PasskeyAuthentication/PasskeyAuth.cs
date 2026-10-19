@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.ServiceModel.Web;
 using System.Text;
@@ -54,11 +55,20 @@ public class PasskeyAuth : IAuthPlugin, IAuthClientInfo, IAuthProbe, IAuthAccoun
 	Settings Current => new(name => Server?.GetOption(OptionPrefix + name));
 	PasskeyStore Store => new(Path.Combine(Server.GetPathParam(), "Server", PasskeyStore.FileName));
 
-	/// <summary>The sign-in tile: a client plugin in the same DLL, which receives the relying party id and origin (public values).</summary>
+	/// <summary>
+	/// The sign-in tile: a client plugin in the same DLL, which receives the relying party id and origin (public values), and for the
+	/// web client the ES module web\Passkey.js, installed in Bin\Web\authplugins (WebModule=, a path relative to the server).
+	/// </summary>
 	public AuthenticationMethodInfo Describe()
 	{
 		var s = Current;
-		return new() { Ui = AuthenticationUi.Plugin, ClientPlugin = "appPluginPasskey.dll", DisplayName = "Passkey", Parameters = $"RpId={s.RpId}\nOrigin={s.Origin}" };
+		return new()
+		{
+			Ui = AuthenticationUi.Plugin,
+			ClientPlugin = "appPluginPasskey.dll",
+			DisplayName = "Passkey",
+			Parameters = $"RpId={s.RpId}\nOrigin={s.Origin}\nWebModule=/authplugins/Passkey.js",
+		};
 	}
 
 	public UserRow Login(NameValue[] args) => Helper.GetParameter(PasskeyProtocol.Step, args) switch
@@ -261,7 +271,10 @@ public class PasskeyAuth : IAuthPlugin, IAuthClientInfo, IAuthProbe, IAuthAccoun
 	/// <summary>Options of the method, read from the server or from the values appConfig tests before saving them.</summary>
 	sealed class Settings
 	{
-		/// <summary>Relying party id: the DNS name the passkeys are bound to. Default: the server host name. Changing it orphans every passkey.</summary>
+		/// <summary>
+		/// Relying party id: the DNS name the passkeys are bound to. Default: the fully qualified name of the server (pc-01.example.com),
+		/// browsers refuse a single-label name (pc-01). Changing it orphans every passkey.
+		/// </summary>
 		public string RpId { get; }
 		/// <summary>Origin the client writes in clientDataJSON. Default: https://&lt;RpId&gt;.</summary>
 		public string Origin { get; }
@@ -272,10 +285,23 @@ public class PasskeyAuth : IAuthPlugin, IAuthClientInfo, IAuthProbe, IAuthAccoun
 
 		public Settings(Func<string, string> option)
 		{
-			RpId = option("RpId") is { Length: > 0 } rp ? rp : Dns.GetHostName().ToLowerInvariant();
+			RpId = option("RpId") is { Length: > 0 } rp ? rp : FullHostName();
 			Origin = option("Origin") is { Length: > 0 } o ? o : "https://" + RpId;
 			ProofMethod = option("ProofMethod") is { Length: > 0 } m ? m : "Local";
 			MaxPerUser = int.TryParse(option("MaxPerUser"), out var n) && n > 0 ? n : 5;
+		}
+
+		// fully qualified name of the server; its short name when the machine is not in a DNS domain
+		static string FullHostName()
+		{
+			try
+			{
+				return Dns.GetHostEntry(string.Empty).HostName.ToLowerInvariant();
+			}
+			catch (SocketException)
+			{
+				return Dns.GetHostName().ToLowerInvariant();
+			}
 		}
 	}
 

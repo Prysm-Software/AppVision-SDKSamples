@@ -62,6 +62,8 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="sign-in.png" />
+    <!-- web client part (ES module), installed by hand in the AppVision Bin\Web\authplugins folder of the server -->
+    <None Include="web\Passkey.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

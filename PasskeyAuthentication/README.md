@@ -49,6 +49,7 @@ Sign in
 | `PasskeyProtocol.cs` | What the two plugins exchange: step names, 401 message prefixes, options DTOs, base64url, JSON helpers. |
 | `PasskeySignIn.cs` | Client plugin: the tile (one button, a link to the registration dialog) and the ceremony driver; `RegisterDialog`, a `ChildWindow` of appCommon. |
 | `WindowsWebAuthn.cs` | P/Invoke of `webauthn.dll` (version 1 structures): make credential, get assertion, error names. |
+| `web\Passkey.js` | Web client part: an ES module the web client loads from the server, the browser does the ceremony (`navigator.credentials`). |
 
 **References** (*Copy Local = False*, the DLL is loaded from the AppVision `Bin` folder): `appSDK.dll` (`IAuthPlugin`,
 `ISignInPlugin`, `IServer`), `appData.dll` (`UserRow`, `AuthenticationMethodInfo`), `appCommon.dll`, `appScript.dll`
@@ -113,6 +114,44 @@ authenticator models checks the attestation certificate chain against the FIDO m
 a library such as Fido2NetLib can replace `WebAuthn\`; check its target framework against the AppVision `Bin` first (version 4
 targets .NET 8 only).
 
+### The web client
+
+The web client knows no plugin when it ships: for a method `Ui = Plugin` it loads at run time the ES module named by the
+`WebModule=` parameter of `Describe()` (a path relative to the server, here `/authplugins/Passkey.js`), or `/authplugins/<Method>.js`
+when the parameter is absent. The server serves every file of `Bin\Web` as is. A method whose module is missing or invalid is not
+offered by the web client. The module has no build step and no dependency; it exports its form and the ceremony
+(contract `apiVersion: 1`):
+
+```js
+export default {
+    apiVersion: 1,
+    unavailable: ctx => window.isSecureContext ? null : 'HTTPS required',     // reason shown instead of the form, or null
+    signIn: { label: { en: 'Sign in with a passkey', fr: '...' }, icon: 'fas fa-fingerprint', fields: [], run: signIn },
+    actions: [{ label: { en: 'Register this device' }, help: { en: '...' },
+                fields: ['username', 'password', { name: 'device', label: { en: 'Name of this device' }, optional: true,
+                                                   value: 'Windows – Google Chrome' }], run: register }],
+};
+```
+
+The web client adds the server version to the URL (`?v=`), so that browsers do not keep the module of a previous version in their
+cache; a plugin updated on its own changes the URL it publishes (`WebModule=/authplugins/Passkey.js?v=2`).
+A field of the plugin may be `optional` (the label says so) and carry a proposed `value` the user can change; `'username'` and
+`'password'` are the fields of the sign-in screen. `run(ctx)` opens the session or throws an `Error` whose message is shown. `ctx` gives `method` (the published
+`AuthenticationMethodInfo`), `parameter(name)`, `values` (`username`, `password` and the plugin fields), `language`, and the two calls
+of the ceremony: `ctx.login(args, continuation)` sends the first `Login` on a new session with `Method=<method>`, the user name and
+password typed, and `args`; `ctx.continueLogin(args, continuation)` sends the next one on the same session. When the refusal starts
+with `continuation` (`Passkey:Get:`), the promise returns the rest of the message and the session stays pending; any other refusal
+rejects it and the web client handles it (refusal message, second factor dialog). The web client keeps the sign-in warning, the
+second factor, the error display and the opening of the application.
+
+The browser checks what Windows does not: the relying party id must be the host name of the web client URL (or a registrable suffix
+of it), and the origin it writes in `clientDataJSON` is the page origin. Set `App.Main.Authentication.Passkey.RpId` to the DNS name
+the users type and `Origin` to `https://<that name>[:port]`: appClient and appConfig read the same values, so a passkey registered on
+a workstation (Windows Hello) also signs in from the browser of that workstation. Chrome and Edge refuse a single-label name
+(`pc-01`: *'rp.id' cannot be used with the current origin*) and an IP address: use the fully qualified name (`pc-01.example.com`),
+the default, or `localhost` for a test on the server itself. The HTTPS certificate of the server must be trusted and name that host:
+browsers disable WebAuthn on a site with a certificate error.
+
 ### The Windows API
 
 `WindowsWebAuthn` calls `webauthn.dll` as a browser does. The application builds `clientDataJSON` itself (type, challenge,
@@ -128,7 +167,8 @@ passkey managers to the dialog without any change in the application.
 
 1. Build the project: `bin\Debug\appPluginPasskey.dll` (or `bin\Release\`).
 2. Copy `appPluginPasskey.dll` into the AppVision `Bin` folder (`C:\Program Files\AppVision 4\Bin`) of the **server** and of the
-   **client and configurator workstations**: the sign-in tile is loaded from the same DLL. Restart the server, the clients and the
+   **client and configurator workstations**: the sign-in tile is loaded from the same DLL. For the web client, copy
+   `web\Passkey.js` into `Bin\Web\authplugins` on the server (HTTPS required). Restart the server, the clients and the
    configurator.
 3. Configurator › **Options › Authentication**: tick **Active** on the *Passkey* row and untick its **2FA** column (a passkey is two
    factors). Keep *AppVision password* active and default at first: the users register their passkey with their password. The
@@ -137,7 +177,7 @@ passkey managers to the dialog without any change in the application.
 
    | Option | Default | Role |
    |---|---|---|
-   | `App.Main.Authentication.Passkey.RpId` | server host name | Relying party id the passkeys are bound to. Set it to the DNS name the clients use; changing it later orphans every passkey. |
+   | `App.Main.Authentication.Passkey.RpId` | fully qualified name of the server | Relying party id the passkeys are bound to. Set it to the DNS name the clients use, with a domain (browsers refuse a single-label name); changing it later orphans every passkey. |
    | `App.Main.Authentication.Passkey.Origin` | `https://<RpId>` | Origin signed in `clientDataJSON`. |
    | `App.Main.Authentication.Passkey.ProofMethod` | `Local` | Method that checks the password at registration (`AD`, `LDAP`... on a directory site). |
    | `App.Main.Authentication.Passkey.MaxPerUser` | `5` | Passkeys per account. |
