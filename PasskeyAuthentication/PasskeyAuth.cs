@@ -30,7 +30,7 @@ namespace PasskeyAuthentication;
 /// <para>Registering a passkey requires the account's password: <see cref="IServer.CheckUserPassword(NameValue[])"/> runs the
 /// sign-in pipeline (failure counter, lockout, event) with the method named by <c>App.Main.Authentication.Passkey.ProofMethod</c>.</para>
 /// </remarks>
-public class PasskeyAuth : IAuthPlugin, IAuthClientInfo, IAuthProbe
+public class PasskeyAuth : IAuthPlugin, IAuthClientInfo, IAuthProbe, IAuthAccountPlugin
 {
 	/// <summary>Method name: the DLL is appPluginPasskey.dll.</summary>
 	public const string MethodName = "Passkey";

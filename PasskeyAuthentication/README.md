@@ -41,7 +41,7 @@ Sign in
 
 | File | Role |
 |---|---|
-| `PasskeyAuth.cs` | Server plugin: `IAuthPlugin` (the four steps), `IAuthClientInfo` (the sign-in tile), `IAuthProbe` (state in appConfig). Challenges per session, options. |
+| `PasskeyAuth.cs` | Server plugin: `IAuthPlugin` (the four steps), `IAuthClientInfo` (the sign-in tile), `IAuthProbe` (state in appConfig), `IAuthAccountPlugin` (opens an existing account). Challenges per session, options. |
 | `WebAuthn\WebAuthnVerifier.cs` | Relying party checks of WebAuthn Level 2 § 7.1 and § 7.2: clientDataJSON, rpIdHash, flags, signature, counter. |
 | `WebAuthn\CoseKey.cs` | COSE public keys (RFC 8152): ES256 (P-256, DER signature converted to r‖s) and RS256. |
 | `WebAuthn\AuthenticatorData.cs`, `WebAuthn\Cbor.cs` | Authenticator data layout and a 100-line CBOR decoder: no dependency to add to the AppVision `Bin` folder. |
@@ -74,9 +74,13 @@ Sign in
   calls `AppServer.Login(args)`; `Method=Passkey` is added by the SDK when the tile is not the default method. Keep those calls on
   the UI thread: appClient hands a 401 to the thread that called, a call made from `Task.Run` would not see it. Only the Windows
   API runs on a worker thread, so the dispatcher keeps running behind the Windows Security dialog.
-- **Open the session of an existing account.** Returning the `UserRow` of the AppVision account (with its `Id`, read by
-  `UserManager.GetUserByName`) opens that account's session: no external account is created, the parameter `AuthMethods=` of the
-  user or profile and the account availability (locked, validity, timetable) are checked by the server as for any method.
+- **Open the session of an existing account.** The plugin implements the marker `IAuthAccountPlugin`: it proves the possession
+  of an AppVision account, like the client certificate, instead of being a directory. Returning the `UserRow` of that account
+  (with its `Id`, read by `UserManager.GetUserByName`) opens its session, a local account included; the server reloads the record
+  by its `Id` and ignores the rest of the object, and never creates an external account (a row without `Id` is refused). Without
+  the marker, a plugin that returns a local account is refused as a directory homonym (`Local_user_exists_x`). The parameter
+  `AuthMethods=` of the user or profile and the account availability (locked, validity, timetable) are checked as for any method.
+  The marker requires AppVision 4.11: the DLL does not load on an older server.
 - **Proof of identity at registration.** `IServer.CheckUserPassword(NameValue[])` runs the sign-in pipeline for the password
   (failure counter and profile lockout, locked or expired account refused, an event for every check) with the method the plugin
   names: `Method=` is required here because the default method may be the plugin itself. The method is the option
