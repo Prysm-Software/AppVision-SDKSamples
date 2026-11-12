@@ -61,7 +61,8 @@ namespace OverlayManager
 				_server.ClientManager.OverlayUpdated -= Overlay_Updated;
 				_server.ClientManager.OverlayUpdated += Overlay_Updated;
 				_server.AddFilterNotifications("NotificationType=Overlay");
-				_server.StartNotifications(false);
+				// No initial values (the list is read below); polling: no HTTP listener to open on this machine.
+				_server.StartNotifications(false, false);
 				UpdateUI(isConnected: true);
 
 				// Retrieve the list of symbols and synoptics (suggestions of the Symbol and Synoptic columns)

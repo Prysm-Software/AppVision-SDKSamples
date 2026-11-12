@@ -1,5 +1,5 @@
-﻿using DriverAdvanced;
-using Prysm.AppVision.Common;
+﻿using Prysm.AppVision.Common;
+using Prysm.AppVision.SDK;
 using Prysm.Logger;
 using System;
 using System.ComponentModel;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Prysm.AppVision.SDK
+namespace DriverAdvanced
 {
 	/// <summary>
 	/// WPF application entry point for the DriverAdvanced driver.

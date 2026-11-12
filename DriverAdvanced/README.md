@@ -11,6 +11,11 @@ logging window and log file, deployment in `Bin\Drivers\<name>\`.
 **Output:** `DriverAdvanced.exe` in `..\..\..\Bin\Drivers\DriverAdvanced\` (with the repository in
 `AppVision 4\Public\AppVision-SDKSamples`, that is the AppVision `Bin\Drivers\DriverAdvanced` folder).
 
+**Documentation:** *Writing a driver* in the API help served by your server,
+`http://<server>/doccsharp/html/fa685819-4ff4-4c40-81ba-4172e43de86b.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)). `App.Logger` and `App.Utility` are not described in the API help:
+this README and the code are their documentation.
+
 | Assembly (*Copy Local = False*) | Namespace | Used for |
 |---|---|---|
 | `appSDK.dll` | `Prysm.AppVision.SDK` | `AppServerForDriver` and its managers |
@@ -84,8 +89,8 @@ runs (`VariableManager.RowUpdated`): reconnect there if the address or the param
 
 - `LoggerBox`, the list of the window (right-click: log level, maximum number of lines, saved in the user settings);
 - `AppServerLogAppender`, which writes through `AppServer.Log()` to the driver log file
-  `C:\ProgramData\AppVision 4\LogFiles\<year>\<product>\<protocol>_<yyMM>.log`, filtered by the *Log level* of the
-  protocol.
+  `%ProgramData%\<installation folder>\LogFiles\<year>\<product>\<protocol>_<yyMM>.log` (the *Log files* button of
+  the server window opens it), filtered by the *Log level* of the protocol.
 
 ### Download and Refresh
 
@@ -143,7 +148,7 @@ driver runs. Remove this block when you implement your device.
 ```
 Configurator › Protocols › Add
     Name      MyProtocol
-    Manager   Drivers\DriverAdvanced\DriverAdvanced.exe      (relative to the AppVision Bin folder)
+    Manager   Drivers\DriverAdvanced\DriverAdvanced.exe      (relative to the AppVision Bin folder; ProtocolRow.Executable in the SDK)
     Address / Timeout / Retries / Parameters: settings shared by all devices (optional)
 
 Configurator › Variables
@@ -160,9 +165,10 @@ Configurator › Variables
 
 ## Step 2 — Build and run
 
-1. Build the project (Visual Studio 2019 or later: the T4 transformation needs the *Text Template Transformation*
-   component of Visual Studio). The exe lands in `Bin\Drivers\DriverAdvanced\` of the AppVision installation that
-   is three levels above the project; otherwise copy the output folder there.
+1. Build the project (Visual Studio 2022: the T4 transformation needs the *Text Template Transformation*
+   component of Visual Studio). The exe lands in `..\..\..\Bin\Drivers\DriverAdvanced\`, which is the AppVision
+   `Bin\Drivers\DriverAdvanced\` folder only when the repository is cloned two levels below the installation folder;
+   otherwise copy the output folder there, or change the *Output path* of the project.
 2. **Started by AppVision:** Configurator › Protocols › *Start*. The window shows the log, ending with
    `1 device(s) running`, and the protocol state becomes *Synchronized*. A click on the sensor of the home page
    shows the command received (`>app>`) and the status sent back (`<drv<`):
@@ -178,8 +184,9 @@ The window cannot be closed by mistake: a plain close shows a warning; **Ctrl + 
 
 ## How to adapt this sample
 
-1. Rename the project, the assembly and the namespace. For a Prysm delivery the executable is
-   `appDriver<Name>.exe` in `Bin\Drivers\<Name>\`; set the *Manager* of the protocol accordingly.
+1. Rename the project, the assembly and the namespace (the sample keeps `DriverAdvanced.exe` and the namespace
+   `DriverAdvanced`: use your own names). The drivers delivered with the product follow the
+   convention `appDriver<Name>.exe` in `Bin\Drivers\<Name>\`; set the *Manager* of the protocol accordingly.
 2. `Driver.Start`: read the protocol settings (commented lines), adjust the notification filters.
 3. `Device`: implement the device lifecycle.
 
@@ -202,7 +209,7 @@ The window cannot be closed by mistake: a plain close shows a warning; **Ctrl + 
 
 | Symptom | Cause |
 |---|---|
-| The protocol does not start, *Executable is missing* or file not found in the server errors | *Manager* does not point to the exe, relative to the AppVision `Bin` folder (`Drivers\DriverAdvanced\DriverAdvanced.exe`). |
+| The protocol does not start, *Executable is missing* or file not found in the server errors | *Manager* (the server calls it *Executable*) does not point to the exe, relative to the AppVision `Bin` folder (`Drivers\DriverAdvanced\DriverAdvanced.exe`). |
 | `FileNotFoundException` on `appSDK` or `App.Logger` at startup | The exe is not two levels below `Bin` (or one level): the `AssemblyResolve` handler does not find the AppVision DLLs. |
 | "Usage: DriverAdvanced protocolName[@hostName]" | No command line argument. |
 | Error in the log, protocol never *Synchronized* | Connection or login failed (server, protocol name, password), or the warranty check failed. `Start` logs the error and keeps the window open. |

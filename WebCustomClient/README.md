@@ -9,6 +9,10 @@ external system... The page runs inside the web client and reuses its connected 
 **Audience:** web developers who know React and TypeScript. The same technique works with any framework or with plain
 JavaScript: only `window.parent.sdk` matters.
 
+**Documentation:** *Web services and JavaScript SDK* in the API help served by your server,
+`http://<server>/doccsharp/html/11442ac1-c309-4c8f-8837-050c0cf5fe13.htm`, and the reference of the JavaScript SDK,
+`http://<server>/docjs/index.html` (URLs relative to your server, see [Documentation](../README.md#documentation)).
+
 ![The custom page loaded in the web client](preview.png)
 
 ---
@@ -95,6 +99,9 @@ shows *No AppVision session*. Test the SDK part with the build deployed in `Bin\
   ```
   Save the `.tgz` in `sdk/`, update the file name in `package.json`, then `npm install`. Prefer this `file:` reference
   to the server URL (`npm i http://<server>/mcp/sdk/...`), which would tie `package-lock.json` to one server.
+- **Versions.** Inside the web client, the package only provides the types: the objects come from the web client of
+  the server. A page that opens its own session (below) runs the package code: SDK 4.9.79 and later require an
+  AppVision 4.10.2 server, so take the version that your server serves.
 
 For a page **outside** the web client (another site, Node.js), the SDK can open its own session:
 

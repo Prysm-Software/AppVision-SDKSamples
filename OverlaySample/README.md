@@ -58,6 +58,11 @@ deletion: there is no `Add`.
 
 **References:** `appSDK.dll`, `appData.dll`, `appCommon.dll` (AppVision `Bin` folder). **Output:** `OverlayManager.exe`.
 
+**Documentation:** *Synoptics and symbols*, `http://<server>/doccsharp/html/0d5e00d8-27bb-4b55-a9b4-bfcf867794da.htm`,
+and, for the scripts of the sample configuration, *Server scripts*,
+`http://<server>/doccsharp/html/b274fa62-82c7-4e21-ab7b-099b658076e7.htm`, in the API help served by your server
+(URLs relative to your server, see [Documentation](../README.md#documentation)).
+
 ---
 
 ## OverlayManager, step by step
@@ -69,7 +74,7 @@ _server.Open("http://localhost");
 _server.Login("ADM", password);
 _server.ClientManager.OverlayUpdated += Overlay_Updated;
 _server.AddFilterNotifications("NotificationType=Overlay");   // only the overlay notifications
-_server.StartNotifications(false);
+_server.StartNotifications(false, false);                   // no initial values, polling (no local HTTP listener)
 
 foreach (var overlay in await _server.ClientManager.GetOverlays())
 	AddOrReplace(overlay);

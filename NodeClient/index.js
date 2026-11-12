@@ -8,8 +8,9 @@
 // Connection settings come from environment variables (defaults: http://localhost, ADM / 123):
 //   APPVISION_HOST, APPVISION_USER, APPVISION_PASSWORD
 
-// The SDK targets the browser: its base64 helper calls window.btoa / window.atob. Node (16+) has btoa and atob
-// as globals, so expose them under 'window' before loading the SDK.
+// Needed up to SDK 4.9.76 (the version pinned in package.json): its base64 helper calls window.btoa / window.atob.
+// Node (16+) has btoa and atob as globals, so expose them under 'window' before loading the SDK.
+// From SDK 4.9.77 on, the SDK runs in Node 18+ as is and this line is unnecessary.
 globalThis.window ??= globalThis;
 
 const { AppServer, DateHelper, AlarmEvent } = require('@prysm/appsdk');
@@ -21,7 +22,8 @@ const options = {
 	productName: 'NodeClient',
 	productDescription: 'AppVision SDK sample (Node.js)',
 	productCompany: 'Partner',
-	// Required outside a browser: without it, login() reads navigator.userAgent, which Node < 21 does not have
+	// Required with SDK 4.9.76 outside a browser: without it, login() reads navigator.userAgent, which Node < 21
+	// does not have. From SDK 4.9.77 on, the SDK picks a default in Node.
 	productProcess: 'node',
 	clientHostname: require('os').hostname(),
 };

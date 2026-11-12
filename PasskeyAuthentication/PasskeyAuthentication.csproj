@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PasskeyAuthentication</RootNamespace>
-    <!-- appPlugin<Name>.dll: the authentication method is named after the file (Passkey), AppVision 4.11 -->
+    <!-- appPlugin<Name>.dll: the authentication method is named after the file (Passkey), AppVision 4.10.2 -->
     <AssemblyName>appPluginPasskey</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

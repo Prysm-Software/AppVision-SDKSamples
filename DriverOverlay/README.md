@@ -12,6 +12,10 @@ ignored).
 **References:** `appSDK.dll` (`AppServerForDriver`, `ClientManager`), `appCommon.dll` (`Helper`), `appData.dll`
 (`OverlayItem`). **Output:** `DriverOverlay.exe`.
 
+**Documentation:** *Writing a driver*, `http://<server>/doccsharp/html/fa685819-4ff4-4c40-81ba-4172e43de86b.htm`,
+and *Synoptics and symbols*, `http://<server>/doccsharp/html/0d5e00d8-27bb-4b55-a9b4-bfcf867794da.htm`, in the API
+help served by your server (URLs relative to your server, see [Documentation](../README.md#documentation)).
+
 ![The geographical synoptic of the sample configuration: the target and its trail, moved by the driver](map.png)
 
 ![The driver window](driver-window.png)

@@ -24,8 +24,15 @@ access-control module of AppVision.
 | `Program.cs` | Menu, `CreateContext()` (URL, credentials) and the five operations |
 | `Service References/AppControlDataServiceReference/` | Generated client classes (`AppControlContext`, `Person`, `Badge`...) |
 
-**References:** NuGet `Microsoft.Data.Services.Client` 5.8.4. **Output:** `WebServiceODataAppControl.exe`, in the
-AppVision `Bin` folder.
+**References:** NuGet `Microsoft.Data.Services.Client` 5.8.4. **Output:** `WebServiceODataAppControl.exe`, in
+`bin\Debug\` (or `bin\Release\`) of the project, with the OData DLLs.
+
+The generated `AppControlContext` is the OData client of the service. It is not the server-side
+`Prysm.AppControl.Data.AppControlContext` (Entity Framework) described in the API help, despite the same name.
+
+**Documentation:** *Access control*, `http://<server>/doccsharp/html/04bcc881-e1bf-4e10-bb05-ea4adf6f91ea.htm`, and
+*Web services and JavaScript SDK*, `http://<server>/doccsharp/html/11442ac1-c309-4c8f-8837-050c0cf5fe13.htm`, in the
+API help served by your server (URLs relative to your server, see [Documentation](../README.md#documentation)).
 
 ```csharp
 var ctx = CreateContext();                                   // URL + NetworkCredential + IgnoreMissingProperties

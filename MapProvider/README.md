@@ -34,6 +34,10 @@ reached. It adds a settings panel to the map window of the configurator.
 **References:** `appSDK.dll` (`IConfigurable`), `appCommon.dll` (`Helper`), `Telerik.Windows.Controls*.dll`, all from
 the AppVision `Bin` folder with *Copy Local = False*. **Output:** `MapProvider.dll`.
 
+**Documentation:** *Synoptics and symbols* in the API help served by your server,
+`http://<server>/doccsharp/html/0d5e00d8-27bb-4b55-a9b4-bfcf867794da.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
+
 ---
 
 ## The code

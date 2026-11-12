@@ -38,6 +38,10 @@ override only what your video system supports, and the `CanXxx` properties that 
 **References:** `appVideo.dll`, `appSDK.dll`, `appCommon.dll` (AppVision `Bin` folder).
 **Output:** `PlayerClock.dll` (assembly name, namespace `PlayerClock`, class `PlayerClockControl`).
 
+**Documentation:** *Video players* in the API help served by your server,
+`http://<server>/doccsharp/html/241bd2a4-bd41-4dfa-aa02-ecbd33f83103.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
+
 ---
 
 ## Lifecycle

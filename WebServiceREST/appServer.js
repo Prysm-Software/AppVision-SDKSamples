@@ -77,8 +77,9 @@ class AppServer {
         if (!this.sessionId)
             throw new Error('Open: no session id returned');
 
-        // 2. authentication. The Basic header is only read when the server delegates authentication
-        //    (Active Directory, LDAP...); it is sent on this single request, as the TypeScript SDK does.
+        // 2. authentication. Up to AppVision 4.10.1, the Basic header is read when the server delegates
+        //    authentication (Active Directory, LDAP); 4.10.2 reads only the body and ignores it. It is sent on this
+        //    single request (the TypeScript SDK did the same up to 4.9.78).
         try {
             await this.post('Login',
                 [{ Name: 'username', Value: username }, { Name: 'password', Value: password }],

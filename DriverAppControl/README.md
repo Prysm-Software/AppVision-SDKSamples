@@ -10,8 +10,12 @@ hardware. The communication with the controller itself is a stub (`ChannelServic
 and AppControl side.
 
 **References:** `appSDK.dll`, `appData.dll`, `appCommon.dll`, `AppControl.Sdk.dll` (`Prysm.AppControl.SDK.Datalayer`),
-and the OData client DLLs `Microsoft.Data.*` / `System.Spatial` (in the AppVision `Bin` folder).
-**Output:** `DriverAppControl.exe`.
+and the OData client DLLs `Microsoft.Data.*` / `System.Spatial` 5.8.4 (NuGet packages of `packages.config`, the
+same version as in the AppVision `Bin` folder). **Output:** `DriverAppControl.exe`.
+
+**Documentation:** *Writing a driver*, `http://<server>/doccsharp/html/fa685819-4ff4-4c40-81ba-4172e43de86b.htm`,
+and *Access control*, `http://<server>/doccsharp/html/04bcc881-e1bf-4e10-bb05-ea4adf6f91ea.htm`, in the API help
+served by your server (URLs relative to your server, see [Documentation](../README.md#documentation)).
 
 ---
 
@@ -91,7 +95,8 @@ download does not stop the driver.
 `ControllerManager.Closed` (AppVision stops the protocol) ends the main loop: devices stopped, `AppServer.Close()`,
 window closed. `ControllerManager.Restart` (raised by the SDK when the connection to the server is lost) does the
 same, then tries to reconnect once; if the server is still unreachable the driver ends, and AppVision relaunches it
-if the protocol is *Autostart*.
+if the protocol is *Autostart*. This reconnection in the same process differs from DriverSimple and DriverAdvanced,
+which exit on `Restart` and let the server relaunch the protocol; exiting is the simpler choice for a new driver.
 
 ---
 
@@ -160,7 +165,9 @@ Access.C001.Door1.Cmd     Logical/Integer, Command checked
 | Index files not written | The driver does not run on the server machine (the `Param` path comes from the server). |
 | The window cannot be closed | Intentional: *Ctrl + close*, or stop the protocol from AppVision. |
 
-Log file of the driver: `C:\ProgramData\AppVision 4\LogFiles\<year>\<product>\<protocol>_<yyMM>.log`.
+Log file of the driver: `%ProgramData%\<installation folder>\LogFiles\<year>\<product>\<protocol>_<yyMM>.log`
+when the driver runs from the AppVision `Bin` folder (*Log files* button of the server window); `%ProgramData%\bin\`
+when it runs from its own `bin\Debug` with copies of the DLLs.
 
 ---
 

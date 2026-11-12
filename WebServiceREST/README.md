@@ -8,6 +8,10 @@ session. The same sequence of HTTP calls applies from Python, Node.js, PowerShel
 
 **Audience:** web or back-end developers who know HTTP and JavaScript; no .NET knowledge needed.
 
+**Documentation:** *Web services and JavaScript SDK* in the API help served by your server,
+`http://<server>/doccsharp/html/11442ac1-c309-4c8f-8837-050c0cf5fe13.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
+
 ![The page after a write, a read and an alarm raised by another program](preview.png)
 
 ---
@@ -40,8 +44,9 @@ GET  Close                                          (end of session)
 `SessionID` cookie (`HttpOnly`, `SameSite=Lax`).
 
 **Login.** The password is sent once, in the body of `Login`, never in a URL. The sample also sends an
-`Authorization: Basic` header on that request only: the server reads it when authentication is delegated to Active
-Directory or LDAP. Over plain `http` both are readable on the network: use `https` outside a test bench.
+`Authorization: Basic` header on that request only: AppVision 4.10.1 and earlier read it when authentication is
+delegated to Active Directory or LDAP; AppVision 4.10.2 reads only the body and ignores the header (the TypeScript SDK
+stopped sending it in 4.9.79). Over plain `http` both are readable on the network: use `https` outside a test bench.
 
 **Keep the session alive.** The server closes a session that stops calling `KeepAlive`. Polling every 500 ms gives
 near real-time notifications; a slower period (a few seconds) is enough for a dashboard.

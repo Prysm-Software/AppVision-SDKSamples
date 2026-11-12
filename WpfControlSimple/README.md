@@ -14,6 +14,10 @@ itself in a floating window.
 **References:** `appSDK.dll`, `appData.dll`, `appCommon.dll` (AppVision `Bin` folder).
 **Output:** `WpfControlSimple.dll` — a WPF class library.
 
+**Documentation:** *Synoptics and symbols*, `http://<server>/doccsharp/html/0d5e00d8-27bb-4b55-a9b4-bfcf867794da.htm`,
+and *Operands and expressions*, `http://<server>/doccsharp/html/17d6b229-9778-43f0-bfca-ef755524e4a8.htm`, in the API
+help served by your server (URLs relative to your server, see [Documentation](../README.md#documentation)).
+
 ---
 
 ## How it works
@@ -132,6 +136,6 @@ breakpoints in the control. In the Visual Studio XAML designer the control is em
 ## Learning path
 
 ```
-WpfControlSimple  ->  WidgetLibrary (4.11)          ->  WpfControlAdvanced
+WpfControlSimple  ->  WidgetLibrary (4.10.2)          ->  WpfControlAdvanced
 Read/write            toolbox entries, live values       IPersistable, ICommandable, IContainer, live events
 ```

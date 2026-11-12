@@ -47,8 +47,12 @@ Error: Alarm #3 cannot be closed yet (to acknowledge, condition active)
 |---|---|
 | `Program.cs` | Connection, notifications, commands |
 
-**References:** `appSDK.dll`, `appData.dll`, `appCommon.dll` from `AppVision 4\Bin`, copied next to the exe
+**References:** `appSDK.dll`, `appData.dll`, `appCommon.dll` from the AppVision `Bin` folder, copied next to the exe
 (a client application runs outside the AppVision folder). **Output:** `bin\Debug\ClientAlarms.exe`.
+
+**Documentation:** *Alarm model* in the API help served by your server,
+`http://<server>/doccsharp/html/6e5e199a-5dd5-4048-84ad-5975fe79add9.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
 
 ---
 

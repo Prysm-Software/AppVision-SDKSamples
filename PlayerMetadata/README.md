@@ -39,6 +39,14 @@ does not have this problem.
 **References:** `appVideo.dll`, `appSDK.dll`, `appFFmpeg.dll`, `appCommon.dll`, `appData.dll` (AppVision `Bin`
 folder), `Microsoft.ML.OnnxRuntime` (NuGet). **Output:** `PlayerMetadata.dll`, plus the files listed below.
 
+`appFFmpeg.dll` (`Prysm.AppVision.FFmpeg.FFmpegVideoPlayerCtrl`) is a different component from the `App.FFmpeg.dll`
+(`Prysm.FFmpeg.Next`) used by [PlayerSimple](../PlayerSimple/README.md); both ship in the `Bin` folder, and neither is
+described in the API help.
+
+**Documentation:** *Video players* in the API help served by your server,
+`http://<server>/doccsharp/html/241bd2a4-bd41-4dfa-aa02-ecbd33f83103.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
+
 **Model:** `tinyyolov2-8.onnx` of the [ONNX Model Zoo](https://github.com/onnx/models) (Tiny YOLOv2, Pascal VOC: 20
 classes such as person, car, bicycle, dog), downloaded by the first build. Any other ONNX model can replace it: only
 `TinyYoloDetector.cs` depends on its input and output.

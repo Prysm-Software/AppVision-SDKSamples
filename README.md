@@ -20,14 +20,57 @@ Partner developers who already configure AppVision sites (protocols, variables, 
 
 ---
 
+## Documentation
+
+These samples go with the API help, which every server serves from its installation (`Bin\Web`), in the version
+and under the name of the installed product. Replace `<server>` by the name or address of your server (`localhost`
+on the development machine), and `http` by `https` if the server only accepts HTTPS:
+
+| Help | URL |
+|---|---|
+| .NET API (`appSDK`, `appData`, `appCommon`, `appVideo`, scripts...) | `http://<server>/doccsharp/index.html` |
+| JavaScript SDK (`@prysm/appsdk`) | `http://<server>/docjs/index.html` |
+
+The .NET help opens with concept pages, then the reference of each namespace. Start with the page that matches what
+you build; each sample README also names its page. The page addresses below are relative to your server
+(`http://<server>/doccsharp/html/<id>.htm`):
+
+| You want to... | Concept page | `<id>` | Samples |
+|---|---|---|---|
+| Connect a program, read and write values | Getting started | `4d97183d-f664-4102-9eb7-e35df2a99dd8` | ClientSimple, ClientAdvanced |
+| Choose what the server notifies, and on which thread | Notifications and filters | `72f3b891-cdf6-48e2-b5f1-015f8e023a0d` | ClientSimple, DriverMinimal |
+| Read or write `$V.`, `$A.`, `$G.` operands and expressions | Operands and expressions | `17d6b229-9778-43f0-bfca-ef755524e4a8` | WpfControlSimple |
+| Raise, acknowledge, report and close alarms | Alarm model | `6e5e199a-5dd5-4048-84ad-5975fe79add9` | ClientAlarms |
+| Write a driver or its configuration wizard | Writing a driver | `fa685819-4ff4-4c40-81ba-4172e43de86b` | DriverMinimal, DriverSimple, DriverAdvanced, DriverOverlay, WizardSample |
+| Write a video player | Video players | `241bd2a4-bd41-4dfa-aa02-ecbd33f83103` | PlayerSimple, PlayerAdvanced, PlayerMetadata |
+| Write server scripts | Server scripts | `b274fa62-82c7-4e21-ab7b-099b658076e7` | OverlaySample (configuration) |
+| Write client scripts, open documents on the operator screens | Client scripts and documents | `fba94a4b-ad72-4807-be00-2d747b51da85` | RemoteControl, WpfControlAdvanced |
+| Put controls, widgets, maps or overlays on synoptics | Synoptics and symbols | `0d5e00d8-27bb-4b55-a9b4-bfcf867794da` | WpfControlSimple, WpfControlAdvanced, WidgetLibrary, MapProvider, OverlaySample |
+| Manage people, badges and rights, or download them to controllers | Access control | `04bcc881-e1bf-4e10-bb05-ea4adf6f91ea` | DriverAppControl, WebServiceODataAppControl, AppControlSynchro |
+| Reach the server over REST, OData or with the JavaScript SDK | Web services and JavaScript SDK | `11442ac1-c309-4c8f-8837-050c0cf5fe13` | WebServiceREST, WebServiceOData, NodeClient, WebCustomClient |
+| Find the sample for a topic | SDK samples | `1f39c0dc-edd7-4d7c-9dd1-ddc315b457df` | all |
+
+The help describes the version installed on that server; this repository follows the latest version (see
+*Prerequisites* for the samples that need more than 4.10.0).
+
+---
+
 ## Prerequisites
 
 | Requirement | Details |
 |---|---|
-| **AppVision** | 4.10 or later, installed on the development machine (the .NET samples reference its DLLs) and running on `localhost` or a reachable host. [WidgetLibrary](WidgetLibrary/README.md) requires 4.11. |
-| **Visual Studio** | 2019 or later with the *.NET desktop development* workload |
+| **AppVision** | 4.10 or later, installed on the development machine (the .NET samples reference its DLLs) and running on `localhost` or a reachable host. Exceptions below. |
+| **Visual Studio** | 2022 version 17.8 or later, with the *.NET desktop development* workload: [`Directory.Build.props`](Directory.Build.props) sets `LangVersion` to `latest` and some samples use C# 12 (primary constructors, collection expressions), which Visual Studio 2019 does not compile |
 | **.NET Framework** | 4.8 |
 | **Node.js** | 18 or later, for the JavaScript samples |
+
+Samples that need more than AppVision 4.10.0:
+
+| Sample | Requires |
+|---|---|
+| [WidgetLibrary](WidgetLibrary/README.md) | AppVision 4.10.2 (`Prysm.AppVision.SDK.Widgets`) |
+| [PasskeyAuthentication](PasskeyAuthentication/README.md) | AppVision 4.10.2 (`IAuthClientInfo`, `IAuthProbe`, `IAuthAccountPlugin`, `AuthenticationMethodInfo`) |
+| [NodeClient](NodeClient/README.md), [WebCustomClient](WebCustomClient/README.md) | The JavaScript SDK 4.9.79 and later needs an AppVision 4.10.2 server; the 4.9.76 package pinned by the samples works with 4.10.0 |
 
 ### Build
 
@@ -40,8 +83,10 @@ Each project builds into its own `bin\Debug\` or `bin\Release\` folder:
 - **programs** (drivers, client applications, tools) get the AppVision DLLs copied next to them and run from there;
 - **DLLs loaded by AppVision** (video players, WPF controls, map provider, authentication plugin) are built alone
   (*Copy Local = False*): copy the DLL into the AppVision `Bin` folder, as each README explains;
-- [DriverAdvanced](DriverAdvanced/README.md) builds into `Bin\Drivers\DriverAdvanced\` of the AppVision installation
-  three levels above the project, the layout of a delivered driver.
+- [DriverAdvanced](DriverAdvanced/README.md) builds into `..\..\..\Bin\Drivers\DriverAdvanced\`, the layout of a
+  delivered driver: this is the AppVision `Bin` folder only when the repository is cloned two levels below the
+  installation folder (e.g. `<installation>\Public\AppVision-SDKSamples`). Elsewhere, change its *Output path* or
+  copy the output folder into `Bin\Drivers\`.
 
 ### Sample configurations
 
@@ -91,7 +136,7 @@ Create a **WPF control** that operators place on a synoptic or load in a contain
 | Project | Description | Level |
 |---|---|---|
 | [WpfControlSimple](WpfControlSimple/README.md) | Read and write variables from a control placed in a synoptic | Intermediate |
-| [WidgetLibrary](WidgetLibrary/README.md) | Widget DLL listed in the synoptic toolbox (`[AppWidget]`), live variables (AppVision 4.11) | Intermediate |
+| [WidgetLibrary](WidgetLibrary/README.md) | Widget DLL listed in the synoptic toolbox (`[AppWidget]`), live variables (AppVision 4.10.2) | Intermediate |
 | [WpfControlAdvanced](WpfControlAdvanced/README.md) | `IPersistable`, `ICommandable` (container menu), alarms, async data | Advanced |
 
 ### Video players
@@ -142,11 +187,14 @@ Reach AppVision **without the .NET SDK**: JavaScript SDK, REST, OData, SQL.
 | `appData.dll` | `Prysm.AppVision.Data` | `VariableRow`, `VariableState`, `AlarmRow`, `AlarmInfo`, `EventRow`, `OverlayItem`, `CommStatus` |
 | `appCommon.dll` | `Prysm.AppVision.Common` | `Helper`, `RT` (translations), extension methods |
 | `appUI.dll` | `Prysm.AppVision.UI` | AppVision WPF controls, `RColor` (theme) |
-| `appVideo.dll` | `Prysm.AppVision.Video` | `PlayerBaseControl`, `IPlayerLive`, `IPlayerPlayback`, `IPlayerPtz`, `IPlayerExport` |
+| `appVideo.dll` | `Prysm.AppVideo` | `PlayerBaseControl`, `IPlayerLive`, `IPlayerPlayback`, `IPlayerPtz`, `IPlayerExport`, `IPlayerOverlay` |
 | `App.Logger.dll`, `App.Utility.dll` | `Prysm.Logger`, `Prysm.Utility` | logging (`Trace`, `LoggerBox`, `AppServerLogAppender`) |
 
-JavaScript: `@prysm/appsdk`, served by the AppVision server itself (`http://<server>/mcp/sdk`), see
-[NodeClient](NodeClient/README.md).
+`App.Logger` and `App.Utility` are not described in the API help: [DriverAdvanced](DriverAdvanced/README.md) shows
+how to use them.
+
+JavaScript: `@prysm/appsdk`, served by the MCP server extension of the AppVision server
+(`http://<server>/mcp/sdk`), see [NodeClient](NodeClient/README.md).
 
 ---
 

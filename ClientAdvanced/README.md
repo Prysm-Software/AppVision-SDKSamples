@@ -23,6 +23,11 @@ Compared to ClientSimple, this sample:
 event controls, `RColor`), `appVideo.dll` (`CamerasControl`), `appClient.exe` (`Container`, `Themes/Generic.xaml`),
 `appSyn.dll`. **Output:** `ClientAdvanced.exe` — standalone WPF application.
 
+**Documentation:** *Getting started* in the API help served by your server,
+`http://<server>/doccsharp/html/4d97183d-f664-4102-9eb7-e35df2a99dd8.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)). The controls of `appClient.exe` (`Container`...) are not described in
+the API help: this README is their documentation.
+
 ---
 
 ## How it works

@@ -34,7 +34,8 @@ Each new alarm will be shown on OPERATOR01
 ## How it works
 
 1. The program logs in as an AppVision user (an SDK client licence).
-2. `Sdk.Server.ClientManager` (`IRemoteClientManager`) sends **client commands** through the server: `@Load`,
+2. The `ClientManager` (`IRemoteClientManager`) of the program's own `AppServer` sends **client commands** through
+   the server (inside the AppVision client, the same manager is `Sdk.Server.ClientManager`): `@Load`,
    `@Open`, `@CloseWindow`, `@LoadContext`, `@LoadEnv`... The server forwards them to the clients matching the
    target.
 3. Each client executes the command as if the operator had done it, **with the rights of its own user**.
@@ -46,6 +47,11 @@ Each new alarm will be shown on OPERATOR01
 
 **References:** `appSDK.dll`, `appData.dll`, `appCommon.dll`, copied next to the exe. **Output:**
 `bin\Debug\RemoteControl.exe`. Start an AppVision client (`appClient.exe`) to have something to drive.
+
+**Documentation:** *Client scripts and documents* in the API help served by your server,
+`http://<server>/doccsharp/html/fba94a4b-ad72-4807-be00-2d747b51da85.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)). `IRemoteClientManager.GetClientInfos()`, used by the `clients`
+command, is not described in the API help.
 
 ---
 

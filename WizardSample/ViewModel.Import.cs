@@ -219,9 +219,9 @@ namespace WizardSample
 				{
 					Name = protocolName,
 					Description = "Protocol " + ProtocolName,
-					// path of the driver executable, relative to the AppVision 'Bin' folder of the server,
-					// e.g. $@"Drivers\{protocolName}\appDriver{protocolName}.exe" if the driver has its own sub-folder
-					Executable = $"appDriver{protocolName}.exe",
+					// path of the driver executable (the "Manager" field of the configurator), relative to the AppVision
+					// 'Bin' folder of the server, without leading '\': each driver has its own sub-folder
+					Executable = $@"Drivers\{protocolName}\appDriver{protocolName}.exe",
 					Icon = iconPath
 				};
 				if (!appServer.ProtocolManager.AddProtocol(protocol))

@@ -4,7 +4,12 @@
 for checking data during an integration.
 
 **Available in:** AppVision 4.x. The scripts in `SQL/` and the diagrams in `Diagrams/` describe the databases of
-AppVision 4.10; columns are added from one version to the next.
+AppVision 4.10; columns and tables are added from one version to the next (for example `UserSecrets` in the `Param`
+database of 4.10.2, not in these scripts).
+
+**Documentation:** *Web services and JavaScript SDK*, the supported access to these data, in the API help served by
+your server, `http://<server>/doccsharp/html/11442ac1-c309-4c8f-8837-050c0cf5fe13.htm` (URL relative to your server,
+see [Documentation](../README.md#documentation)).
 
 > **Prefer the APIs.** The supported ways to read and write AppVision data are the SDK, the REST service and the OData
 > services (see [WebServiceREST](../WebServiceREST/README.md), [WebServiceOData](../WebServiceOData/README.md)). They
@@ -23,7 +28,7 @@ AppVision 4.10; columns are added from one version to the next.
 | `AppControl` | `Param\AppControl.mdf` | Access control: `Apc_People`, `Apc_Badges`, `Apc_BadgeTypes`, `Apc_Categories`, `Apc_Departments`, `Apc_AccessProfiles`, `Apc_Zones`, `Apc_Visitors`... | `SQL/AppControl.sql` | `AppControlDataService.svc` |
 
 The connection strings (`ParamContext`, `HistoContext`, `StateContext`, `AppControlContext`) are in
-`AppVision 4\Bin\appServer.exe.config`. By default the databases are attached to SQL Server LocalDB
+`Bin\appServer.exe.config` of the installation. By default the databases are attached to SQL Server LocalDB
 (`(localdb)\MSSQLLocalDB`); a site can use a SQL Server instance instead.
 
 Conventions: column names are prefixed with the table (`EventDate`, `EventStateDesc`...); dates of events and alarms

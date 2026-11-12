@@ -51,7 +51,8 @@ namespace DriverAdvanced
 			AppServer.VariableManager.StateChanged += s => Trace.Info($">app> {s.Name}={s.Value}");
 
 			// Note: restart and stop requests are handled in App.xaml.cs with AppServer.ControllerManager.Closed
-			// and .Restart. AppServerForDriver.Restart is obsolete and never raised: do not use it.
+			// and .Restart. AppServerForDriver.Restart is never raised (hidden from the API help, without [Obsolete]
+			// attribute): do not use it.
 
 			// AppVision sends a download command (e.g. push config to an AppControl controller).
 			AppServer.Download += Download;
@@ -60,7 +61,7 @@ namespace DriverAdvanced
 			AppServer.Refresh += Refresh;
 
 			// Write the Trace entries to the driver log file through AppServer.Log():
-			// C:\ProgramData\AppVision 4\LogFiles\<year>\<product>\<protocol>_<yyMM>.log
+			// %ProgramData%\<installation folder>\LogFiles\<year>\<product>\<protocol>_<yyMM>.log
 			// Entries are filtered by the "Log level" of the protocol (Configurator > Protocols > Parameters).
 			Trace.Logger.AddAppender(new AppServerLogAppender(AppServer), LogLevel.All, "app");
 		}

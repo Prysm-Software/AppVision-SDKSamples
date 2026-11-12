@@ -222,7 +222,7 @@ public class PasskeyAuth : IAuthPlugin, IAuthClientInfo, IAuthProbe, IAuthAccoun
 		public DateTime Expires { get; } = DateTime.UtcNow + ChallengeLifetime;
 	}
 
-	// 32 random bytes, kept for the session that asked (SessionId is added to the arguments by the server, AppVision 4.11)
+	// 32 random bytes, kept for the session that asked (SessionId is added to the arguments by the server, AppVision 4.10.2)
 	static byte[] NewChallenge(NameValue[] args, ChallengeKind kind, string user)
 	{
 		var bytes = new byte[32];
@@ -250,7 +250,7 @@ public class PasskeyAuth : IAuthPlugin, IAuthClientInfo, IAuthProbe, IAuthAccoun
 		}
 	}
 
-	static string Session(NameValue[] args) => Helper.GetParameter("SessionId", args) ?? throw new InvalidOperationException("SessionId expected in the login arguments (AppVision 4.11)");
+	static string Session(NameValue[] args) => Helper.GetParameter("SessionId", args) ?? throw new InvalidOperationException("SessionId expected in the login arguments (AppVision 4.10.2)");
 
 	// opaque, stable user handle returned by the authenticator with each assertion (WebAuthn § 5.4.3): never the name
 	static byte[] UserHandle(UserRow user)

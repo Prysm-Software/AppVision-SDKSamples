@@ -30,8 +30,14 @@ See [PlayerAdvanced](../PlayerAdvanced/README.md) for the complete set of featur
 | `cctv.mp4` | Demo video, copied next to the DLL |
 | `Configuration/` | Ready-made AppVision configuration with cameras declared (see below) |
 
-**References:** `appVideo.dll`, `appSDK.dll`, `appCommon.dll`, `App.FFmpeg.dll` (AppVision `Bin` folder).
+**References:** `appVideo.dll`, `appSDK.dll`, `appCommon.dll`, `App.FFmpeg.dll` 2.4.0.3 (AppVision `Bin` folder).
 **Output:** `PlayerSimple.dll`.
+
+A video file plays once and stops at its end: `App.FFmpeg` 2.4.0.3 has no loop option. Reopen the camera to play it again.
+
+**Documentation:** *Video players* in the API help served by your server,
+`http://<server>/doccsharp/html/241bd2a4-bd41-4dfa-aa02-ecbd33f83103.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
 
 ---
 
@@ -57,7 +63,6 @@ public partial class PlayerSimple : PlayerBaseControl, IPlayerLive
 		{
 			Rendering = RenderingMethod.Software,   // pure WPF rendering
 			UseHardwareDecoding = false,
-			LoopOnEndOfFile = true,                 // a file plays in a loop, like a camera
 			AutoReconnect = true,                   // stream lost: retry after 2 s, then up to every 30 s
 		});
 
@@ -126,8 +131,9 @@ In the configurator, **Variables**, create a variable of type **Camera** (video)
 - Save, then display the camera in the client: from the camera list, from a *Video* object of a synoptic, or by
   script with `Client.Load(0, "main", "$V.Building.Camera1")`.
 
-See *docs/Video system integration/Video System Integration Specifications.pdf* for the variable tree that a video
-system integration is expected to follow (`Cameras.Cam001.Video`, `.Comm`, `.RecStatus`...).
+See the *Video players* page of the API help
+(`http://<server>/doccsharp/html/241bd2a4-bd41-4dfa-aa02-ecbd33f83103.htm`) for the declaration of a player and
+the integration of a video system.
 
 ---
 
@@ -167,7 +173,7 @@ It is shared by the video samples and declares these cameras:
 | *Invalid type* | The class does not derive from a WPF control or does not implement `IPlayerLive`. |
 | The tile stays on *Connecting* | `Play()` did not complete, or `FireFrameDecoded` is never called. |
 | Red error message, then retries | FFmpeg cannot open the address (URL, credentials, firewall, RTSP over UDP blocked...). Test the address with `ffplay` or VLC. |
-| The video stops at the end of a file | `LoopOnEndOfFile` is not set. |
+| The video stops at the end of a file | Expected: `App.FFmpeg` 2.4.0.3 does not loop a file. |
 | The new DLL is not taken into account | A client still has the old DLL loaded: close all clients, then replace it. |
 
 **Debugging:** attach Visual Studio to `appClient.exe` (*Debug › Attach to Process*) and set breakpoints in

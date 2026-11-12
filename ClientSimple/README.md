@@ -21,6 +21,10 @@ The second row of the window writes a value into any variable.
 **References:** `appSDK.dll`, `appData.dll`, `appCommon.dll` (from the AppVision `Bin` folder).
 **Output:** `ClientSimple.exe` — standalone WPF application.
 
+**Documentation:** *Getting started*, `http://<server>/doccsharp/html/4d97183d-f664-4102-9eb7-e35df2a99dd8.htm`,
+and *Notifications and filters*, `http://<server>/doccsharp/html/72f3b891-cdf6-48e2-b5f1-015f8e023a0d.htm`, in the
+API help served by your server (URLs relative to your server, see [Documentation](../README.md#documentation)).
+
 ---
 
 ## How it works
@@ -111,8 +115,10 @@ otherwise the session stays open on the server until it times out.
 | `Set` has no effect | The variable is driven by a driver that is stopped, or the profile does not allow commands. |
 
 **Debugging:** set breakpoints in the `StateChanged` / `AlarmChanged` / `EventChanged` handlers. The SDK
-logs its calls (Open, Login, StartNotifications...) in `C:\ProgramData\AppVision 4\LogFiles\<year>\`, in a
-sub-folder named after the application (default location).
+logs its calls (Open, Login, StartNotifications...) in `%ProgramData%\<folder>\LogFiles\<year>\`, in a sub-folder
+named after the application. `<folder>` is the name of the folder that contains the `Bin` folder of the loaded
+`appCommon.dll`: run from `bin\Debug` with its copies of the DLLs, as built here, that is `%ProgramData%\bin\`; run
+from the AppVision `Bin` folder, the installation folder.
 
 ---
 

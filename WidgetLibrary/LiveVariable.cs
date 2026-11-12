@@ -52,7 +52,8 @@ internal sealed class LiveVariable
 			Sdk.Server.VariableManager.StateChanged -= OnStateChanged;
 	}
 
-	// notifications arrive on a background thread: back to the UI thread before touching the widget
+	// notifications may arrive on a background thread (client in web service mode): always go back to the UI thread
+	// before touching the widget
 	void OnStateChanged(VariableState state)
 	{
 		if (string.Equals(state.Name, Name, StringComparison.OrdinalIgnoreCase))

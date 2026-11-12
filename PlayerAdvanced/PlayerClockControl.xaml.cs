@@ -463,7 +463,7 @@ namespace PlayerClock
 
 		/// <summary>
 		/// Returns <c>false</c>: this player does not support PTZ patrol patterns.
-		/// Set to <c>true</c> and implement <c>GetPatterns</c>/<c>GotoPattern</c> to enable.
+		/// Set to <c>true</c> and implement <c>GetPatterns</c>/<c>RunPattern</c>/<c>StopPattern</c> to enable.
 		/// </summary>
 		public override bool CanPatterns => false;
 

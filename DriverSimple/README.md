@@ -10,6 +10,10 @@ structure of a real driver (devices, cache, logging, deployment), continue with
 
 **References:** `appSDK.dll`, `appData.dll`, `appCommon.dll`. **Output:** `DriverSimple.exe`.
 
+**Documentation:** *Writing a driver* in the API help served by your server,
+`http://<server>/doccsharp/html/fa685819-4ff4-4c40-81ba-4172e43de86b.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
+
 ![The driver window: inputs 1 and 3 set by the driver, outputs 1 and 3 received back from AppVision](driver-window.png)
 
 ![The same state in the AppVision client: the home page of the sample configuration and the events list](client.png)
@@ -144,8 +148,10 @@ Then:
 | The home page shows a warning icon | `DriverSimple.exe` is not in the AppVision `Bin` folder (Step 2). |
 | Two driver windows | The protocol is started by AppVision and from Visual Studio: stop one. |
 
-Log file of the driver: `C:\ProgramData\AppVision 4\LogFiles\<year>\<product>\<protocol>_<yyMM>.log` (*Log files*
-button of the server window).
+Log file of the driver: `%ProgramData%\<installation folder>\LogFiles\<year>\<product>\<protocol>_<yyMM>.log`
+(*Log files* button of the server window) when the driver runs from the AppVision `Bin` folder. Run from its own
+`bin\Debug`, with copies of the DLLs, it writes under `%ProgramData%\bin\LogFiles\`: the SDK names the folder after
+the parent of the folder that holds `appCommon.dll`.
 
 ---
 

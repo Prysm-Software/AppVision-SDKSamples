@@ -7,8 +7,14 @@ write a command, acknowledge an alarm, read the event history. The same calls wo
 
 **Audience:** developers who know JavaScript and npm; no .NET and no Visual Studio needed.
 
-**Requirements:** Node.js 18 or later, an AppVision 4.9+ server reachable over HTTP, a user account (default
-`ADM` / `123` on a test server).
+**Requirements:** Node.js 18 or later, an AppVision server reachable over HTTP, a user account (default
+`ADM` / `123` on a test server). The SDK version must match the server: the package `4.9.76` pinned in
+`package.json` works with AppVision 4.10.0 and 4.10.1; SDK `4.9.79` and later require an AppVision 4.10.2 server. Install the
+version that your server serves (Step 1).
+
+**Documentation:** *Web services and JavaScript SDK* in the API help served by your server,
+`http://<server>/doccsharp/html/11442ac1-c309-4c8f-8837-050c0cf5fe13.htm`, and the reference of the JavaScript SDK,
+`http://<server>/docjs/index.html` (URLs relative to your server, see [Documentation](../README.md#documentation)).
 
 ---
 
@@ -101,7 +107,7 @@ node index.js history 24                    # events of the last 24 hours
 
 ## Key points
 
-**Node needs two adjustments.** The SDK is written for the browser:
+**Node and SDK 4.9.76.** Up to 4.9.76, the SDK is written for the browser and needs two adjustments in Node:
 
 ```js
 globalThis.window ??= globalThis;   // the SDK calls window.btoa / window.atob; Node has them as globals
@@ -109,6 +115,8 @@ globalThis.window ??= globalThis;   // the SDK calls window.btoa / window.atob; 
 await server.login({ host, username, password,
 	productProcess: 'node' });      // otherwise login() reads navigator.userAgent, missing in Node < 21
 ```
+
+From SDK 4.9.77 on, the SDK runs in Node.js 18+ as is: both lines become unnecessary (harmless if kept).
 
 **One session per application.** `login()` loads the whole configuration: create one `AppServer` and share it.
 
@@ -147,7 +155,7 @@ notification.
 
 | Symptom | Cause |
 |---|---|
-| `window is not defined` / `navigator is not defined` | The two Node adjustments above are missing. |
+| `window is not defined` / `navigator is not defined` | SDK 4.9.76 or earlier without the two Node adjustments above. |
 | `Error: Unauthorized` | Wrong user or password. |
 | `Error: fetch failed` | Server not reachable: check `APPVISION_HOST` (scheme and port). |
 | Connected, but no live change | `startKeepAlive()` not called, or the notification filter (`notifFilter`) excludes the variables. |

@@ -1,4 +1,4 @@
-// PasskeyAuthentication: web part of the plugin, for the AppVision 4.11 web client.
+// PasskeyAuthentication: web part of the plugin, for the AppVision 4.10.2 web client.
 //
 // The web client loads this ES module at run time for the method Passkey (Ui = Plugin): the URL is the WebModule= parameter published
 // by PasskeyAuth.Describe(), /authplugins/Passkey.js, so the file goes to the AppVision Bin\Web\authplugins folder of the server.

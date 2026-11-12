@@ -4,7 +4,7 @@
 toolbox of the synoptic editor like the built-in objects: in their own node, sorted by category, with an icon, a
 default size and a tooltip, ready to drag onto a synoptic.
 
-**Available in:** AppVision 4.11 and later (extensible toolbox). Earlier versions can still place the controls of
+**Available in:** AppVision 4.10.2 and later (extensible toolbox). Earlier versions can still place the controls of
 the DLL through *Third-party .Net objects*, but do not read the toolbox metadata.
 
 **Audience:** partner developers who already configure AppVision sites (synoptics, variables, scripts) and know
@@ -34,6 +34,11 @@ the basics of C# and WPF.
 
 **References:** `appSDK.dll` (attributes, `Sdk.Server`), `appData.dll` (`VariableState`), `appCommon.dll`, all with
 *Copy Local = False*. **Output:** `WidgetLibrary.dll`.
+
+**Documentation:** *Synoptics and symbols* in the API help served by your server,
+`http://<server>/doccsharp/html/0d5e00d8-27bb-4b55-a9b4-bfcf867794da.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)). The widget attributes (`Prysm.AppVision.SDK.Widgets`) do not exist before
+AppVision 4.10.2, so the help of an older server does not describe them.
 
 ---
 
@@ -75,8 +80,10 @@ public static bool Online => Sdk.Server is { IsConnected: true };
 ```
 
 **Follow a variable** with `Sdk.Server.VariableManager`: read the current state on `Loaded`, subscribe to
-`StateChanged`, unsubscribe on `Unloaded`. Notifications arrive on a background thread: go back to the UI thread
-before touching the control. `LiveVariable.cs` does all of this in a few lines:
+`StateChanged`, unsubscribe on `Unloaded`. The client raises the notifications on the UI thread in its default mode,
+but on a background thread when it receives them through a web service port (`PortWebService` setting, see
+[WpfControlAdvanced](../WpfControlAdvanced/README.md)): check the thread before touching the control.
+`LiveVariable.cs` does all of this in a few lines:
 
 ```csharp
 Sdk.Server.VariableManager.StateChanged += OnStateChanged;          // Loaded

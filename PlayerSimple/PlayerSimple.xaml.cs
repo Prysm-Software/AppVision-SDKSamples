@@ -65,8 +65,6 @@ namespace PlayerSimple
 				// control, and FrameRendered provides a SoftwareVideoFrame holding the decoded bitmap.
 				Rendering = RenderingMethod.Software,
 				UseHardwareDecoding = false,
-				// A video file has an end: play it in a loop so that it behaves like a camera.
-				LoopOnEndOfFile = true,
 				// Stream lost or not reachable yet: retry automatically (after 2 s, then up to every 30 s).
 				AutoReconnect = true,
 			});

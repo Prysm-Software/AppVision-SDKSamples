@@ -17,6 +17,10 @@ documents folder).
 **References:** `appSDK.dll`, `appData.dll`, `appCommon.dll`, Telerik UI for WPF (`Telerik.Windows.*`, shipped in
 the AppVision `Bin` folder). **Output:** `appWizardSample.exe` — standalone WPF application.
 
+**Documentation:** *Writing a driver* in the API help served by your server,
+`http://<server>/doccsharp/html/fa685819-4ff4-4c40-81ba-4172e43de86b.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
+
 ---
 
 ## How it works
@@ -85,7 +89,7 @@ The user must have the right to modify the configuration.
 appServer.ProtocolManager.AddProtocol(new ProtocolRow
 {
     Name = "WizardSample",
-    Executable = "appDriverWizardSample.exe",   // relative to the AppVision Bin folder, e.g. @"Drivers\WizardSample\appDriverWizardSample.exe"
+    Executable = @"Drivers\WizardSample\appDriverWizardSample.exe",   // the "Manager" field of the configurator, relative to the AppVision Bin folder, without leading '\'
     Icon = "Images/WizardSample.png",           // uploaded with FileManager.PutFile("Param/Client/Images/...")
 });
 
@@ -132,7 +136,7 @@ in the process list.
 
 ### 6. Deployment next to a driver
 
-Deploy the wizard with its driver, for example in `AppVision 4\Bin\Drivers\WizardSample\`. `App.xaml.cs` resolves the
+Deploy the wizard with its driver, for example in `Bin\Drivers\WizardSample\` of the installation. `App.xaml.cs` resolves the
 AppVision DLLs (`appSDK.dll`, Telerik...) one and two folders up, so they need not be copied next to the exe.
 
 ---
@@ -156,12 +160,14 @@ AppVision DLLs (`appSDK.dll`, Telerik...) one and two folders up, so they need n
 | Login fails | Wrong address or credentials; the user needs configuration rights. |
 | Discovery finds nothing | ICMP blocked by firewalls, or no IPv4 address on the machine. Use **Add**. |
 | *Your license does not allow to create N variables* | Variable count of the license reached. |
-| The protocol exists but the driver does not start | `Executable` not found relative to the server `Bin` folder; with `App.Server.SecurityLevel` 2 or more, the protocol also needs a password. |
+| The protocol exists but the driver does not start | `Executable` (*Manager* in the configurator) not found relative to the server `Bin` folder; with `App.Server.SecurityLevel` 2 or more, the protocol also needs a password. |
 | *Could not load file or assembly 'appSDK'* when deployed in a sub-folder | The wizard is more than two levels below the AppVision `Bin` folder: adapt `CurrentDomain_AssemblyResolve`. |
 | Entities already imported are skipped | By design (`<todo>` in `Import()`): update them if your driver needs it. |
 
 **Debugging:** set breakpoints in `ViewModel.Import.cs` / `Import()`; errors are also written to the wizard's log
-(`Helper.Log`, folder `C:\ProgramData\AppVision 4\LogFiles\<year>\`).
+(`Helper.Log`, folder `%ProgramData%\<folder>\LogFiles\<year>\`, where `<folder>` is the name of the folder that
+contains the `Bin` folder of the loaded `appCommon.dll`: the installation folder when the wizard is deployed under
+`Bin\Drivers\`, `bin` when it runs from its own `bin\Debug`).
 
 ---
 

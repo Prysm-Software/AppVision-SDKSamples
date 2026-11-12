@@ -24,6 +24,10 @@ a control DLL are explained there).
 **References:** `appSDK.dll`, `appData.dll`, `appCommon.dll`, `appUI.dll` (AppVision `Bin` folder).
 **Output:** `WpfControlAdvanced.dll`.
 
+**Documentation:** *Synoptics and symbols*, `http://<server>/doccsharp/html/0d5e00d8-27bb-4b55-a9b4-bfcf867794da.htm`,
+and *Client scripts and documents*, `http://<server>/doccsharp/html/fba94a4b-ad72-4807-be00-2d747b51da85.htm`, in the
+API help served by your server (URLs relative to your server, see [Documentation](../README.md#documentation)).
+
 ---
 
 ## How it works
@@ -174,6 +178,6 @@ the last 15 notifications received.
 ## Learning path
 
 ```
-WpfControlSimple  ->  WidgetLibrary (4.11)  ->  WpfControlAdvanced  ->  PlayerSimple / PlayerAdvanced
+WpfControlSimple  ->  WidgetLibrary (4.10.2)  ->  WpfControlAdvanced  ->  PlayerSimple / PlayerAdvanced
 Read/write            toolbox, live values       full integration        video players
 ```

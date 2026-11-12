@@ -5,9 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Prysm.AppVision.Common;
+using Prysm.AppVision.SDK;
 using Prysm.Logger;
 
-namespace Prysm.AppVision.SDK
+namespace DriverAdvanced
 {
 	/// <summary>
 	/// Diagnostic window for the DriverAdvanced driver.

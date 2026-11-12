@@ -10,6 +10,11 @@ AppVision asks it to.
 **References:** `appSDK.dll` (`AppServerForDriver`), `appData.dll` (`VariableState`), `appCommon.dll`.
 **Output:** `DriverMinimal.exe`.
 
+**Documentation:** *Writing a driver* in the API help served by your server,
+`http://<server>/doccsharp/html/fa685819-4ff4-4c40-81ba-4172e43de86b.htm`, and *Notifications and filters*,
+`http://<server>/doccsharp/html/72f3b891-cdf6-48e2-b5f1-015f8e023a0d.htm` (URLs relative to your server, see
+[Documentation](../README.md#documentation)).
+
 ---
 
 ## How it works
@@ -55,7 +60,8 @@ stops it cleanly.
 In the **Configurator**:
 
 1. **Protocols › Add**: *Name* `DriverMinimal`, *Manager* `DriverMinimal.exe` (path relative to the AppVision
-   `Bin` folder, or an absolute path). Leave *Autostart* unchecked while you develop.
+   `Bin` folder, or an absolute path). Leave *Autostart* unchecked while you develop. The *Manager* field of the
+   configurator is the `Executable` property of `ProtocolRow` in the SDK.
 2. **Variables**: create a node `MinimalNode` and, in its *Parameters* tab, set *Source* to `$P.DriverMinimal`.
 3. Create one or two children, for example `MinimalNode.Value` (Integer) and `MinimalNode.Cmd` (Logical, *Command*
    checked).
@@ -115,8 +121,10 @@ The server name is empty when the driver connects to the local server.
 | Two consoles | The protocol was started by AppVision and from Visual Studio at the same time: stop one. |
 | Login refused | The protocol has a password (mandatory with a high security level): add `-password=...` to the command line. |
 
-Log file of the driver (written by the SDK): `C:\ProgramData\AppVision 4\LogFiles\<year>\<product>\` (folder
-opened by the *Log files* button of the server window).
+Log file of the driver (written by the SDK): `LogFiles\<year>\<product>\` under `%ProgramData%\<folder>\`, where
+`<folder>` is the name of the folder that contains the `Bin` folder of the loaded `appCommon.dll`: the installation
+folder when the driver runs from the AppVision `Bin` folder (folder opened by the *Log files* button of the server
+window), `bin` when it runs from its own `bin\Debug` with copies of the DLLs.
 
 ---
 

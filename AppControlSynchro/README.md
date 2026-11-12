@@ -27,8 +27,13 @@ request per person). Each step is printed and appended to `SynchroAppControl.log
 | `Program.cs` | CSV reading, comparison, upsert |
 | `Service References/AppControlServiceReference/` | Generated client classes (`AppControlContext`, `Person`...) |
 
-**References:** NuGet `Microsoft.Data.Services.Client` 5.8.4. **Output:** `SynchroAppControl.exe`, in the AppVision
-`Bin` folder. Authentication and client classes: see [WebServiceOData](../WebServiceOData/README.md).
+**References:** NuGet `Microsoft.Data.Services.Client` 5.8.4. **Output:** `SynchroAppControl.exe`, in `bin\Debug\`
+(or `bin\Release\`) of the project, with the OData DLLs: it needs no AppVision DLL and runs from any folder.
+Authentication and client classes: see [WebServiceOData](../WebServiceOData/README.md).
+
+**Documentation:** *Access control*, `http://<server>/doccsharp/html/04bcc881-e1bf-4e10-bb05-ea4adf6f91ea.htm`, and
+*Web services and JavaScript SDK*, `http://<server>/doccsharp/html/11442ac1-c309-4c8f-8837-050c0cf5fe13.htm`, in the
+API help served by your server (URLs relative to your server, see [Documentation](../README.md#documentation)).
 
 ---
 

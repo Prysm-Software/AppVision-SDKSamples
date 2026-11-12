@@ -1,8 +1,8 @@
 /**
  * Application entry point.
  *
- * Mounts the React root into the `#root` element created by the AppVision
- * Web Client's iframe host page.
+ * Mounts the React root into the `#root` element of `public/index.html`, the page
+ * that the web client loads in its iframe.
  * {@link React.StrictMode} is kept enabled to surface potential issues
  * during development (double-invokes effects in dev mode).
  */

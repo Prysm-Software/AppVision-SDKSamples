@@ -12,7 +12,7 @@ namespace WizardSample
 
 		// Probes the AppVision assemblies (appSDK.dll, appCommon.dll, Telerik...) one and two folders up.
 		// Needed when the wizard is deployed in a sub-folder of the AppVision 'Bin' folder,
-		// e.g. Bin\Drivers\MyDriver\appMyDriverWizard.exe, without copying the AppVision DLLs next to it.
+		// e.g. Bin\Drivers\WizardSample\appWizardSample.exe, next to its driver, without copying the AppVision DLLs.
 		// Do not reference AppVision types in this method: it runs before they can be loaded.
 		private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{

@@ -3,13 +3,13 @@
 **Used for:** letting AppVision users sign in **without a password**, with a passkey (WebAuthn / FIDO2): Windows Hello face,
 fingerprint or PIN, a USB or NFC security key, or a phone. The sample is a complete **authentication plugin**: the server part
 is the WebAuthn relying party (challenges, signature checks, public keys), the client part is the sign-in tile of appClient and
-appConfig, both in one DLL. It also shows how any third-party authentication method plugs into AppVision 4.11: method naming,
+appConfig, both in one DLL. It also shows how any third-party authentication method plugs into AppVision 4.10.2: method naming,
 multi-step login through a single session, second factor exemption, configurator page.
 
 **Audience:** C# developers who integrate AppVision with a site's authentication policy. Server-side code runs inside
 `appServer.exe`, client-side code inside `appClient.exe` and `appConfig.exe` (Windows 10 1903 or later for the WebAuthn API).
 
-**Available in:** AppVision 4.11 and later (`IServer.CheckUserPassword`, method naming by file, `TwoFactor.ExemptMethods`).
+**Available in:** AppVision 4.10.2 and later (`IServer.CheckUserPassword`, method naming by file, `TwoFactor.ExemptMethods`).
 
 ![The Passkey tile of appClient and the Windows Security prompt it opens: the passkey of ADM on pc-thomas, confirmed with a fingerprint](sign-in.png)
 
@@ -55,9 +55,15 @@ Sign in
 `ISignInPlugin`, `IServer`), `appData.dll` (`UserRow`, `AuthenticationMethodInfo`), `appCommon.dll`, `appScript.dll`
 (`ScriptServerBase.Server`), `System.ServiceModel.Web` (`WebFaultException`). **Output:** `appPluginPasskey.dll`.
 
+**Documentation:** the authentication plugin interfaces (`Prysm.AppVision.SDK.Plugins.Auth`) are not described in the
+API help, and the types added by 4.10.2 (`IAuthClientInfo`, `IAuthProbe`, `IAuthAccountPlugin`,
+`AuthenticationMethodInfo`) do not exist before AppVision 4.10.2: this README is their documentation. The help lists the
+samples on its *SDK samples* page, `http://<server>/doccsharp/html/1f39c0dc-edd7-4d7c-9dd1-ddc315b457df.htm` (URL
+relative to your server, see [Documentation](../README.md#documentation)).
+
 ---
 
-## An authentication plugin in AppVision 4.11
+## An authentication plugin in AppVision 4.10.2
 
 - **The method is named after the file.** `appPlugin<Name>.dll` in the `Bin` folder is the method `<Name>`: `appPluginPasskey.dll`
   is **`Passkey`**, the name used by `App.Main.Authentication.Methods`, the `Method=` login argument, the
@@ -81,7 +87,7 @@ Sign in
   by its `Id` and ignores the rest of the object, and never creates an external account (a row without `Id` is refused). Without
   the marker, a plugin that returns a local account is refused as a directory homonym (`Local_user_exists_x`). The parameter
   `AuthMethods=` of the user or profile and the account availability (locked, validity, timetable) are checked as for any method.
-  The marker requires AppVision 4.11: the DLL does not load on an older server.
+  The marker requires AppVision 4.10.2: the DLL does not load on an older server.
 - **Proof of identity at registration.** `IServer.CheckUserPassword(NameValue[])` runs the sign-in pipeline for the password
   (failure counter and profile lockout, locked or expired account refused, an event for every check) with the method the plugin
   names: `Method=` is required here because the default method may be the plugin itself. The method is the option

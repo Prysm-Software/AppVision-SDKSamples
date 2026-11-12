@@ -24,8 +24,12 @@ The AppVision server publishes its configuration database (`Param`) as an OData 
 | `Service References/ParamServiceReference/` | Client classes generated from the service metadata (`ParamContext`, `OptionRow`, `VariableRow`...) |
 
 **References:** NuGet `Microsoft.Data.Services.Client` 5.8.4 (WCF Data Services client) and its dependencies. No
-AppVision DLL. **Output:** `WebServiceOData.exe` in `bin\Debug\`, with the WCF Data Services client DLLs (copied from the
-AppVision `Bin` folder, which ships them).
+AppVision DLL. **Output:** `WebServiceOData.exe` in `bin\Debug\` (or `bin\Release\`), with the WCF Data Services
+client DLLs copied from the NuGet packages (the AppVision `Bin` folder ships the same version).
+
+**Documentation:** *Web services and JavaScript SDK* in the API help served by your server,
+`http://<server>/doccsharp/html/11442ac1-c309-4c8f-8837-050c0cf5fe13.htm` (URL relative to your server, see
+[Documentation](../README.md#documentation)).
 
 ```csharp
 var ctx = new ParamContext(new Uri("http://localhost/AppVisionDataService.svc/"))
@@ -81,8 +85,8 @@ with .NET Framework 4.8. Change `ServiceUrl`, `UserName` and `Password` at the t
    follows the schedule above (1 from 07:45 to 11:30 and from 14:30 to 17:30).
 5. **0** quits.
 
-The executable is built in the AppVision `Bin` folder, next to the `Microsoft.Data.*.dll` and `System.Spatial.dll`
-files it needs (referenced with *Copy Local = False*). To run it elsewhere, copy these four DLLs next to it.
+The executable is built in `bin\Debug\` of the project, next to the `Microsoft.Data.*.dll` and `System.Spatial.dll`
+files it needs (NuGet packages, *Copy Local*). To run it elsewhere, copy these four DLLs with it.
 
 ---
 
