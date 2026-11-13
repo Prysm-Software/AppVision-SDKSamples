@@ -4,6 +4,10 @@ Samples that show partners how to integrate third-party systems with **AppVision
 applications, embed WPF controls and video players, drive the operator screens, and reach AppVision from other
 platforms over HTTP or with the JavaScript SDK.
 
+The repository is published on [Azure DevOps](https://dev.azure.com/PrysmSoftware/Public/_git/AppVision-SDKSamples) (the
+reference, where changes are made) and on [GitHub](https://github.com/Prysm-Software/AppVision-SDKSamples) (a copy updated
+after each change of `master`).
+
 ---
 
 ## Audience
